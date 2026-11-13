@@ -1,0 +1,2228 @@
+﻿<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1-§. Astronomiya nimani o‘rganadi? | Interaktiv Darslik</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            space: {
+              950: '#030712',
+              900: '#070d1f',
+              800: '#0f172a',
+              700: '#1e293b',
+            },
+            neon: {
+              cyan: '#38bdf8',
+              blue: '#0ea5e9',
+              gold: '#fbbf24',
+              amber: '#f59e0b',
+              purple: '#a855f7',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Deep Space maxsus uslublar */
+    body {
+      background-color: #030712;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+
+    #starfield-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(56, 189, 248, 0.18);
+      box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.65);
+    }
+
+    .glass-card-gold {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.65);
+    }
+
+    .sim-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 0.75rem;
+      background: radial-gradient(circle at center, #0b132b 0%, #02040a 100%);
+    }
+
+    /* Slayder dizayni */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(30, 41, 59, 0.9);
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #fbbf24);
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+      border: 2px solid #030712;
+    }
+
+    .neon-glow {
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.45);
+    }
+
+    .gold-glow {
+      text-shadow: 0 0 18px rgba(251, 191, 36, 0.45);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-sky-500/30 selection:text-sky-200">
+  <!-- Orqa fon yulduzlar maydoni -->
+  <canvas id="starfield-canvas"></canvas>
+
+  <!-- Yuqori Navigatsiya Paneli -->
+  <header class="sticky top-0 z-50 border-b border-sky-500/20 bg-space-950/85 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between py-3 gap-3">
+        <a href="#top" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500/20 to-amber-500/20 border border-sky-400/40 flex items-center justify-center shadow-lg shadow-sky-500/10 group-hover:scale-105 transition">
+            <svg class="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="4" class="fill-amber-400/30" />
+              <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-25 12 12)" />
+              <circle cx="18.5" cy="8.5" r="1.3" class="fill-sky-400 stroke-none" />
+            </svg>
+          </div>
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-sky-400 block">11-sinf Astronomiya</span>
+            <span class="font-display font-bold text-sm sm:text-base text-slate-100">1-§. Astronomiyaga kirish</span>
+          </div>
+        </a>
+
+        <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <a href="#reja-1" class="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-300 hover:text-sky-300 hover:bg-sky-500/10 border border-transparent hover:border-sky-500/30 transition">
+            1-reja: Ta’rif va fanlar
+          </a>
+          <a href="#reja-2" class="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-300 hover:text-amber-300 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30 transition">
+            2-reja: Sharq allomalari
+          </a>
+          <a href="#reja-3" class="px-3 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-300 hover:text-sky-300 hover:bg-sky-500/10 border border-transparent hover:border-sky-500/30 transition">
+            3-reja: Yevropa kashfiyotlari
+          </a>
+          <a href="#viktorina" class="px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-400 hover:to-blue-500 shadow-md shadow-sky-500/20 transition">
+            Viktorina (5 test)
+          </a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Asosiy Kontent -->
+  <main id="top" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16">
+
+    <!-- Hero Bo'limi -->
+    <section class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-4xl space-y-5">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/30 text-sky-300 text-xs sm:text-sm font-medium">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          Interaktiv Elektron Darslik • 6 ta jonli simulyatsiya
+        </div>
+        <h1 class="font-display text-2xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight neon-glow">
+          1-§. Astronomiya nimani o‘rganadi? Uning rivojlanish tarixi va boshqa fanlar bilan aloqasi
+        </h1>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+          Ushbu interaktiv modul orqali Koinot masshtablariga sayohat qilasiz, Ptolemey va Kopernik tizimlarini jonli taqqoslaysiz, Mirzo Ulug‘bekning Samarqand rasadxonasidagi ulkan sekstantda Quyosh balandligini o‘lchaysiz hamda Galiley teleskopi orqali Yupiter yo‘ldoshlarini kuzatasiz.
+        </p>
+
+        <!-- Dars rejasi kartochkalari -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3">
+          <a href="#reja-1" class="p-4 rounded-2xl bg-slate-900/80 border border-sky-500/25 hover:border-sky-400 transition group">
+            <div class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-1">1-reja</div>
+            <div class="font-semibold text-slate-100 group-hover:text-sky-300 transition">Astronomiya fanining ta’rifi, o‘rganish predmeti va fanlar bilan aloqasi</div>
+          </a>
+          <a href="#reja-2" class="p-4 rounded-2xl bg-slate-900/80 border border-amber-500/25 hover:border-amber-400 transition group">
+            <div class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">2-reja</div>
+            <div class="font-semibold text-slate-100 group-hover:text-amber-300 transition">Qadimgi dunyo va O‘rta asr Sharq allomalarining hissasi</div>
+          </a>
+          <a href="#reja-3" class="p-4 rounded-2xl bg-slate-900/80 border border-sky-500/25 hover:border-sky-400 transition group">
+            <div class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-1">3-reja</div>
+            <div class="font-semibold text-slate-100 group-hover:text-sky-300 transition">Yevropa olimlarining kashfiyotlari va keyingi taraqqiyot</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 1-REJA: TA'RIF, O'RGANISH PREDMETI VA FANLAR BILAN ALOQASI            -->
+    <!-- ===================================================================== -->
+    <section id="reja-1" class="space-y-8 scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-sky-500/20 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-sky-400">1-reja</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1">
+            Astronomiya fanining ta’rifi, o‘rganish predmeti va boshqa fanlar bilan aloqasi
+          </h2>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 self-start sm:self-auto">
+          2 ta interaktiv laboratoriya
+        </span>
+      </div>
+
+      <!-- Nazariy qism -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass-card rounded-2xl p-6 space-y-3">
+          <div class="w-11 h-11 rounded-xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400 font-display font-bold text-lg">
+            αΩ
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">Astronomiya nima?</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            <strong class="text-sky-300">Astronomiya</strong> (yunoncha <em>«astron»</em> — yulduz, <em>«nomos»</em> — qonun) — osmon jismlari (Sayyoralar, yo‘ldoshlar, kometalar, yulduzlar, tumanliklar, galaktikalar) va butun Koinotning tuzilishi, harakati, fizik tabiati, kimyoviy tarkibi hamda evolyutsiyasini o‘rganuvchi fundamental tabiiy fandir.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 space-y-3">
+          <div class="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-400 font-display font-bold text-lg">
+            4×
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">Asosiy bo‘limlari</h3>
+          <ul class="text-slate-300 text-sm space-y-2 leading-relaxed">
+            <li><strong class="text-amber-300">Astrometriya:</strong> Osmon jismlarining vaziyati, harakati va aniq vaqtni o‘lchash.</li>
+            <li><strong class="text-amber-300">Osmon mexanikasi:</strong> Gravitatsiya kuchlari ta’sirida osmon jismlari harakati.</li>
+            <li><strong class="text-amber-300">Astrofizika:</strong> Yulduz va galaktikalarning fizik xossalari va kimyoviy tarkibi.</li>
+            <li><strong class="text-amber-300">Kosmologiya:</strong> Koinotning bir butun sifatida paydo bo‘lishi va rivojlanishi.</li>
+          </ul>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 space-y-3">
+          <div class="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-400/30 flex items-center justify-center text-purple-400 font-display font-bold text-lg">
+            ∞
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">O‘ziga xos xususiyati</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Boshqa fanlardan farqli o‘laroq, astronomiyada asosiy tadqiqot usuli — <strong class="text-sky-300">kuzatish</strong>dir. Olimlar osmon jismlaridan kelayotgan elektromagnit nurlanishlar (ko‘rinadigan yorug‘lik, radio, rentgen, gamma nurlar), kosmik zarralar va gravitatsion to‘lqinlarni tahlil qilib, Koinot sirlarini ochadilar.
+          </p>
+        </div>
+      </div>
+
+      <!-- 1-SIMULYATSIYA: KOINOT MASSHTABI -->
+      <div class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">1-Simulyatsiya • Interaktiv Laboratoriya</span>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white">«Koinot masshtabi» (Scale of the Universe)</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="scale-play-btn" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm transition shadow-md shadow-sky-500/20">
+              ▶ Avto-sayohat
+            </button>
+            <button id="scale-reset-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-medium transition">
+              ↺ Qayta tiklash
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- Canvas maydoni -->
+          <div class="lg:col-span-8 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-sky-500/30">
+            <canvas id="scale-canvas" class="sim-canvas"></canvas>
+            <div class="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-slate-950/80 border border-sky-500/30 text-xs text-sky-300 font-mono">
+              Masshtab darajasi: <span id="scale-level-badge" class="text-amber-400 font-bold">1 / 6</span>
+            </div>
+          </div>
+
+          <!-- Boshqaruv va Ma'lumot paneli -->
+          <div class="lg:col-span-4 space-y-4 bg-slate-900/75 p-5 rounded-2xl border border-slate-700/70">
+            <div>
+              <div class="flex justify-between text-xs text-slate-400 mb-2">
+                <span>Yer (12 742 km)</span>
+                <span>Koinot (93 mlrd y.y.)</span>
+              </div>
+              <input id="scale-slider" type="range" min="0" max="100" step="0.2" value="0" class="w-full" />
+            </div>
+
+            <div class="flex items-center justify-between gap-2 pt-1">
+              <label for="scale-speed" class="text-xs text-slate-400">Sayohat tezligi:</label>
+              <select id="scale-speed" class="bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1 text-xs text-slate-200">
+                <option value="0.15">0.5x (Sekin)</option>
+                <option value="0.3" selected>1x (Normal)</option>
+                <option value="0.65">2x (Tez)</option>
+              </select>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/90 border border-sky-500/25 space-y-2">
+              <div class="text-xs text-sky-400 font-semibold uppercase tracking-wider">Joriy obyekt</div>
+              <h4 id="scale-obj-title" class="font-display text-lg font-bold text-amber-400">Yer sayyorasi</h4>
+              <div id="scale-obj-size" class="text-xs font-mono text-sky-300 bg-sky-500/10 px-2.5 py-1 rounded inline-block">
+                Diametri: 12 742 km
+              </div>
+              <p id="scale-obj-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed pt-1">
+                Bizning ona sayyoramiz — Quyosh tizimidagi uchinchi sayyora. Astronomik o‘lchovlar uchun boshlang‘ich tayanch nuqta.
+              </p>
+            </div>
+
+            <!-- Tezkor o'tish tugmalari -->
+            <div class="grid grid-cols-3 gap-1.5 pt-1">
+              <button data-scale-preset="0" class="scale-preset-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 text-xs text-slate-200 transition">Yer</button>
+              <button data-scale-preset="20" class="scale-preset-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 text-xs text-slate-200 transition">Yer–Oy</button>
+              <button data-scale-preset="40" class="scale-preset-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 text-xs text-slate-200 transition">Quyosh tizimi</button>
+              <button data-scale-preset="60" class="scale-preset-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 text-xs text-slate-200 transition">Yulduzlararo</button>
+              <button data-scale-preset="80" class="scale-preset-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 text-xs text-slate-200 transition">Somon yo‘li</button>
+              <button data-scale-preset="100" class="scale-preset-btn px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 text-xs text-slate-200 transition">Koinot</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-SIMULYATSIYA: FANLAR INTEGRATSIYASI XARITASI -->
+      <div class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider">2-Simulyatsiya • Interaktiv Xarita</span>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white">«Fanlar integratsiyasi» — Astronomiyaning boshqa fanlar bilan aloqasi</h3>
+          </div>
+          <span class="text-xs text-slate-400">Istalgan fan tuguni ustiga bosing</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-7 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-sky-500/30">
+            <canvas id="subjects-canvas" class="sim-canvas cursor-pointer"></canvas>
+          </div>
+
+          <div class="lg:col-span-5 space-y-4">
+            <!-- Mobil va tezkor tanlash tugmalari -->
+            <div class="flex flex-wrap gap-2">
+              <button data-subj="fizika" class="subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 transition">Fizika</button>
+              <button data-subj="matematika" class="subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 transition">Matematika</button>
+              <button data-subj="kimyo" class="subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 transition">Kimyo</button>
+              <button data-subj="geografiya" class="subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 transition">Geografiya</button>
+              <button data-subj="informatika" class="subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 transition">Informatika</button>
+            </div>
+
+            <div id="subj-detail-card" class="p-5 rounded-2xl bg-slate-900/90 border border-sky-400/35 space-y-3 transition-all">
+              <div class="flex items-center justify-between">
+                <h4 id="subj-title" class="font-display text-xl font-bold text-sky-400">Astronomiya + Fizika</h4>
+                <span id="subj-tag" class="text-xs px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">Astrofizika</span>
+              </div>
+              <p id="subj-desc" class="text-sm text-slate-300 leading-relaxed">
+                Fizika qonunlari (mexanika, optika, termodinamika, yadro fizikasi) osmon jismlarining harakatini, yulduzlar ichidagi termoyadroviy reaksiyalarni va teleskoplar ishlash prinsipini tushuntirib beradi.
+              </p>
+              <div class="p-3 rounded-xl bg-slate-950 border border-amber-500/30">
+                <div class="text-xs text-amber-400 font-semibold mb-1">Asosiy formula / usul:</div>
+                <div id="subj-formula" class="font-mono text-sm text-amber-200">F = G · (m₁ · m₂) / r²  (Butun olam tortishish qonuni)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 2-REJA: QADIMGI DUNYO VA O'RTA ASR SHARQ (MARKAZIY OSIYO) OLIMLARI    -->
+    <!-- ===================================================================== -->
+    <section id="reja-2" class="space-y-8 scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-amber-500/25 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-400">2-reja</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1">
+            Qadimgi dunyo va O‘rta asr Sharq (Markaziy Osiyo) olimlarining astronomiya rivojiga qo‘shgan hissasi
+          </h2>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 self-start sm:self-auto">
+          2 ta tarixiy simulyatsiya
+        </span>
+      </div>
+
+      <!-- Nazariy qism: Qadimgi dunyo va Sharq allomalari -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="glass-card rounded-2xl p-5 space-y-2.5">
+          <div class="text-xs font-bold text-sky-400 uppercase">Qadimgi Sivilizatsiyalar</div>
+          <h3 class="font-display text-lg font-bold text-white">Misr, Bobil va Yunoniston</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong>Misrliklar</strong> Sirius yulduzining chiqishiga qarab Nil daryosi toshqinini bashorat qilgan va 365 kunlik quyosh taqvimini yaratgan. <strong>Bobilliklar</strong> sutkani 24 soatga, doirani 360° ga bo‘lgan. <strong>Klavdiy Ptolemey</strong> (II asr) «Almagest» asarida Yer markazda turuvchi <em>geosentrik tizim</em>ni asoslagan.
+          </p>
+        </div>
+
+        <div class="glass-card-gold rounded-2xl p-5 space-y-2.5">
+          <div class="text-xs font-bold text-amber-400 uppercase">IX–XI asrlar • Markaziy Osiyo</div>
+          <h3 class="font-display text-lg font-bold text-white">Xorazmiy, Farg‘oniy va Beruniy</h3>
+          <ul class="text-sm text-slate-300 space-y-1.5 leading-relaxed">
+            <li><strong class="text-amber-300">Muhammad al-Xorazmiy:</strong> Mashhur «Zij» astronomik jadvallarini tuzib, trigonometriya va astronomik hisoblashlarni rivojlantirdi.</li>
+            <li><strong class="text-amber-300">Ahmad al-Farg‘oniy:</strong> «Astronomiya asoslari» asarida Yerning sharsimonligini isbotladi va ekliptika og‘maligini (23°35') aniq o‘lchadi.</li>
+            <li><strong class="text-amber-300">Abu Rayhon Beruniy:</strong> «Qonuni Mas’udiy» asarini yozdi, Yer radiusini (≈ 6339.6 km) yuksak aniqlikda o‘lchadi va Yerning Quyosh atrofida aylanishi mumkinligini ilgari surdi.</li>
+          </ul>
+        </div>
+
+        <div class="glass-card-gold rounded-2xl p-5 space-y-2.5 md:col-span-2 lg:col-span-1">
+          <div class="text-xs font-bold text-amber-400 uppercase">XV asr • Samarqand maktabi</div>
+          <h3 class="font-display text-lg font-bold text-white">Mirzo Ulug‘bek va Samarqand rasadxonasi</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            1428–1429-yillarda <strong>Mirzo Ulug‘bek</strong> Samarqandda radiusi <strong>40,2 metr</strong> bo‘lgan ulkan marmar sekstantli rasadxona qurdirdi. U shogirdlari (Qozizoda Rumiy, G‘iyosiddin Koshiy, Ali Qushchi) bilan <strong>1018 ta yulduz</strong>ning aniq koordinatalari jamlangan <em>«Ziji jadidi Ko‘ragoniy»</em> katalogini yaratdi va yulduz yilini atigi 58 soniya farq bilan hisobladi.
+          </p>
+        </div>
+      </div>
+
+      <!-- 3-SIMULYATSIYA: PTOLEMEY GEOSENTRIK TIZIMI -->
+      <div class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider">3-Simulyatsiya • Geosentrik Model</span>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white">«Ptolemeyning geosentrik tizimi» (Deferent va Epitsikl)</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="geo-play-btn" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm transition">
+              ⏸ To‘xtatish
+            </button>
+            <button id="geo-trail-btn" class="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 text-sm font-medium transition">
+              ✦ Sirtmoq izi: YOQIQ
+            </button>
+            <button id="geo-reset-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-medium transition">
+              ↺ Qayta tiklash
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-8 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-sky-500/30">
+            <canvas id="geo-canvas" class="sim-canvas"></canvas>
+          </div>
+
+          <div class="lg:col-span-4 space-y-4 bg-slate-900/75 p-5 rounded-2xl border border-slate-700/70">
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span>Harakat tezligi:</span>
+                <span id="geo-speed-val" class="text-sky-400 font-mono">1.0x</span>
+              </div>
+              <input id="geo-speed" type="range" min="0.2" max="3" step="0.1" value="1" class="w-full" />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span>Epitsikl radiusi:</span>
+                <span id="geo-epi-val" class="text-amber-400 font-mono">45 px</span>
+              </div>
+              <input id="geo-epi-radius" type="range" min="20" max="75" step="1" value="45" class="w-full" />
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-700 space-y-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <p><strong class="text-sky-400">Deferent:</strong> Yer atrofidagi katta asosiy aylana orbita.</p>
+              <p><strong class="text-amber-400">Epitsikl:</strong> Markazi deferent bo‘ylab aylanadigan kichik aylana. Sayyora shu epitsiklda harakatlangani uchun osmon gumbazida sirtmoqsimon (retrograd) iz qoldiradi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4-SIMULYATSIYA: MIRZO ULUG'BEK SEKSTANTI -->
+      <div class="glass-card-gold rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">4-Simulyatsiya • Samarqand Rasadxonasi (1428-yil)</span>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white">«Mirzo Ulug‘bek rasadxonasi Faxriy sekstanti»</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="sextant-play-btn" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-semibold text-sm transition">
+              ▶ Yillik aylanish
+            </button>
+            <button id="sextant-reset-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-medium transition">
+              ↺ Qayta tiklash
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-8 relative h-80 sm:h-96 rounded-2xl overflow-hidden border border-amber-500/35">
+            <canvas id="sextant-canvas" class="sim-canvas"></canvas>
+          </div>
+
+          <div class="lg:col-span-4 space-y-4 bg-slate-900/80 p-5 rounded-2xl border border-amber-500/25">
+            <div class="space-y-2">
+              <div class="text-xs font-semibold text-amber-300 uppercase">Yil faslini tanlang:</div>
+              <div class="grid grid-cols-1 gap-1.5">
+                <button data-season="summer" class="season-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-amber-500/20 border border-slate-700 text-left text-xs text-slate-200 transition">
+                  ☀️ Yozgi quyosh turishi (22-iyun) — Eng baland
+                </button>
+                <button data-season="equinox" class="season-btn px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-400 text-left text-xs text-amber-200 font-semibold transition">
+                  🌓 Bahorgi / Kuzgi tengkunlik (21-mart / 23-sentabr)
+                </button>
+                <button data-season="winter" class="season-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-amber-500/20 border border-slate-700 text-left text-xs text-slate-200 transition">
+                  ❄️ Qishki quyosh turishi (22-dekabr) — Eng past
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1">
+                <span>Quyosh og‘ishi (δ):</span>
+                <span id="sextant-decl-val" class="text-amber-400 font-mono">0° 00'</span>
+              </div>
+              <input id="sextant-slider" type="range" min="-23.45" max="23.45" step="0.05" value="0" class="w-full" />
+            </div>
+
+            <div class="flex items-center justify-between gap-2">
+              <label for="sextant-speed" class="text-xs text-slate-400">Animatsiya tezligi:</label>
+              <select id="sextant-speed" class="bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1 text-xs text-slate-200">
+                <option value="0.2">0.5x</option>
+                <option value="0.45" selected>1x</option>
+                <option value="0.9">2x</option>
+              </select>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-amber-500/30 space-y-1.5 text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-400">Samarqand kengligi (φ):</span>
+                <span class="font-mono text-sky-300 font-semibold">39° 40'</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Quyosh zenit masofasi (z):</span>
+                <span id="sextant-zenith" class="font-mono text-amber-300 font-semibold">39° 40'</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Quyosh ufqdan balandligi (h):</span>
+                <span id="sextant-alt" class="font-mono text-emerald-400 font-semibold">50° 20'</span>
+              </div>
+              <p class="text-slate-400 pt-1 border-t border-slate-800">
+                Ekliptika og‘maligi: <strong class="text-amber-300">ε = (z_qish - z_yoz) / 2 = 23° 27'</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 3-REJA: YEVROPA OLIMLARI KASHFIYOTLARI VA KEYINGI TARAQQIYOT           -->
+    <!-- ===================================================================== -->
+    <section id="reja-3" class="space-y-8 scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-sky-500/20 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-sky-400">3-reja</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1">
+            Yevropa olimlarining kashfiyotlari va astronomiyaning keyingi taraqqiyoti
+          </h2>
+        </div>
+        <span class="text-xs px-3 py-1 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 self-start sm:self-auto">
+          2 ta jonli simulyatsiya
+        </span>
+      </div>
+
+      <!-- Nazariy qism: Yevropa allomalari va zamonaviy teleskoplar -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="glass-card rounded-2xl p-5 space-y-2">
+          <div class="text-xs font-bold text-sky-400">1543-yil • Geliosentrik inqilob</div>
+          <h3 class="font-display text-lg font-bold text-white">Nikolay Kopernik va Jordano Bruno</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong>Nikolay Kopernik</strong> «Osmon sferalarining aylanishi haqida» asarida olam markazida Yer emas, balki <strong>Quyosh</strong> turishini va barcha sayyoralar (jumladan Yer ham) Quyosh atrofida aylanishini isbotladi. <strong>Jordano Bruno</strong> esa Koinotning cheksizligi va yulduzlarning uzoq quyoshlar ekanligini ta’kidladi.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-2">
+          <div class="text-xs font-bold text-amber-400">1609–1687-yillar • Klassik mexanika</div>
+          <h3 class="font-display text-lg font-bold text-white">Galiley, Kepler va Nyuton</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            <strong>Galileo Galiley</strong> 1609-yilda ilk bor teleskopni osmonga qaratib, Yupiterning 4 ta yo‘ldoshini va Venera fazalarini ochdi. <strong>Iogann Kepler</strong> sayyoralar harakatining 3 qonunini yaratdi. <strong>Isaak Nyuton</strong> esa butun olam tortishish qonuni bilan ularning sababini tushuntirdi.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-2 sm:col-span-2 lg:col-span-1">
+          <div class="text-xs font-bold text-purple-400">XX–XXI asrlar • Kosmik davr</div>
+          <h3 class="font-display text-lg font-bold text-white">Habbl va Jeyms Uebb teleskoplari</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            1957-yilda ilk sun’iy yo‘ldosh uchirilishi bilan kosmik astronomiya boshlandi. Bugungi kunda <strong>Habbl (Hubble)</strong> va infraqizil diapazonda ishlovchi <strong>Jeyms Uebb (JWST)</strong> kosmik teleskoplari 13,5 mlrd yorug‘lik yili uzoqlikdagi ilk galaktikalar va ekzosayyoralarni tadqiq qilmoqda.
+          </p>
+        </div>
+      </div>
+
+      <!-- 5-SIMULYATSIYA: GELIOSENTRIK TIZIM VA KEPLER QONUNLARI -->
+      <div class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider">5-Simulyatsiya • Osmon Mexanikasi</span>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white">«Geliosentrik tizim va Kepler qonunlari»</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="kepler-play-btn" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm transition">
+              ⏸ To‘xtatish
+            </button>
+            <button id="kepler-mode-btn" class="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 text-sm font-semibold transition">
+              ⇄ Rejim: Geliosentrik
+            </button>
+            <button id="kepler-reset-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-medium transition">
+              ↺ Qayta tiklash
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-8 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-sky-500/30">
+            <canvas id="kepler-canvas" class="sim-canvas"></canvas>
+            <div id="kepler-mode-label" class="absolute top-3 left-3 px-3 py-1 rounded-lg bg-slate-950/80 border border-sky-500/30 text-xs text-sky-300">
+              Markazda: Quyosh (Fokusda)
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 space-y-4 bg-slate-900/75 p-5 rounded-2xl border border-slate-700/70">
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span>Orbita ekssentrisiteti (e):</span>
+                <span id="kepler-ecc-val" class="text-amber-400 font-mono">0.45</span>
+              </div>
+              <input id="kepler-ecc" type="range" min="0" max="0.72" step="0.02" value="0.45" class="w-full" />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span>Simulyatsiya tezligi:</span>
+                <span id="kepler-speed-val" class="text-sky-400 font-mono">1.0x</span>
+              </div>
+              <input id="kepler-speed" type="range" min="0.2" max="2.5" step="0.1" value="1.0" class="w-full" />
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-700 space-y-2 text-xs text-slate-300 leading-relaxed">
+              <div class="flex justify-between text-sky-300 font-mono">
+                <span>Joriy orbital tezlik:</span>
+                <span id="kepler-live-v" class="text-amber-400 font-bold">34.2 km/s</span>
+              </div>
+              <p><strong class="text-sky-400">Kepler 1-qonuni:</strong> Sayyoralar Quyosh atrofida fokuslaridan birida Quyosh joylashgan ellips bo‘ylab harakatlanadi.</p>
+              <p><strong class="text-amber-400">Kepler 2-qonuni:</strong> Sayyora perigeliyda (Quyoshga yaqin) tezroq, afeliyda (uzoq) sekinroq harakatlanadi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6-SIMULYATSIYA: GALILEY TELESKOPI -->
+      <div class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">6-Simulyatsiya • Teleskopik Kuzatuv (1609-yil)</span>
+            <h3 class="font-display text-xl sm:text-2xl font-bold text-white">«Galiley teleskopi» — Yupiter yo‘ldoshlari va Venera fazalari</h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="tele-play-btn" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm transition">
+              ⏸ To‘xtatish
+            </button>
+            <button id="tele-reset-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-medium transition">
+              ↺ Qayta tiklash
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-8 relative h-72 sm:h-96 rounded-2xl overflow-hidden border border-sky-500/30">
+            <canvas id="tele-canvas" class="sim-canvas"></canvas>
+            <div class="absolute bottom-3 left-3 px-3 py-1 rounded-lg bg-slate-950/85 border border-sky-500/30 text-xs font-mono text-sky-300">
+              Kattalashtirish: <span id="tele-zoom-badge" class="text-amber-400 font-bold">15x</span>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 space-y-4 bg-slate-900/75 p-5 rounded-2xl border border-slate-700/70">
+            <div class="space-y-1.5">
+              <div class="text-xs font-semibold text-slate-400 uppercase">Kuzatuv obyektini tanlang:</div>
+              <div class="grid grid-cols-2 gap-2">
+                <button data-tele-target="jupiter" class="tele-target-btn px-3 py-2 rounded-xl bg-sky-500 text-slate-950 font-semibold text-xs transition">
+                  🪐 Yupiter (4 yo‘ldosh)
+                </button>
+                <button data-tele-target="venus" class="tele-target-btn px-3 py-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 font-semibold text-xs transition">
+                  🌓 Venera fazalari
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span>Okulyar yaqinlashtirishi (Zoom):</span>
+                <span id="tele-zoom-val" class="text-amber-400 font-mono">15x</span>
+              </div>
+              <input id="tele-zoom" type="range" min="1" max="30" step="1" value="15" class="w-full" />
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs text-slate-300 mb-1.5">
+                <span>Aylanish tezligi:</span>
+                <span id="tele-speed-val" class="text-sky-400 font-mono">1.0x</span>
+              </div>
+              <input id="tele-speed" type="range" min="0.2" max="3" step="0.1" value="1.0" class="w-full" />
+            </div>
+
+            <div id="tele-info-box" class="p-4 rounded-xl bg-slate-950/90 border border-slate-700 text-xs text-slate-300 leading-relaxed">
+              <strong class="text-amber-400 block mb-1">Yupiter va Galiley yo‘ldoshlari:</strong>
+              1610-yilda Galiley Yupiter atrofida aylanayotgan 4 ta yirik yo‘ldoshni — <strong>Io, Yevropa, Ganimed va Kallisto</strong>ni kashf etdi. Bu hamma jismlar ham Yer atrofida aylanmasligining ilk isboti bo‘ldi!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- BILIMNI TEKSHIRISH: INTERAKTIV VIKTORINA (5 TA TEST)                  -->
+    <!-- ===================================================================== -->
+    <section id="viktorina" class="glass-card-gold rounded-3xl p-6 sm:p-10 space-y-6 scroll-mt-24">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-500/25 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Bilimni tekshirish</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mt-1">
+            Tezkor Interaktiv Viktorina (5 ta savol)
+          </h2>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="px-4 py-2 rounded-xl bg-slate-900 border border-amber-500/35 text-sm font-semibold text-amber-300">
+            Natija: <span id="quiz-score">0</span> / 5
+          </div>
+          <button id="quiz-reset-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-sm font-medium transition">
+            ↺ Qayta ishlash
+          </button>
+        </div>
+      </div>
+
+      <div id="quiz-container" class="space-y-5"></div>
+
+      <div id="quiz-summary" class="hidden p-5 rounded-2xl bg-gradient-to-r from-sky-500/15 to-amber-500/15 border border-amber-400/40 text-center space-y-2">
+        <h3 id="quiz-summary-title" class="font-display text-xl font-bold text-amber-300"></h3>
+        <p id="quiz-summary-text" class="text-sm text-slate-200"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="relative z-10 border-t border-slate-800/80 bg-space-950/90 py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs sm:text-sm text-slate-400">
+      11-sinf Astronomiya • «1-§. Astronomiya nimani o‘rganadi? Uning rivojlanish tarixi va boshqa fanlar bilan aloqasi» interaktiv o‘quv qo‘llanmasi.
+    </div>
+  </footer>
+
+  <!-- ======================================================================= -->
+  <!-- JAVASCRIPT: BARCHA ANIMATSIYA, SIMULYATSIYA VA VIKTORINA MANTIQI         -->
+  <!-- ======================================================================= -->
+  <script>
+    // Yordamchi funksiya: Canvas o'lchamini konteynerga moslash (HiDPI qo'llab-quvvatlovi bilan)
+    function setupHiDPICanvas(canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (canvas.width !== Math.round(rect.width * dpr) || canvas.height !== Math.round(rect.height * dpr)) {
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+      }
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, width: rect.width, height: rect.height };
+    }
+
+    // =========================================================================
+    // 0. ORQA FON: MILTILLOVCHI YULDUZLAR VA METEORLAR
+    // =========================================================================
+    (function initStarfield() {
+      const canvas = document.getElementById('starfield-canvas');
+      let stars = [];
+      let meteors = [];
+
+      function resize() {
+        const { width, height } = setupHiDPICanvas(canvas);
+        stars = Array.from({ length: 140 }, () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 1.6 + 0.3,
+          alpha: Math.random(),
+          delta: (Math.random() * 0.015 + 0.004) * (Math.random() < 0.5 ? 1 : -1)
+        }));
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      function spawnMeteor(width, height) {
+        if (Math.random() < 0.012 && meteors.length < 2) {
+          meteors.push({
+            x: Math.random() * width * 0.8,
+            y: Math.random() * height * 0.3,
+            vx: 5 + Math.random() * 4,
+            vy: 2.5 + Math.random() * 2,
+            life: 1
+          });
+        }
+      }
+
+      function animate() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        ctx.clearRect(0, 0, width, height);
+
+        for (const s of stars) {
+          s.alpha += s.delta;
+          if (s.alpha <= 0.15 || s.alpha >= 1) s.delta *= -1;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(226, 232, 240, ${s.alpha.toFixed(2)})`;
+          ctx.fill();
+        }
+
+        spawnMeteor(width, height);
+        for (let i = meteors.length - 1; i >= 0; i--) {
+          const m = meteors[i];
+          m.x += m.vx;
+          m.y += m.vy;
+          m.life -= 0.018;
+          if (m.life <= 0) {
+            meteors.splice(i, 1);
+            continue;
+          }
+          const grad = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * 10, m.y - m.vy * 10);
+          grad.addColorStop(0, `rgba(56, 189, 248, ${m.life})`);
+          grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(m.x, m.y);
+          ctx.lineTo(m.x - m.vx * 10, m.y - m.vy * 10);
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    })();
+
+    // =========================================================================
+    // 1. SIMULYATSIYA: KOINOT MASSHTABI (SCALE OF THE UNIVERSE)
+    // =========================================================================
+    (function initScaleSim() {
+      const canvas = document.getElementById('scale-canvas');
+      const slider = document.getElementById('scale-slider');
+      const playBtn = document.getElementById('scale-play-btn');
+      const resetBtn = document.getElementById('scale-reset-btn');
+      const speedSel = document.getElementById('scale-speed');
+
+      const badgeEl = document.getElementById('scale-level-badge');
+      const titleEl = document.getElementById('scale-obj-title');
+      const sizeEl = document.getElementById('scale-obj-size');
+      const descEl = document.getElementById('scale-obj-desc');
+
+      let isPlaying = false;
+      let angle = 0;
+
+      const stages = [
+        {
+          min: 0, max: 16.6, level: '1 / 6',
+          title: 'Yer sayyorasi',
+          size: 'Diametri: 12 742 km',
+          desc: 'Bizning ona sayyoramiz — Quyosh tizimidagi uchinchi sayyora. Astronomik o‘lchovlar uchun boshlang‘ich tayanch nuqta.'
+        },
+        {
+          min: 16.6, max: 33.3, level: '2 / 6',
+          title: 'Yer — Oy tizimi',
+          size: 'O‘rtacha masofa: 384 400 km (1.28 yorug‘lik soniyasi)',
+          desc: 'Oy — Yerning yagona tabiiy yo‘ldoshi. Yorug‘lik Oydan Yerga 1,28 soniyada yetib keladi.'
+        },
+        {
+          min: 33.3, max: 50, level: '3 / 6',
+          title: 'Quyosh tizimi',
+          size: '1 a.b. = 149.6 mln km | Neptun orbitasi: 30 a.b. (4.5 mlrd km)',
+          desc: 'Quyosh va uning gravitatsiya maydonida aylanuvchi 8 ta sayyora, mitti sayyoralar, asteroidlar va kometalar majmuasi.'
+        },
+        {
+          min: 50, max: 66.6, level: '4 / 6',
+          title: 'Yulduzlararo masofa (Proksima Sentavr)',
+          size: 'Masofa: 4.24 yorug‘lik yili (1.30 parsek ≈ 40 trillion km)',
+          desc: 'Quyoshga eng yaqin yulduz — Proksima Sentavr. Undan chiqqan yorug‘lik Yerga 4 yilu 3 oyda yetib keladi.'
+        },
+        {
+          min: 66.6, max: 83.3, level: '5 / 6',
+          title: 'Somon yo‘li galaktikasi',
+          size: 'Diametri: ~100 000 yorug‘lik yili (~30 600 parsek)',
+          desc: '200–400 milliard yulduzni o‘z ichiga olgan ulkan spiral galaktika. Quyosh tizimi uning markazidan 26 000 y.y. uzoqlikda joylashgan.'
+        },
+        {
+          min: 83.3, max: 101, level: '6 / 6',
+          title: 'Kuzatiladigan Koinot',
+          size: 'Diametri: ~93 milliard yorug‘lik yili (~28.5 gigaparsek)',
+          desc: 'Yuz milliardlab galaktikalar va galaktika to‘dalaridan tashkil topgan cheksiz kosmik to‘r.'
+        }
+      ];
+
+      function updateInfo(val) {
+        const st = stages.find(s => val >= s.min && val <= s.max) || stages[0];
+        badgeEl.textContent = st.level;
+        titleEl.textContent = st.title;
+        sizeEl.textContent = st.size;
+        descEl.textContent = st.desc;
+      }
+
+      slider.addEventListener('input', () => updateInfo(parseFloat(slider.value)));
+
+      document.querySelectorAll('.scale-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          isPlaying = false;
+          playBtn.textContent = '▶ Avto-sayohat';
+          slider.value = btn.dataset.scalePreset;
+          updateInfo(parseFloat(slider.value));
+        });
+      });
+
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if (isPlaying && parseFloat(slider.value) >= 100) slider.value = 0;
+        playBtn.textContent = isPlaying ? '⏸ To‘xtatish' : '▶ Avto-sayohat';
+      });
+
+      resetBtn.addEventListener('click', () => {
+        isPlaying = false;
+        playBtn.textContent = '▶ Avto-sayohat';
+        slider.value = 0;
+        updateInfo(0);
+      });
+
+      function render() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        const cx = width / 2;
+        const cy = height / 2;
+        const val = parseFloat(slider.value);
+
+        if (isPlaying) {
+          const next = val + parseFloat(speedSel.value);
+          if (next >= 100) {
+            slider.value = 100;
+            isPlaying = false;
+            playBtn.textContent = '▶ Avto-sayohat';
+          } else {
+            slider.value = next;
+          }
+          updateInfo(parseFloat(slider.value));
+        }
+
+        angle += 0.015;
+        ctx.clearRect(0, 0, width, height);
+
+        // Logarifmik masshtab koeffitsienti
+        const maxR = Math.min(width, height) * 0.42;
+
+        // 1. Yer (val: 0 -> 25)
+        if (val < 30) {
+          const factor = Math.max(0.08, 1 - val / 28);
+          const earthR = maxR * 0.55 * factor;
+          const grad = ctx.createRadialGradient(cx - earthR * 0.3, cy - earthR * 0.3, earthR * 0.1, cx, cy, earthR);
+          grad.addColorStop(0, '#38bdf8');
+          grad.addColorStop(0.55, '#0284c7');
+          grad.addColorStop(1, '#082f49');
+          ctx.beginPath();
+          ctx.arc(cx, cy, earthR, 0, Math.PI * 2);
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // Atmosfera halqasi
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+          ctx.lineWidth = 3 * factor;
+          ctx.stroke();
+
+          if (earthR > 18) {
+            ctx.fillStyle = '#e0f2fe';
+            ctx.font = '600 12px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('YER (12 742 km)', cx, cy + earthR + 18);
+          }
+        }
+
+        // 2. Yer-Oy orbitasi (val: 10 -> 45)
+        if (val >= 8 && val < 48) {
+          const alpha = val < 16 ? (val - 8) / 8 : val > 38 ? (48 - val) / 10 : 1;
+          const zoom = Math.pow(0.88, val - 18);
+          const moonOrbit = Math.min(maxR * 0.85, Math.max(12, 115 * zoom));
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+          ctx.beginPath();
+          ctx.arc(cx, cy, moonOrbit, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+          ctx.setLineDash([4, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          const mx = cx + Math.cos(angle * 1.4) * moonOrbit;
+          const my = cy + Math.sin(angle * 1.4) * moonOrbit;
+          ctx.beginPath();
+          ctx.arc(mx, my, Math.max(3, 8 * zoom), 0, Math.PI * 2);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.fill();
+
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '11px Inter';
+          ctx.fillText('Oy (384 400 km)', mx, my - 10);
+          ctx.restore();
+        }
+
+        // 3. Quyosh tizimi (val: 28 -> 62)
+        if (val >= 28 && val < 64) {
+          const alpha = val < 35 ? (val - 28) / 7 : val > 55 ? (64 - val) / 9 : 1;
+          const scale = Math.pow(0.86, val - 40);
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+
+          // Quyosh
+          const sunR = Math.max(4, 18 * scale);
+          const sunGrad = ctx.createRadialGradient(cx, cy, 1, cx, cy, sunR * 2.2);
+          sunGrad.addColorStop(0, '#fef08a');
+          sunGrad.addColorStop(0.5, '#f59e0b');
+          sunGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+          ctx.beginPath();
+          ctx.arc(cx, cy, sunR * 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = sunGrad;
+          ctx.fill();
+
+          const planets = [
+            { r: 34, color: '#94a3b8', sp: 2.1, name: '' },
+            { r: 52, color: '#fde047', sp: 1.6, name: '' },
+            { r: 74, color: '#38bdf8', sp: 1.2, name: 'Yer (1 a.b.)' },
+            { r: 96, color: '#f87171', sp: 0.9, name: '' },
+            { r: 132, color: '#fbbf24', sp: 0.5, name: 'Yupiter' },
+            { r: 168, color: '#60a5fa', sp: 0.3, name: 'Neptun (30 a.b.)' }
+          ];
+
+          planets.forEach((p, idx) => {
+            const pr = p.r * scale;
+            if (pr < 3) return;
+            ctx.beginPath();
+            ctx.arc(cx, cy, pr, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            const px = cx + Math.cos(angle * p.sp + idx) * pr;
+            const py = cy + Math.sin(angle * p.sp + idx) * pr;
+            ctx.beginPath();
+            ctx.arc(px, py, Math.max(2, 4 * scale), 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+
+            if (p.name && pr > 25) {
+              ctx.fillStyle = '#e2e8f0';
+              ctx.font = '11px Inter';
+              ctx.fillText(p.name, px + 8, py - 6);
+            }
+          });
+          ctx.restore();
+        }
+
+        // 4. Yulduzlararo masofa (val: 50 -> 76)
+        if (val >= 50 && val < 76) {
+          const alpha = val < 56 ? (val - 50) / 6 : val > 68 ? (76 - val) / 8 : 1;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+          const span = Math.min(width * 0.34, 150);
+
+          // Quyosh nuqtasi
+          ctx.beginPath();
+          ctx.arc(cx - span, cy, 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#fbbf24';
+          ctx.fill();
+          ctx.fillStyle = '#fde68a';
+          ctx.font = '600 12px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText('Quyosh tizimi', cx - span, cy + 22);
+
+          // Proksima Sentavr
+          ctx.beginPath();
+          ctx.arc(cx + span, cy, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#f87171';
+          ctx.fill();
+          ctx.fillStyle = '#fecaca';
+          ctx.fillText('Proksima Sentavr', cx + span, cy + 22);
+
+          // Masofa chizig'i
+          ctx.beginPath();
+          ctx.moveTo(cx - span + 10, cy);
+          ctx.lineTo(cx + span - 10, cy);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.setLineDash([5, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = '600 12px Inter';
+          ctx.fillText('4.24 yorug‘lik yili (1.3 parsek)', cx, cy - 12);
+          ctx.restore();
+        }
+
+        // 5. Somon yo'li galaktikasi (val: 66 -> 92)
+        if (val >= 66 && val < 92) {
+          const alpha = val < 72 ? (val - 66) / 6 : val > 85 ? (92 - val) / 7 : 1;
+          const gScale = Math.pow(0.9, val - 80);
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(angle * 0.25);
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+
+          const arms = 4;
+          const armR = Math.min(maxR * 0.9, 145 * gScale);
+          for (let a = 0; a < arms; a++) {
+            const baseAng = (a * Math.PI * 2) / arms;
+            for (let i = 0; i < 45; i++) {
+              const t = i / 45;
+              const r = t * armR;
+              const theta = baseAng + t * 2.8;
+              const sx = Math.cos(theta) * r;
+              const sy = Math.sin(theta) * r * 0.72;
+              ctx.beginPath();
+              ctx.arc(sx, sy, (1 - t) * 2.2 + 0.6, 0, Math.PI * 2);
+              ctx.fillStyle = t < 0.3 ? 'rgba(251, 191, 36, 0.75)' : 'rgba(56, 189, 248, 0.65)';
+              ctx.fill();
+            }
+          }
+
+          // Galaktika yadrosi
+          const coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, armR * 0.28);
+          coreGrad.addColorStop(0, '#fef08a');
+          coreGrad.addColorStop(0.5, 'rgba(251, 191, 36, 0.5)');
+          coreGrad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+          ctx.beginPath();
+          ctx.arc(0, 0, armR * 0.28, 0, Math.PI * 2);
+          ctx.fillStyle = coreGrad;
+          ctx.fill();
+
+          ctx.restore();
+          if (alpha > 0.4) {
+            ctx.fillStyle = '#e0f2fe';
+            ctx.font = '600 12px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('Somon yo‘li galaktikasi (~100 000 yorug‘lik yili)', cx, height - 18);
+          }
+        }
+
+        // 6. Kuzatiladigan Koinot (val: 84 -> 100)
+        if (val >= 84) {
+          const alpha = (val - 84) / 12;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+          const webR = maxR * 0.92;
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, webR, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(168, 85, 247, 0.55)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Kosmik to'r tugunlari (galaktika to'dalari)
+          const nodes = [];
+          for (let i = 0; i < 28; i++) {
+            const ang = i * 2.39996 + angle * 0.08;
+            const rad = Math.sqrt(i / 28) * (webR * 0.85);
+            nodes.push({ x: cx + Math.cos(ang) * rad, y: cy + Math.sin(ang) * rad });
+          }
+
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.22)';
+          ctx.lineWidth = 1;
+          for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+              const dist = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+              if (dist < webR * 0.48) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          nodes.forEach((n, idx) => {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, idx % 3 === 0 ? 3.2 : 2, 0, Math.PI * 2);
+            ctx.fillStyle = idx % 2 === 0 ? '#fbbf24' : '#38bdf8';
+            ctx.fill();
+          });
+
+          ctx.fillStyle = '#e9d5ff';
+          ctx.font = '600 12px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText('Kuzatiladigan Koinot (~93 mlrd yorug‘lik yili)', cx, height - 16);
+          ctx.restore();
+        }
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+
+    // =========================================================================
+    // 2. SIMULYATSIYA: FANLAR INTEGRATSIYASI XARITASI
+    // =========================================================================
+    (function initSubjectsSim() {
+      const canvas = document.getElementById('subjects-canvas');
+      const titleEl = document.getElementById('subj-title');
+      const tagEl = document.getElementById('subj-tag');
+      const descEl = document.getElementById('subj-desc');
+      const formulaEl = document.getElementById('subj-formula');
+
+      const data = {
+        fizika: {
+          label: 'Fizika',
+          title: 'Astronomiya + Fizika',
+          tag: 'Astrofizika',
+          color: '#38bdf8',
+          desc: 'Fizika qonunlari (mexanika, optika, termodinamika, yadro fizikasi) osmon jismlarining harakatini, yulduzlar ichidagi termoyadroviy reaksiyalarni va teleskoplar ishlash prinsipini tushuntirib beradi.',
+          formula: 'F = G · (m₁ · m₂) / r²   |   E = m · c²'
+        },
+        matematika: {
+          label: 'Matematika',
+          title: 'Astronomiya + Matematika',
+          tag: 'Osmon mexanikasi',
+          color: '#fbbf24',
+          desc: 'Sferik trigonometriya, differensial hisob va ehtimollar nazariyasi sayyoralar orbitasini hisoblash, tutilish vaqtlarini oldindan bashorat qilish hamda yulduzlar koordinatalarini aniqlashda asosiy vositadir.',
+          formula: 'T₁² / T₂² = a₁³ / a₂³   (Keplerning 3-qonuni)'
+        },
+        kimyo: {
+          label: 'Kimyo',
+          title: 'Astronomiya + Kimyo',
+          tag: 'Astrokimyo & Spektroskopiya',
+          color: '#a855f7',
+          desc: 'Spektral tahlil yordamida milliardlab kilometr uzoqlikdagi yulduzlar va sayyoralar atmosferasida qaysi kimyoviy elementlar (vodorod, geliy, kislorod, uglerod) borligi aniqlanadi.',
+          formula: '4 ¹H → ⁴He + 2e⁺ + 2ν + Energiya (Yulduz sintezi)'
+        },
+        geografiya: {
+          label: 'Geografiya',
+          title: 'Astronomiya + Geografiya',
+          tag: 'Geodeziya & Vaqt hisobi',
+          color: '#34d399',
+          desc: 'Aniq vaqt xizmati, vaqt mintaqalari, geografik kenglik va uzunlikni aniqlash, taqvimlar tuzish hamda Yerning o‘z o‘qi va Quyosh atrofida aylanishidan kelib chiqadigan fasllar almashinuvi astronomiyaga tayanadi.',
+          formula: 'φ = 90° - z + δ   (Joyning geografik kengligi)'
+        },
+        informatika: {
+          label: 'Informatika',
+          title: 'Astronomiya + Informatika',
+          tag: 'Raqamli astronomiya & AI',
+          color: '#f472b6',
+          desc: 'Zamonaviy radioteleskoplar va kosmik observatoriyalardan keladigan terabaytlab ma’lumotlarni qayta ishlash, qora tuynuk tasvirlarini modellashtirish va ekzosayyoralarni izlashda sun’iy intellekt qo‘llaniladi.',
+          formula: 'Big Data + Neyron tarmoqlar → Ekzosayyoralar tahlili'
+        }
+      };
+
+      const keys = Object.keys(data);
+      let activeKey = 'fizika';
+      let pulse = 0;
+      let nodeCoords = [];
+
+      function selectSubject(key) {
+        activeKey = key;
+        const item = data[key];
+        titleEl.textContent = item.title;
+        titleEl.style.color = item.color;
+        tagEl.textContent = item.tag;
+        descEl.textContent = item.desc;
+        formulaEl.textContent = item.formula;
+
+        document.querySelectorAll('.subj-btn').forEach(btn => {
+          if (btn.dataset.subj === key) {
+            btn.className = 'subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 transition shadow-md shadow-sky-500/20';
+          } else {
+            btn.className = 'subj-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 transition';
+          }
+        });
+      }
+
+      document.querySelectorAll('.subj-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectSubject(btn.dataset.subj));
+      });
+
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        for (const node of nodeCoords) {
+          if (Math.hypot(mx - node.x, my - node.y) <= node.r + 8) {
+            selectSubject(node.key);
+            break;
+          }
+        }
+      });
+
+      function render() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        const cx = width / 2;
+        const cy = height / 2;
+        pulse += 0.03;
+
+        ctx.clearRect(0, 0, width, height);
+        const orbitR = Math.min(width, height) * 0.34;
+
+        // Tashqi orbita halqasi
+        ctx.beginPath();
+        ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        nodeCoords = [];
+        keys.forEach((key, idx) => {
+          const ang = (idx * Math.PI * 2) / keys.length - Math.PI / 2 + Math.sin(pulse * 0.4) * 0.04;
+          const nx = cx + Math.cos(ang) * orbitR;
+          const ny = cy + Math.sin(ang) * orbitR;
+          const isSelected = key === activeKey;
+          const item = data[key];
+          const nr = isSelected ? 34 : 28;
+
+          nodeCoords.push({ key, x: nx, y: ny, r: nr });
+
+          // Markaz bilan bog'lovchi nur
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(nx, ny);
+          ctx.strokeStyle = isSelected ? item.color : 'rgba(148, 163, 184, 0.25)';
+          ctx.lineWidth = isSelected ? 3 : 1.2;
+          ctx.stroke();
+
+          // Tugun doirasi
+          ctx.beginPath();
+          ctx.arc(nx, ny, nr, 0, Math.PI * 2);
+          ctx.fillStyle = isSelected ? '#0f172a' : 'rgba(15, 23, 42, 0.9)';
+          ctx.fill();
+          ctx.lineWidth = isSelected ? 3 : 1.5;
+          ctx.strokeStyle = item.color;
+          ctx.stroke();
+
+          ctx.fillStyle = isSelected ? '#ffffff' : '#cbd5e1';
+          ctx.font = isSelected ? '700 12px Inter' : '500 11px Inter';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(item.label, nx, ny);
+        });
+
+        // Markaziy ASTRONOMIYA tuguni
+        const centerR = 44 + Math.sin(pulse) * 2;
+        const cGrad = ctx.createRadialGradient(cx, cy, 5, cx, cy, centerR * 1.4);
+        cGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        cGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+        ctx.beginPath();
+        ctx.arc(cx, cy, centerR * 1.4, 0, Math.PI * 2);
+        ctx.fillStyle = cGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, centerR, 0, Math.PI * 2);
+        ctx.fillStyle = '#070d1f';
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.stroke();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '700 11px Space Grotesk';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('ASTRONOMIYA', cx, cy);
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+
+    // =========================================================================
+    // 3. SIMULYATSIYA: PTOLEMEYNING GEOSENTRIK TIZIMI
+    // =========================================================================
+    (function initGeoSim() {
+      const canvas = document.getElementById('geo-canvas');
+      const playBtn = document.getElementById('geo-play-btn');
+      const trailBtn = document.getElementById('geo-trail-btn');
+      const resetBtn = document.getElementById('geo-reset-btn');
+      const speedSlider = document.getElementById('geo-speed');
+      const speedVal = document.getElementById('geo-speed-val');
+      const epiSlider = document.getElementById('geo-epi-radius');
+      const epiVal = document.getElementById('geo-epi-val');
+
+      let isPlaying = true;
+      let showTrail = true;
+      let t = 0;
+      let trail = [];
+
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playBtn.textContent = isPlaying ? '⏸ To‘xtatish' : '▶ Boshlash';
+      });
+
+      trailBtn.addEventListener('click', () => {
+        showTrail = !showTrail;
+        if (!showTrail) trail = [];
+        trailBtn.textContent = showTrail ? '✦ Sirtmoq izi: YOQIQ' : '✦ Sirtmoq izi: O‘CHIQ';
+      });
+
+      resetBtn.addEventListener('click', () => {
+        t = 0;
+        trail = [];
+        speedSlider.value = 1;
+        epiSlider.value = 45;
+        speedVal.textContent = '1.0x';
+        epiVal.textContent = '45 px';
+      });
+
+      speedSlider.addEventListener('input', () => {
+        speedVal.textContent = parseFloat(speedSlider.value).toFixed(1) + 'x';
+      });
+
+      epiSlider.addEventListener('input', () => {
+        epiVal.textContent = epiSlider.value + ' px';
+        trail = [];
+      });
+
+      function render() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        const cx = width / 2;
+        const cy = height / 2;
+        const speed = parseFloat(speedSlider.value);
+        const epiR = parseFloat(epiSlider.value);
+        const deferentR = Math.min(width, height) * 0.31;
+
+        if (isPlaying) {
+          t += 0.015 * speed;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Deferent aylanasi
+        ctx.beginPath();
+        ctx.arc(cx, cy, deferentR, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Epitsikl markazi
+        const ex = cx + Math.cos(t) * deferentR;
+        const ey = cy + Math.sin(t) * deferentR;
+
+        // Epitsikl aylanasi
+        ctx.beginPath();
+        ctx.arc(ex, ey, epiR, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+
+        // Sayyora koordinatasi (Mars)
+        const px = ex + Math.cos(t * 4.2) * epiR;
+        const py = ey + Math.sin(t * 4.2) * epiR;
+
+        if (isPlaying && showTrail) {
+          trail.push({ x: px, y: py });
+          if (trail.length > 260) trail.shift();
+        }
+
+        // Sirtmoqsimon traektoriya izi
+        if (showTrail && trail.length > 1) {
+          ctx.beginPath();
+          ctx.moveTo(trail[0].x, trail[0].y);
+          for (let i = 1; i < trail.length; i++) {
+            ctx.lineTo(trail[i].x, trail[i].y);
+          }
+          ctx.strokeStyle = 'rgba(248, 113, 113, 0.75)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        // Radius vektorlar
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ex, ey);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Markazda Yer
+        ctx.beginPath();
+        ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+        ctx.fillStyle = '#0284c7';
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#e0f2fe';
+        ctx.font = '700 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('YER', cx, cy + 26);
+
+        // Epitsikl markazi nuqtasi
+        ctx.beginPath();
+        ctx.arc(ex, ey, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fill();
+
+        // Sayyora
+        ctx.beginPath();
+        ctx.arc(px, py, 7.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.fillStyle = '#fecaca';
+        ctx.font = '600 11px Inter';
+        ctx.fillText('Sayyora', px, py - 12);
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+
+    // =========================================================================
+    // 4. SIMULYATSIYA: MIRZO ULUG'BEK RASADXONASI SEKSTANTI
+    // =========================================================================
+    (function initSextantSim() {
+      const canvas = document.getElementById('sextant-canvas');
+      const playBtn = document.getElementById('sextant-play-btn');
+      const resetBtn = document.getElementById('sextant-reset-btn');
+      const slider = document.getElementById('sextant-slider');
+      const speedSel = document.getElementById('sextant-speed');
+
+      const declEl = document.getElementById('sextant-decl-val');
+      const zenithEl = document.getElementById('sextant-zenith');
+      const altEl = document.getElementById('sextant-alt');
+
+      const lat = 39.67; // Samarqand kengligi 39° 40'
+      let isPlaying = false;
+      let dir = 1;
+
+      function formatDeg(deg) {
+        const sign = deg < 0 ? '-' : '';
+        const abs = Math.abs(deg);
+        const d = Math.floor(abs);
+        const m = Math.round((abs - d) * 60);
+        return `${sign}${d}° ${m.toString().padStart(2, '0')}'`;
+      }
+
+      function updateReadout(decl) {
+        const z = lat - decl; // Zenit masofasi
+        const h = 90 - z;     // Ufqdan balandlik
+        declEl.textContent = formatDeg(decl);
+        zenithEl.textContent = formatDeg(z);
+        altEl.textContent = formatDeg(h);
+      }
+
+      slider.addEventListener('input', () => {
+        updateReadout(parseFloat(slider.value));
+      });
+
+      document.querySelectorAll('.season-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          isPlaying = false;
+          playBtn.textContent = '▶ Yillik aylanish';
+          const s = btn.dataset.season;
+          if (s === 'summer') slider.value = 23.45;
+          if (s === 'equinox') slider.value = 0;
+          if (s === 'winter') slider.value = -23.45;
+          updateReadout(parseFloat(slider.value));
+
+          document.querySelectorAll('.season-btn').forEach(b => {
+            b.className = 'season-btn px-3 py-2 rounded-xl bg-slate-800 hover:bg-amber-500/20 border border-slate-700 text-left text-xs text-slate-200 transition';
+          });
+          btn.className = 'season-btn px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-400 text-left text-xs text-amber-200 font-semibold transition';
+        });
+      });
+
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playBtn.textContent = isPlaying ? '⏸ To‘xtatish' : '▶ Yillik aylanish';
+      });
+
+      resetBtn.addEventListener('click', () => {
+        isPlaying = false;
+        playBtn.textContent = '▶ Yillik aylanish';
+        slider.value = 0;
+        updateReadout(0);
+      });
+
+      function render() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        if (isPlaying) {
+          let val = parseFloat(slider.value) + parseFloat(speedSel.value) * dir;
+          if (val >= 23.45) { val = 23.45; dir = -1; }
+          if (val <= -23.45) { val = -23.45; dir = 1; }
+          slider.value = val;
+          updateReadout(val);
+        }
+
+        const decl = parseFloat(slider.value);
+        const zDeg = lat - decl; // Zenit masofasi (gradus)
+        const zRad = (zDeg * Math.PI) / 180;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Yer sathi chizig'i
+        const groundY = height * 0.34;
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.55)';
+        ctx.fillRect(0, groundY, width, height - groundY);
+
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(width, groundY);
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Sekstant markazi (tuynuk / rozetka)
+        const ox = width * 0.62;
+        const oy = groundY;
+        const R = Math.min(width * 0.52, height * 0.58);
+
+        // Zenit vertikal chizig'i
+        ctx.beginPath();
+        ctx.moveTo(ox, 15);
+        ctx.lineTo(ox, oy + R + 10);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '11px Inter';
+        ctx.fillText('Zenit (0°)', ox + 8, 26);
+
+        // Marmar sekstant yoyi (0° dan 75° gacha)
+        const startAng = Math.PI / 2;
+        const endAng = Math.PI / 2 + (75 * Math.PI) / 180;
+
+        ctx.beginPath();
+        ctx.arc(ox, oy, R, startAng, endAng);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 9;
+        ctx.stroke();
+
+        // Gradus shkalasi belgilari
+        for (let deg = 0; deg <= 70; deg += 10) {
+          const a = Math.PI / 2 + (deg * Math.PI) / 180;
+          const x1 = ox + Math.cos(a) * (R - 6);
+          const y1 = oy + Math.sin(a) * (R - 6);
+          const x2 = ox + Math.cos(a) * (R + 8);
+          const y2 = oy + Math.sin(a) * (R + 8);
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = '#fef08a';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          const tx = ox + Math.cos(a) * (R + 22);
+          const ty = oy + Math.sin(a) * (R + 22);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '10px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(deg + '°', tx, ty);
+        }
+
+        // Quyosh nurining tushishi
+        const rayAngleInside = Math.PI / 2 + zRad;
+        const hitX = ox + Math.cos(rayAngleInside) * R;
+        const hitY = oy + Math.sin(rayAngleInside) * R;
+
+        // Osmondagi Quyosh pozitsiyasi
+        const sunDist = oy * 0.85;
+        const sunX = ox - Math.cos(rayAngleInside) * sunDist;
+        const sunY = oy - Math.sin(rayAngleInside) * sunDist;
+
+        // Quyosh nuri shulasi
+        ctx.beginPath();
+        ctx.moveTo(sunX, sunY);
+        ctx.lineTo(ox, oy);
+        ctx.lineTo(hitX, hitY);
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.85)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Quyosh diski
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 12, 0, Math.PI * 2);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fill();
+
+        // Yoyga tushgan yorug' dog'
+        ctx.beginPath();
+        ctx.arc(hitX, hitY, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+
+        // Zenit burchagi yoyi
+        ctx.beginPath();
+        ctx.arc(ox, oy, 42, Math.PI / 2, rayAngleInside);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fef08a';
+        ctx.font = '600 11px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(`z = ${formatDeg(zDeg)}`, ox - 95, oy + 58);
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Yer osti marmar yoyi (R = 40.2 m)', 16, height - 16);
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+
+    // =========================================================================
+    // 5. SIMULYATSIYA: GELIOSENTRIK TIZIM VA KEPLER QONUNLARI
+    // =========================================================================
+    (function initKeplerSim() {
+      const canvas = document.getElementById('kepler-canvas');
+      const playBtn = document.getElementById('kepler-play-btn');
+      const modeBtn = document.getElementById('kepler-mode-btn');
+      const resetBtn = document.getElementById('kepler-reset-btn');
+      const eccSlider = document.getElementById('kepler-ecc');
+      const eccVal = document.getElementById('kepler-ecc-val');
+      const speedSlider = document.getElementById('kepler-speed');
+      const speedVal = document.getElementById('kepler-speed-val');
+      const modeLabel = document.getElementById('kepler-mode-label');
+      const liveVEl = document.getElementById('kepler-live-v');
+
+      let isPlaying = true;
+      let isHelio = true;
+      let meanAnomaly = 0;
+
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playBtn.textContent = isPlaying ? '⏸ To‘xtatish' : '▶ Boshlash';
+      });
+
+      modeBtn.addEventListener('click', () => {
+        isHelio = !isHelio;
+        modeBtn.textContent = isHelio ? '⇄ Rejim: Geliosentrik' : '⇄ Rejim: Geosentrik (Yer markazda)';
+        modeLabel.textContent = isHelio ? 'Markazda: Quyosh (Fokusda)' : 'Markazda: Yer (Nisbiy harakat)';
+      });
+
+      resetBtn.addEventListener('click', () => {
+        meanAnomaly = 0;
+        eccSlider.value = 0.45;
+        speedSlider.value = 1.0;
+        eccVal.textContent = '0.45';
+        speedVal.textContent = '1.0x';
+        isHelio = true;
+        modeBtn.textContent = '⇄ Rejim: Geliosentrik';
+        modeLabel.textContent = 'Markazda: Quyosh (Fokusda)';
+      });
+
+      eccSlider.addEventListener('input', () => {
+        eccVal.textContent = parseFloat(eccSlider.value).toFixed(2);
+      });
+
+      speedSlider.addEventListener('input', () => {
+        speedVal.textContent = parseFloat(speedSlider.value).toFixed(1) + 'x';
+      });
+
+      // Kepler tenglamasini yechish: M = E - e * sin(E)
+      function solveKepler(M, e) {
+        let E = M;
+        for (let i = 0; i < 6; i++) {
+          E = E - (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+        }
+        return E;
+      }
+
+      function render() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        const cx = width / 2;
+        const cy = height / 2;
+        const e = parseFloat(eccSlider.value);
+        const speed = parseFloat(speedSlider.value);
+
+        if (isPlaying) {
+          meanAnomaly += 0.018 * speed;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        const a = Math.min(width * 0.36, height * 0.4); // Katta yarim o'q
+        const b = a * Math.sqrt(1 - e * e);              // Kichik yarim o'q
+        const c = a * e;                                 // Fokus masofasi
+
+        // Sayyoraning Quyoshga nisbatan koordinatasi
+        const E = solveKepler(meanAnomaly, e);
+        const relX = a * (Math.cos(E) - e);
+        const relY = b * Math.sin(E);
+
+        // Masofa r va Vis-viva tezligi
+        const r = Math.hypot(relX, relY);
+        const normR = r / a;
+        const speedKmS = (29.8 * Math.sqrt(2 / normR - 1)).toFixed(1);
+        liveVEl.textContent = `${speedKmS} km/s`;
+
+        if (isHelio) {
+          // Quyosh fokusda (cx - c, cy)
+          const sunX = cx - c;
+          const sunY = cy;
+
+          // Ellips orbita
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, a, b, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+
+          // Perigeliy va Afeliy belgilari
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '10px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText('Perigeliy (tez)', cx - a, cy - 10);
+          ctx.fillText('Afeliy (sekin)', cx + a, cy - 10);
+
+          const px = sunX + relX;
+          const py = sunY + relY;
+
+          // Radius vektor
+          ctx.beginPath();
+          ctx.moveTo(sunX, sunY);
+          ctx.lineTo(px, py);
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.55)';
+          ctx.setLineDash([4, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Quyosh
+          const sGrad = ctx.createRadialGradient(sunX, sunY, 3, sunX, sunY, 26);
+          sGrad.addColorStop(0, '#fef08a');
+          sGrad.addColorStop(0.6, '#f59e0b');
+          sGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+          ctx.beginPath();
+          ctx.arc(sunX, sunY, 26, 0, Math.PI * 2);
+          ctx.fillStyle = sGrad;
+          ctx.fill();
+
+          ctx.fillStyle = '#fde68a';
+          ctx.font = '700 11px Inter';
+          ctx.fillText('QUYOSH', sunX, sunY + 26);
+
+          // Sayyora
+          ctx.beginPath();
+          ctx.arc(px, py, 8, 0, Math.PI * 2);
+          ctx.fillStyle = '#38bdf8';
+          ctx.fill();
+          ctx.fillStyle = '#e0f2fe';
+          ctx.fillText('Sayyora', px, py - 13);
+        } else {
+          // Geosentrik taqqoslash rejimi (Yer markazda, Quyosh va Mars uning atrofida)
+          const sunOrbit = a * 0.55;
+          const sx = cx + Math.cos(meanAnomaly) * sunOrbit;
+          const sy = cy + Math.sin(meanAnomaly) * sunOrbit;
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, sunOrbit, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)';
+          ctx.stroke();
+
+          // Marsning Quyosh atrofidagi orbitasi
+          const marsR = a * 0.38;
+          ctx.beginPath();
+          ctx.arc(sx, sy, marsR, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+          ctx.stroke();
+
+          const mx = sx + Math.cos(meanAnomaly * 0.53) * marsR;
+          const my = sy + Math.sin(meanAnomaly * 0.53) * marsR;
+
+          // Markazda Yer
+          ctx.beginPath();
+          ctx.arc(cx, cy, 11, 0, Math.PI * 2);
+          ctx.fillStyle = '#0284c7';
+          ctx.fill();
+          ctx.fillStyle = '#e0f2fe';
+          ctx.font = '700 11px Inter';
+          ctx.textAlign = 'center';
+          ctx.fillText('YER', cx, cy + 22);
+
+          // Quyosh
+          ctx.beginPath();
+          ctx.arc(sx, sy, 13, 0, Math.PI * 2);
+          ctx.fillStyle = '#f59e0b';
+          ctx.fill();
+          ctx.fillStyle = '#fde68a';
+          ctx.fillText('Quyosh', sx, sy - 17);
+
+          // Mars
+          ctx.beginPath();
+          ctx.arc(mx, my, 7, 0, Math.PI * 2);
+          ctx.fillStyle = '#f87171';
+          ctx.fill();
+          ctx.fillStyle = '#fecaca';
+          ctx.fillText('Mars', mx, my - 11);
+        }
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+
+    // =========================================================================
+    // 6. SIMULYATSIYA: GALILEY TELESKOPI (YUPITER VA VENERA)
+    // =========================================================================
+    (function initTelescopeSim() {
+      const canvas = document.getElementById('tele-canvas');
+      const playBtn = document.getElementById('tele-play-btn');
+      const resetBtn = document.getElementById('tele-reset-btn');
+      const zoomSlider = document.getElementById('tele-zoom');
+      const zoomVal = document.getElementById('tele-zoom-val');
+      const zoomBadge = document.getElementById('tele-zoom-badge');
+      const speedSlider = document.getElementById('tele-speed');
+      const speedVal = document.getElementById('tele-speed-val');
+      const infoBox = document.getElementById('tele-info-box');
+
+      let target = 'jupiter';
+      let isPlaying = true;
+      let t = 0;
+
+      document.querySelectorAll('.tele-target-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          target = btn.dataset.teleTarget;
+          document.querySelectorAll('.tele-target-btn').forEach(b => {
+            if (b.dataset.teleTarget === target) {
+              b.className = 'tele-target-btn px-3 py-2 rounded-xl bg-sky-500 text-slate-950 font-semibold text-xs transition';
+            } else {
+              b.className = 'tele-target-btn px-3 py-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-600 hover:border-sky-400 font-semibold text-xs transition';
+            }
+          });
+
+          if (target === 'jupiter') {
+            infoBox.innerHTML = `<strong class="text-amber-400 block mb-1">Yupiter va Galiley yo‘ldoshlari:</strong>
+              1610-yilda Galiley Yupiter atrofida aylanayotgan 4 ta yirik yo‘ldoshni — <strong>Io, Yevropa, Ganimed va Kallisto</strong>ni kashf etdi. Bu hamma jismlar ham Yer atrofida aylanmasligining ilk isboti bo‘ldi!`;
+          } else {
+            infoBox.innerHTML = `<strong class="text-amber-400 block mb-1">Venera fazalari:</strong>
+              Galiley Veneraning xuddi Oy singari o‘roqsimon, yarim va to‘lin fazalarga kirishini aniqladi. Bu Veneraning Yer emas, balki <strong>Quyosh atrofida</strong> aylanishini uzil-kesil isbotladi.`;
+          }
+        });
+      });
+
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playBtn.textContent = isPlaying ? '⏸ To‘xtatish' : '▶ Boshlash';
+      });
+
+      resetBtn.addEventListener('click', () => {
+        t = 0;
+        zoomSlider.value = 15;
+        speedSlider.value = 1.0;
+        zoomVal.textContent = '15x';
+        zoomBadge.textContent = '15x';
+        speedVal.textContent = '1.0x';
+      });
+
+      zoomSlider.addEventListener('input', () => {
+        zoomVal.textContent = zoomSlider.value + 'x';
+        zoomBadge.textContent = zoomSlider.value + 'x';
+      });
+
+      speedSlider.addEventListener('input', () => {
+        speedVal.textContent = parseFloat(speedSlider.value).toFixed(1) + 'x';
+      });
+
+      function render() {
+        const { ctx, width, height } = setupHiDPICanvas(canvas);
+        const cx = width / 2;
+        const cy = height / 2;
+        const zoom = parseFloat(zoomSlider.value) / 15;
+        const speed = parseFloat(speedSlider.value);
+
+        if (isPlaying) {
+          t += 0.02 * speed;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Teleskop okulyari doirasi
+        const lensR = Math.min(width, height) * 0.44;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, lensR, 0, Math.PI * 2);
+        ctx.clip();
+
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(cx - lensR, cy - lensR, lensR * 2, lensR * 2);
+
+        if (target === 'jupiter') {
+          // Yupiter diski
+          const jupR = Math.max(8, 26 * zoom);
+
+          // Yo'ldoshlar (Io, Yevropa, Ganimed, Kallisto)
+          const moons = [
+            { name: 'Io', dist: 52, sp: 2.2, color: '#fde047' },
+            { name: 'Yevropa', dist: 78, sp: 1.4, color: '#e0f2fe' },
+            { name: 'Ganimed', dist: 108, sp: 0.9, color: '#cbd5e1' },
+            { name: 'Kallisto', dist: 142, sp: 0.5, color: '#94a3b8' }
+          ];
+
+          // Orqa tarafdagi yo'ldoshlar
+          moons.forEach((m, idx) => {
+            const ang = t * m.sp + idx * 1.5;
+            const sinA = Math.sin(ang);
+            if (sinA < 0) {
+              const mx = cx + Math.cos(ang) * m.dist * zoom;
+              const my = cy + sinA * 6 * zoom;
+              ctx.beginPath();
+              ctx.arc(mx, my, Math.max(2, 3.5 * zoom), 0, Math.PI * 2);
+              ctx.fillStyle = m.color;
+              ctx.fill();
+            }
+          });
+
+          // Yupiter bulut belbog'lari
+          const jGrad = ctx.createLinearGradient(cx, cy - jupR, cx, cy + jupR);
+          jGrad.addColorStop(0, '#d97706');
+          jGrad.addColorStop(0.3, '#fef3c7');
+          jGrad.addColorStop(0.5, '#b45309');
+          jGrad.addColorStop(0.7, '#fde68a');
+          jGrad.addColorStop(1, '#92400e');
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, jupR, 0, Math.PI * 2);
+          ctx.fillStyle = jGrad;
+          ctx.fill();
+
+          // Old tarafdagi yo'ldoshlar va nomlari
+          moons.forEach((m, idx) => {
+            const ang = t * m.sp + idx * 1.5;
+            const sinA = Math.sin(ang);
+            const mx = cx + Math.cos(ang) * m.dist * zoom;
+            const my = cy + sinA * 6 * zoom;
+            if (sinA >= 0) {
+              ctx.beginPath();
+              ctx.arc(mx, my, Math.max(2, 3.8 * zoom), 0, Math.PI * 2);
+              ctx.fillStyle = m.color;
+              ctx.fill();
+            }
+            if (zoom >= 0.7) {
+              ctx.fillStyle = '#cbd5e1';
+              ctx.font = '10px Inter';
+              ctx.textAlign = 'center';
+              ctx.fillText(m.name, mx, my + (idx % 2 === 0 ? -10 : 16));
+            }
+          });
+        } else {
+          // Venera fazalari simulyatsiyasi
+          const phase = (Math.cos(t * 0.8) + 1) / 2; // 0 (yangi/o'roq) -> 1 (to'lin)
+          const venR = Math.max(10, (24 + (1 - phase) * 24) * zoom);
+
+          // Qorong'i qism
+          ctx.beginPath();
+          ctx.arc(cx, cy, venR, 0, Math.PI * 2);
+          ctx.fillStyle = '#1e293b';
+          ctx.fill();
+
+          // Yorug' qism (faza)
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, venR, -Math.PI / 2, Math.PI / 2);
+          const termRx = venR * Math.abs(2 * phase - 1);
+          ctx.ellipse(cx, cy, termRx, venR, 0, Math.PI / 2, -Math.PI / 2, phase > 0.5);
+          ctx.closePath();
+          ctx.fillStyle = '#fef08a';
+          ctx.fill();
+          ctx.restore();
+
+          ctx.fillStyle = '#fde68a';
+          ctx.font = '600 12px Inter';
+          ctx.textAlign = 'center';
+          const phaseName = phase < 0.25 ? 'O‘roqsimon faza (Yerga yaqin)' : phase < 0.75 ? 'Yarim faza' : 'To‘lin faza (Quyosh ortida)';
+          ctx.fillText(phaseName, cx, cy + venR + 22);
+        }
+
+        ctx.restore();
+
+        // Okulyar hoshiyasi va kesishma chiziqlari
+        ctx.beginPath();
+        ctx.arc(cx, cy, lensR, 0, Math.PI * 2);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx - lensR, cy);
+        ctx.lineTo(cx - lensR + 14, cy);
+        ctx.moveTo(cx + lensR - 14, cy);
+        ctx.lineTo(cx + lensR, cy);
+        ctx.moveTo(cx, cy - lensR);
+        ctx.lineTo(cx, cy - lensR + 14);
+        ctx.moveTo(cx, cy + lensR - 14);
+        ctx.lineTo(cx, cy + lensR);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+
+    // =========================================================================
+    // 7. INTERAKTIV VIKTORINA (5 TA TEST)
+    // =========================================================================
+    (function initQuiz() {
+      const container = document.getElementById('quiz-container');
+      const scoreEl = document.getElementById('quiz-score');
+      const resetBtn = document.getElementById('quiz-reset-btn');
+      const summaryEl = document.getElementById('quiz-summary');
+      const summaryTitle = document.getElementById('quiz-summary-title');
+      const summaryText = document.getElementById('quiz-summary-text');
+
+      const questions = [
+        {
+          q: '1. «Astronomiya» so‘zi yunoncha qanday ma’noni anglatadi?',
+          options: [
+            'Yer va osmon haqidagi fan',
+            'Yulduz va qonun (astron — yulduz, nomos — qonun)',
+            'Koinotni o‘lchash san’ati',
+            'Quyosh va sayyoralar harakati'
+          ],
+          answer: 1,
+          explanation: '«Astronomiya» yunoncha «astron» (yulduz) va «nomos» (qonun) so‘zlaridan kelib chiqqan.'
+        },
+        {
+          q: '2. Yulduzlarning kimyoviy tarkibi va temperaturasini aniqlashda astronomiya qaysi fan bilan bevosita hamkorlik qiladi?',
+          options: [
+            'Botanika va zoologiya',
+            'Kimyo va fizika (spektral tahlil)',
+            'Tarix va arxeologiya',
+            'Iqtisodiyot'
+          ],
+          answer: 1,
+          explanation: 'Spektral tahlil (fizika va kimyo usuli) yordamida yulduz nuridan uning tarkibidagi kimyoviy elementlar aniqlanadi.'
+        },
+        {
+          q: '3. Samarqandda radiusi 40,2 metr bo‘lgan ulkan sekstant qurdirib, 1018 ta yulduz katalogini tuzgan buyuk alloma kim?',
+          options: [
+            'Muhammad al-Xorazmiy',
+            'Ahmad al-Farg‘oniy',
+            'Mirzo Ulug‘bek',
+            'Ibn Sino'
+          ],
+          answer: 2,
+          explanation: 'Mirzo Ulug‘bek 1428–1429-yillarda Samarqand rasadxonasini qurdirib, «Ziji jadidi Ko‘ragoniy» katalogini yaratgan.'
+        },
+        {
+          q: '4. Geosentrik tizimda sayyoralarning sirtmoqsimon (retrograd) harakatini tushuntirish uchun Ptolemey qanday tushunchani kiritgan?',
+          options: [
+            'Elliptik orbita va fokus',
+            'Deferent va epitsikl',
+            'Butun olam tortishish kuchi',
+            'Yorug‘lik yili va parsek'
+          ],
+          answer: 1,
+          explanation: 'Ptolemey sayyora kichik aylana (epitsikl) bo‘ylab, epitsikl markazi esa Yer atrofidagi katta aylana (deferent) bo‘ylab aylanadi deb hisoblagan.'
+        },
+        {
+          q: '5. 1609-yilda ilk bor teleskopni osmonga qaratib, Yupiterning 4 ta yo‘ldoshi va Venera fazalarini kashf etgan olim kim?',
+          options: [
+            'Nikolay Kopernik',
+            'Iogann Kepler',
+            'Galileo Galiley',
+            'Isaak Nyuton'
+          ],
+          answer: 2,
+          explanation: 'Galileo Galiley o‘zi yasagan teleskop yordamida Yupiterning 4 ta yo‘ldoshi va Venera fazalarini kashf etib, geliosentrik tizimni amalda tasdiqlagan.'
+        }
+      ];
+
+      let answeredCount = 0;
+      let score = 0;
+
+      function renderQuiz() {
+        answeredCount = 0;
+        score = 0;
+        scoreEl.textContent = '0';
+        summaryEl.classList.add('hidden');
+        container.innerHTML = '';
+
+        questions.forEach((item, qIdx) => {
+          const card = document.createElement('div');
+          card.className = 'p-5 rounded-2xl bg-slate-900/85 border border-slate-700/80 space-y-3';
+
+          const qTitle = document.createElement('h4');
+          qTitle.className = 'font-semibold text-base text-white';
+          qTitle.textContent = item.q;
+          card.appendChild(qTitle);
+
+          const optsGrid = document.createElement('div');
+          optsGrid.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2.5';
+
+          const feedback = document.createElement('div');
+          feedback.className = 'hidden text-xs sm:text-sm p-3 rounded-xl border';
+
+          item.options.forEach((optText, oIdx) => {
+            const btn = document.createElement('button');
+            btn.className = 'p-3 rounded-xl bg-slate-800/90 hover:bg-sky-500/15 border border-slate-600 text-left text-xs sm:text-sm text-slate-200 transition';
+            btn.textContent = optText;
+
+            btn.addEventListener('click', () => {
+              if (card.dataset.answered === 'true') return;
+              card.dataset.answered = 'true';
+              answeredCount++;
+
+              const allBtns = optsGrid.querySelectorAll('button');
+              allBtns.forEach((b, idx) => {
+                b.disabled = true;
+                if (idx === item.answer) {
+                  b.className = 'p-3 rounded-xl bg-emerald-500/25 border border-emerald-400 text-left text-xs sm:text-sm text-emerald-200 font-semibold';
+                } else if (idx === oIdx) {
+                  b.className = 'p-3 rounded-xl bg-rose-500/25 border border-rose-400 text-left text-xs sm:text-sm text-rose-200';
+                } else {
+                  b.className = 'p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-left text-xs sm:text-sm text-slate-500';
+                }
+              });
+
+              if (oIdx === item.answer) {
+                score++;
+                scoreEl.textContent = score;
+                feedback.className = 'text-xs sm:text-sm p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-200';
+                feedback.innerHTML = `<strong>✓ To‘g‘ri!</strong> ${item.explanation}`;
+              } else {
+                feedback.className = 'text-xs sm:text-sm p-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-200';
+                feedback.innerHTML = `<strong>✗ Noto‘g‘ri.</strong> ${item.explanation}`;
+              }
+
+              if (answeredCount === questions.length) {
+                summaryEl.classList.remove('hidden');
+                summaryTitle.textContent = `Viktorina yakunlandi! Sizning natijangiz: ${score} / ${questions.length}`;
+                summaryText.textContent = score === 5
+                  ? 'A’lo! Siz 1-§ mavzusini mukammal o‘zlashtirdingiz.'
+                  : score >= 3
+                    ? 'Yaxshi natija! Simulyatsiyalarni yana bir bor ko‘rib chiqsangiz, 5/5 natijaga erishasiz.'
+                    : 'Mavzuni va interaktiv simulyatsiyalarni qayta ko‘zdan kechirib, testni yana bir bor ishlab ko‘ring.';
+              }
+            });
+
+            optsGrid.appendChild(btn);
+          });
+
+          card.appendChild(optsGrid);
+          card.appendChild(feedback);
+          container.appendChild(card);
+        });
+      }
+
+      resetBtn.addEventListener('click', renderQuiz);
+      renderQuiz();
+    })();
+  </script>
+</body>
+</html>
+
