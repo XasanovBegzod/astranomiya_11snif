@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11-sinf Astronomiya: 2-§. Yoritgichlarning sutkalik harakatlari va yulduz turkumlari</title>
+    <style>
+        :root {
+            --bg-deep: #070B19;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --border-glow: rgba(56, 189, 248, 0.3);
+            --neon-cyan: #38BDF8;
+            --neon-gold: #F59E0B;
+            --neon-emerald: #10B981;
+            --neon-purple: #8B5CF6;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Starfield Canvas */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Sticky Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 11, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-title {
+            text-align: center;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: var(--text-main);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        .nav-btn:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(16, 185, 129, 0.2));
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+        }
+
+        /* Main Container & Sections */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .glass-card h2 {
+            font-size: 1.3rem;
+            color: var(--neon-cyan);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .glass-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        /* Simulation Layout */
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .sim-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            background: #020617;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Controls & Telemetry Panels */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .control-group {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--neon-cyan);
+            cursor: pointer;
+        }
+
+        .telemetry-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .telemetry-item span:last-child {
+            color: var(--neon-gold);
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--neon-cyan), #0284C7);
+            color: #0F172A;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        /* Quiz Styles */
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .question-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-btn {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: var(--neon-cyan);
+        }
+
+        .option-btn.correct {
+            background: rgba(16, 185, 129, 0.25) !important;
+            border-color: var(--neon-emerald) !important;
+            color: #6EE7B7 !important;
+        }
+
+        .option-btn.incorrect {
+            background: rgba(239, 68, 68, 0.25) !important;
+            border-color: #EF4444 !important;
+            color: #FCA5A5 !important;
+        }
+
+        .explanation {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-left: 4px solid var(--neon-cyan);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: none;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .quiz-score-board {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(245, 158, 11, 0.1));
+            border: 1px solid var(--neon-gold);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--neon-gold);
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Starfield background animation canvas -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Sticky Header -->
+    <header>
+        <div class="header-title">
+            <h1>11-sinf Astronomiya | 2-§</h1>
+            <p>Yoritgichlarning sutkalik ko‘rinma harakatlari. Yulduz turkumlari</p>
+        </div>
+        <nav>
+            <button class="nav-btn active" onclick="switchTab(0)">1. Sutkalik harakat & Olam o‘qi</button>
+            <button class="nav-btn" onclick="switchTab(1)">2. Yulduz turkumlari & Qutb yulduzi</button>
+            <button class="nav-btn" onclick="switchTab(2)">3. Yorqinlik va yunon alifbosi</button>
+            <button class="nav-btn" onclick="switchTab(3)">Yakuniy test (5 ta savol)</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- SECTION 1: SIMULATION 2A -->
+        <div id="section-0" class="section-content active">
+            <div class="glass-card">
+                <h2><span>🌌</span> 1-Laboratoriya: Osmon sferasi va sutkalik ko‘rinma harakat</h2>
+                <p>Yerning o‘z o‘qi atrofida g‘arbdan sharqqa aylanishi natijasida barcha yoritgichlar osmon sferasida sharqdan g‘arbga tomon sutkalik ko‘rinma harakat qiladi. Bu harakat trayektoriyasi kuzatuvchining geografik kengligiga ($\varphi$) bog‘liq.</p>
+                
+                <div class="sim-grid">
+                    <div class="canvas-container">
+                        <canvas id="canvas2A" width="650" height="400"></canvas>
+                    </div>
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <label>Geografik kenglik ($\varphi$): <span id="latValue">40</span>°</label>
+                            <input type="range" id="latSlider" min="0" max="90" value="40" oninput="updateSim2A()">
+                        </div>
+                        <div class="control-group">
+                            <label>Telemetriya paneli</label>
+                            <div class="telemetry-item">
+                                <span>Qutb yulduzi balandligi ($h$):</span>
+                                <span id="telPolarisAlt">40°</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span>Yulduz tipi:</span>
+                                <span id="telStarType">Chiqib-botadigan</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span>Sutkalik tezlik:</span>
+                                <span>15° / soat</span>
+                            </div>
+                        </div>
+                        <button class="action-btn" onclick="toggleAnim2A()" id="animBtn2A">Animatsiyani to‘xtatish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: SIMULATION 2B -->
+        <div id="section-1" class="section-content">
+            <div class="glass-card">
+                <h2><span>✨</span> 2-Laboratoriya: Katta Ayiq va Qutb yulduzini topish</h2>
+                <p>Osmon sferasida yo‘nalish topishda eng muhim yulduz turkumlaridan biri — Katta Ayiq (Yetti qaroqchi). Uning eng oxirgi ikki yulduzi — Merak va Dubhe ($\alpha$ va $\beta$) orqali xayoliy chiziq o‘tkazilsa, bu masofa 5 barobar davom ettirilganda to‘g‘ri Qutb yulduziga olib boradi.</p>
+                
+                <div class="sim-grid">
+                    <div class="canvas-container">
+                        <canvas id="canvas2B" width="650" height="400"></canvas>
+                    </div>
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <label>Navigatsiya rejimi</label>
+                            <button class="action-btn" onclick="togglePolarisFinder()">Qutb yulduzini topish chizig‘i</button>
+                        </div>
+                        <div class="control-group">
+                            <label>Ma'lumot</label>
+                            <p style="font-size:0.85rem; color:var(--text-main); margin:0;">
+                                <b>Qutb yulduzi</b> Kichik Ayiq turkumining eng yorqin yulduzi bo‘lib, u dunyoning shimoliy qutbiga juda yaqin joylashgan va sutka davomida deyarli qo‘zg‘almaydi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: SIMULATION 2C -->
+        <div id="section-2" class="section-content">
+            <div class="glass-card">
+                <h2><span>⭐</span> 3-Laboratoriya: Yulduzlarning yorqinligi va yunon alifbosi</h2>
+                <p>Qadimgi yunon astronomi Gipparx yulduzlarni ko‘rinma yorqinligiga ko‘ra 6 ta yulduz kattaligiga ($m$) bo‘lgan. Har bir turkumdagi eng yorqin yulduzlar yunon alifbosi harflari ($\alpha, \beta, \gamma, \delta\dots$) bilan belgilanadi.</p>
+                
+                <div class="sim-grid">
+                    <div class="canvas-container">
+                        <canvas id="canvas2C" width="650" height="400"></canvas>
+                    </div>
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <label>Yulduz kattaligi ($m$): <span id="magValue">1.0</span>m</label>
+                            <input type="range" id="magSlider" min="-1" max="6" step="0.5" value="1" oninput="updateSim2C()">
+                        </div>
+                        <div class="control-group">
+                            <label>Belgilanishi va Tavsifi</label>
+                            <div class="telemetry-item">
+                                <span>Yunon harfi:</span>
+                                <span id="telGreekLetter">α (Alfa)</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span>Nisbiy yorqinlik:</span>
+                                <span id="telBrightness">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: FINAL QUIZ -->
+        <div id="section-3" class="section-content">
+            <div class="quiz-score-board" id="scoreBoard">
+                Natijangiz: <span id="correctCount">0</span> / 5 (To‘g‘ri javoblar)
+            </div>
+            
+            <div class="quiz-container" id="quizContainer">
+                <!-- Dynamically filled quiz questions -->
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>11-sinf Astronomiya fanining 2-paragrafiga mo‘ljallangan interaktiv o‘quv moduli &copy; 2026</p>
+    </footer>
+
+    <script>
+        'use strict';
+
+        // --- STARFIELD BACKGROUND ANIMATION ---
+        const starCanvas = document.getElementById('starfield');
+        const starCtx = starCanvas.getContext('2d');
+        let stars = [];
+
+        function resizeStarfield() {
+            starCanvas.width = window.innerWidth;
+            starCanvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            const count = Math.floor((window.innerWidth * window.innerHeight) / 3000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * starCanvas.width,
+                    y: Math.random() * starCanvas.height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+        }
+
+        function animateStarfield() {
+            starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+            starCtx.fillStyle = '#FFFFFF';
+            stars.forEach(s => {
+                s.alpha += s.speed;
+                if (s.alpha > 1 || s.alpha < 0.2) s.speed = -s.speed;
+                starCtx.globalAlpha = Math.abs(s.alpha);
+                starCtx.beginPath();
+                starCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                starCtx.fill();
+            });
+            requestAnimationFrame(animateStarfield);
+        }
+
+        window.addEventListener('resize', resizeStarfield);
+        resizeStarfield();
+        animateStarfield();
+
+        // --- TAB NAVIGATION ---
+        const sections = document.querySelectorAll('.section-content');
+        const navBtns = document.querySelectorAll('header nav .nav-btn');
+
+        function switchTab(index) {
+            sections.forEach((sec, i) => {
+                sec.classList.toggle('active', i === index);
+                navBtns[i].classList.toggle('active', i === index);
+            });
+        }
+
+        // --- SIMULATION 2A: CELESTIAL SPHERE ---
+        const canvas2A = document.getElementById('canvas2A');
+        const ctx2A = canvas2A.getContext('2d');
+        let latPhi = 40;
+        let isAnim2ARunning = true;
+        let animAngle2A = 0;
+
+        function updateSim2A() {
+            latPhi = parseInt(document.getElementById('latSlider').value);
+            document.getElementById('latValue').innerText = latPhi;
+            document.getElementById('telPolarisAlt').innerText = latPhi + '°';
+            
+            let starType = "Chiqib-botadigan";
+            if (latPhi >= 60) starType = "Botmaydigan va chiqib-botadigan";
+            document.getElementById('telStarType').innerText = starType;
+        }
+
+        function toggleAnim2A() {
+            isAnim2ARunning = !isAnim2ARunning;
+            document.getElementById('animBtn2A').innerText = isAnim2ARunning ? "Animatsiyani to‘xtatish" : "Animatsiyani davom ettirish";
+        }
+
+        function drawSim2A() {
+            ctx2A.clearRect(0, 0, canvas2A.width, canvas2A.height);
+            
+            const cx = canvas2A.width / 2;
+            const cy = canvas2A.height / 2 + 30;
+            const R = 130;
+
+            // Draw Horizon Plane (Ellipse)
+            ctx2A.save();
+            ctx2A.strokeStyle = '#38BDF8';
+            ctx2A.lineWidth = 2;
+            ctx2A.beginPath();
+            ctx2A.ellipse(cx, cy, R + 40, (R + 40) * 0.35, 0, 0, Math.PI * 2);
+            ctx2A.stroke();
+            ctx2A.fillStyle = 'rgba(56, 189, 248, 0.05)';
+            ctx2A.fill();
+            ctx2A.restore();
+
+            // Draw Celestial Sphere Outline (Circle)
+            ctx2A.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx2A.lineWidth = 1.5;
+            ctx2A.beginPath();
+            ctx2A.arc(cx, cy - 20, R, 0, Math.PI * 2);
+            ctx2A.stroke();
+
+            // Draw Celestial Axis (Olam o'qi) tilted by latitude phi
+            const phiRad = (latPhi * Math.PI) / 180;
+            const axisLen = R;
+            // North celestial pole (Polaris direction) points up at angle phi from zenith
+            const northX = cx - axisLen * Math.sin(phiRad);
+            const northY = (cy - 20) - axisLen * Math.cos(phiRad);
+            const southX = cx + axisLen * Math.sin(phiRad);
+            const southY = (cy - 20) + axisLen * Math.cos(phiRad);
+
+            ctx2A.strokeStyle = '#F59E0B';
+            ctx2A.lineWidth = 2;
+            ctx2A.beginPath();
+            ctx2A.moveTo(southX, southY);
+            ctx2A.lineTo(northX, northY);
+            ctx2A.stroke();
+
+            // Polaris Label & Star
+            ctx2A.fillStyle = '#F59E0B';
+            ctx2A.beginPath();
+            ctx2A.arc(northX, northY, 5, 0, Math.PI * 2);
+            ctx2A.fill();
+            ctx2A.font = '12px sans-serif';
+            ctx2A.fillText('Qutb yulduzi (Polaris)', northX + 10, northY);
+
+            // Draw Rotating Star Path
+            if (isAnim2ARunning) animAngle2A += 0.02;
+            
+            // Star trajectory circle perpendicular to axis
+            const starRadius = R * 0.7;
+            const starAngle = animAngle2A;
+            // Let's project a sample star rotating around the axis
+            const sX = cx + starRadius * Math.cos(starAngle);
+            const sY = (cy - 20) + starRadius * Math.sin(starAngle) * 0.5;
+
+            ctx2A.fillStyle = '#38BDF8';
+            ctx2A.beginPath();
+            ctx2A.arc(sX, sY, 6, 0, Math.PI * 2);
+            ctx2A.fill();
+            ctx2A.shadowColor = '#38BDF8';
+            ctx2A.shadowBlur = 10;
+            ctx2A.fill();
+            ctx2A.shadowBlur = 0;
+
+            ctx2A.fillStyle = '#F8FAFC';
+            ctx2A.fillText('Yoritgich', sX + 10, sY - 5);
+
+            // Labels for Horizon, Zenith
+            ctx2A.fillStyle = '#94A3B8';
+            ctx2A.fillText('Zenit (Z)', cx - 15, (cy - 20) - R - 10);
+            ctx2A.fillText('Ufq (N)', cx + R + 50, cy + 15);
+            ctx2A.fillText(`Kenglik φ = ${latPhi}°`, 20, 30);
+
+            requestAnimationFrame(drawSim2A);
+        }
+        drawSim2A();
+
+        // --- SIMULATION 2B: CONSTELLATIONS & POLARIS ---
+        const canvas2B = document.getElementById('canvas2B');
+        const ctx2B = canvas2B.getContext('2d');
+        let showPolarisLine = false;
+
+        function togglePolarisFinder() {
+            showPolarisLine = !showPolarisLine;
+        }
+
+        // Ursa Major & Minor Coordinates
+        const bigDipper = [
+            {x: 100, y: 220, name: 'Eta'},
+            {x: 140, y: 190, name: 'Zeta'},
+            {x: 190, y: 180, name: 'Epsilon'},
+            {x: 230, y: 210, name: 'Delta'},
+            {x: 280, y: 170, name: 'Megrez'},
+            {x: 320, y: 130, name: 'Phecda'},
+            {x: 340, y: 180, name: 'Merak ($\beta$)'},
+            {x: 390, y: 120, name: 'Dubhe ($\alpha$)'}
+        ];
+
+        const polarisCoord = {x: 520, y: 90, name: 'Qutb yulduzi'};
+
+        function drawSim2B() {
+            ctx2B.clearRect(0, 0, canvas2B.width, canvas2B.height);
+
+            // Draw Big Dipper lines
+            ctx2B.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+            ctx2B.lineWidth = 2;
+            ctx2B.beginPath();
+            for (let i = 0; i < bigDipper.length; i++) {
+                if (i === 0) ctx2B.moveTo(bigDipper[i].x, bigDipper[i].y);
+                else ctx2B.lineTo(bigDipper[i].x, bigDipper[i].y);
+            }
+            ctx2B.stroke();
+
+            // Draw pointer connection from Megrez to Phecda/Merak/Dubhe properly for handle/bowl
+            // Let's connect handle properly: 0->1->2->3->4, 4->5 (Phecda), 5->6 (Merak), 6->7 (Dubhe), 4->7 (Megrez to Dubhe)
+            // Actually let's do precise Big Dipper connecting lines:
+            // Bowl: 3(Delta) -> 4(Megrez) -> 5(Phecda) -> 6(Merak) -> 7(Dubhe) -> 4(Megrez)
+            // Handle: 0(Eta) -> 1(Zeta) -> 2(Epsilon) -> 3(Delta)
+            
+            ctx2B.clearRect(0, 0, canvas2B.width, canvas2B.height);
+            
+            // Redraw constellation lines cleanly
+            ctx2B.strokeStyle = 'rgba(56, 189, 248, 0.5)';
+            ctx2B.lineWidth = 2;
+            
+            // Handle
+            ctx2B.beginPath();
+            ctx2B.moveTo(bigDipper[0].x, bigDipper[0].y);
+            ctx2B.lineTo(bigDipper[1].x, bigDipper[1].y);
+            ctx2B.lineTo(bigDipper[2].x, bigDipper[2].y);
+            ctx2B.lineTo(bigDipper[3].x, bigDipper[3].y);
+            // Bowl
+            ctx2B.lineTo(bigDipper[4].x, bigDipper[4].y); // Megrez
+            ctx2B.lineTo(bigDipper[5].x, bigDipper[5].y); // Phecda
+            ctx2B.lineTo(bigDipper[6].x, bigDipper[6].y); // Merak
+            ctx2B.lineTo(bigDipper[7].x, bigDipper[7].y); // Dubhe
+            ctx2B.lineTo(bigDipper[4].x, bigDipper[4].y); // Megrez
+            ctx2B.stroke();
+
+            // Draw Stars
+            bigDipper.forEach((star, idx) => {
+                ctx2B.fillStyle = '#38BDF8';
+                ctx2B.beginPath();
+                ctx2B.arc(star.x, star.y, idx >= 6 ? 6 : 4, 0, Math.PI * 2);
+                ctx2B.fill();
+                ctx2B.fillStyle = '#94A3B8';
+                ctx2B.font = '11px sans-serif';
+                ctx2B.fillText(star.name, star.x + 8, star.y + 4);
+            });
+
+            // Draw Polaris
+            ctx2B.fillStyle = '#F59E0B';
+            ctx2B.beginPath();
+            ctx2B.arc(polarisCoord.x, polarisCoord.y, 7, 0, Math.PI * 2);
+            ctx2B.shadowColor = '#F59E0B';
+            ctx2B.shadowBlur = 15;
+            ctx2B.fill();
+            ctx2B.shadowBlur = 0;
+
+            ctx2B.fillStyle = '#F59E0B';
+            ctx2B.font = 'bold 12px sans-serif';
+            ctx2B.fillText(polarisCoord.name, polarisCoord.x + 12, polarisCoord.y + 4);
+
+            // Draw Polaris Finder Line if active
+            if (showPolarisLine) {
+                const merak = bigDipper[6];
+                const dubhe = bigDipper[7];
+                // Vector from Merak to Dubhe extended 5 times
+                const dx = dubhe.x - merak.x;
+                const dy = dubhe.y - merak.y;
+                const endX = dubhe.x + dx * 3.8;
+                const endY = dubhe.y + dy * 3.8;
+
+                ctx2B.strokeStyle = '#F59E0B';
+                ctx2B.setLineDash([5, 5]);
+                ctx2B.lineWidth = 2;
+                ctx2B.beginPath();
+                ctx2B.moveTo(merak.x, merak.y);
+                ctx2B.lineTo(endX, endY);
+                ctx2B.stroke();
+                ctx2B.setLineDash([]);
+
+                ctx2B.fillStyle = '#10B981';
+                ctx2B.font = '11px sans-serif';
+                ctx2B.fillText('Merak va Dubhe masofasi (5 marta cho‘zilishi)', dubhe.x + 20, dubhe.y - 20);
+            }
+
+            // Title
+            ctx2B.fillStyle = '#F8FAFC';
+            ctx2B.font = '13px sans-serif';
+            ctx2B.fillText('Katta Ayiq (Yetti qaroqchi) va Qutb yulduzi', 20, 30);
+
+            requestAnimationFrame(drawSim2B);
+        }
+        drawSim2B();
+
+        // --- SIMULATION 2C: MAGNITUDE & GREEK ALPHABET ---
+        const canvas2C = document.getElementById('canvas2C');
+        const ctx2C = canvas2C.getContext('2d');
+        let starMagnitude = 1.0;
+
+        const greekLetters = [
+            {mag: -1, name: 'Sirius (α Canis Majoris)', letter: 'α (Alfa - Eng yorqin)'},
+            {mag: 0, name: 'Vega / Arktur', letter: 'α (Alfa)'},
+            {mag: 1, name: '1-kattalikdagi yulduz', letter: 'α / β (Alfa, Beta)'},
+            {mag: 2, name: '2-kattalikdagi yulduz', letter: 'γ (Gamma)'},
+            {mag: 3, name: '3-kattalikdagi yulduz', letter: 'δ (Delta)'},
+            {mag: 4, name: '4-kattalikdagi yulduz', letter: 'ε (Epsilon)'},
+            {mag: 5, name: '5-kattalikdagi yulduz', letter: 'ζ (Zeta)'},
+            {mag: 6, name: '6-kattalikdagi yulduz (Ko‘z bilan ko‘rinadigan chegara)', letter: 'ω (Omega)'}
+        ];
+
+        function updateSim2C() {
+            starMagnitude = parseFloat(document.getElementById('magSlider').value);
+            document.getElementById('magValue').innerText = starMagnitude.toFixed(1);
+
+            // Find closest greek descriptor
+            const idx = Math.min(Math.max(Math.round(starMagnitude + 1), 0), greekLetters.length - 1);
+            document.getElementById('telGreekLetter').innerText = greekLetters[idx].letter;
+            
+            // Approximate relative brightness based on Pogson formula ratio roughly
+            const relBright = Math.round(100 * Math.pow(2.512, 1 - starMagnitude));
+            document.getElementById('telBrightness').innerText = relBright > 1000 ? '>1000%' : relBright + '%';
+        }
+
+        function drawSim2C() {
+            ctx2C.clearRect(0, 0, canvas2C.width, canvas2C.height);
+
+            const cx = canvas2C.width / 2;
+            const cy = canvas2C.height / 2;
+
+            // Star size inversely proportional to magnitude (smaller magnitude = brighter & bigger)
+            // m = -1 -> r = 45, m = 6 -> r = 4
+            const radius = Math.max(4, 45 - (starMagnitude + 1) * 6);
+
+            // Draw glowing star
+            ctx2C.fillStyle = starMagnitude < 0 ? '#38BDF8' : (starMagnitude <= 2 ? '#F8FAFC' : '#F59E0B');
+            ctx2C.beginPath();
+            ctx2C.arc(cx, cy - 20, radius, 0, Math.PI * 2);
+            ctx2C.shadowColor = ctx2C.fillStyle;
+            ctx2C.shadowBlur = Math.max(5, 40 - starMagnitude * 5);
+            ctx2C.fill();
+            ctx2C.shadowBlur = 0;
+
+            // Text info on canvas
+            ctx2C.fillStyle = '#94A3B8';
+            ctx2C.font = '14px sans-serif';
+            ctx2C.textAlign = 'center';
+            ctx2C.fillText(`Ko‘rinma yulduz kattaligi: m = ${starMagnitude.toFixed(1)}m`, cx, cy + 90);
+            ctx2C.fillStyle = '#38BDF8';
+            ctx2C.fillText(greekLetters[Math.min(Math.max(Math.round(starMagnitude + 1), 0), greekLetters.length - 1)].name, cx, cy + 120);
+            
+            ctx2C.textAlign = 'left';
+            requestAnimationFrame(drawSim2C);
+        }
+        drawSim2C();
+
+        // --- QUIZ DATA & LOGIC ---
+        const quizData = [
+            {
+                question: "1. Osmon sferasida kuzatuvchining geografik kengligi ($\varphi$) nimaga teng?",
+                options: [
+                    "Dunyoning shimoliy qutbigacha bo‘lgan masofaga",
+                    "Qutb yulduzining ufqdan balandligiga ($h = \varphi$)",
+                    "Osmon ekvatorining og‘ish burchagiga",
+                    "Zenit masofasining yarmiga"
+                ],
+                correct: 1,
+                explanation: "Geometrik va astronomik qonuniyatlarga ko‘ra, kuzatuv turgan joyning geografik kengligi ($\varphi$) o‘sha joydan kuzatiladigan Qutb yulduzining ufqdan balandligiga ($h$) har doim teng bo‘ladi."
+            },
+            {
+                question: "2. Qaysi yulduz turkumlari yordamida Qutb yulduzini osongina topish mumkin?",
+                options: [
+                    "Kichik It va Katta It",
+                    "Katta Ayiq va Kichik Ayiq",
+                    "Kassiopeya va Orion",
+                    "Pegas va Oqqush"
+                ],
+                correct: 1,
+                explanation: "Katta Ayiq turkumining oxirgi ikki yulduzi — Merak va Dubhe ($\alpha$ va $\beta$) orqali o‘tkazilgan to‘g‘ri chiziq masofasi 5 barobar cho‘zilsa, Qutb yulduziga borib taqaladi."
+            },
+            {
+                question: "3. Osmon sferasining barcha yoritgichlari bilan birgalikda sutkalik aylanishi nima sababdan yuzaga keladi?",
+                options: [
+                    "Quyoshning o‘z o‘qi atrofida aylanishidan",
+                    "Yerning o‘z o‘qi atrofida g‘arbdan sharqqa aylanishidan",
+                    "Oyning Yer atrofida aylanishidan",
+                    "Yulduzlarning o‘ziga xos xususiy harakatidan"
+                ],
+                correct: 1,
+                explanation: "Yer o‘z o‘qi atrofida g‘arbdan sharqqa tomon aylangani bois, barcha osmon yoritgichlari sharqdan g‘arbga qarab sutkalik ko‘rinma harakatni amalga oshiradi."
+            },
+            {
+                question: "4. Yulduz turkumlaridagi eng yorqin yulduzlar qaysi alifbo harflari bilan belgilanadi?",
+                options: [
+                    "Lotin alifbosi (A, B, C...)",
+                    "Yunon alifbosi ($\alpha, \beta, \gamma \dots$)",
+                    "Kirill alifbosi (А, Б, В...)",
+                    "Arab raqamlari (1, 2, 3...)"
+                ],
+                correct: 1,
+                explanation: "Xalqaro astronomik an'anaga ko‘ra, yulduz turkumlaridagi yulduzlar yunon alifbosi harflari bilan yorqinligiga qarab kamayib borish tartibida ($\alpha$ - eng yorqin, $\beta$ - ikkinchi va hokazo) belgilanadi."
+            },
+            {
+                question: "5. Pogson qoidasiga ko‘ra, 1-kattalikdagi yulduz 6-kattalikdagi yulduzdan taxminan necha marta yorqinroq?",
+                options: [
+                    "5 marta",
+                    "10 marta",
+                    "100 marta",
+                    "1000 marta"
+                ],
+                correct: 2,
+                explanation: "Pogson formulasiga ko‘ra, 1-kattalikdagi yulduz 6-kattalikdagi yulduzdan aniq 100 marta yorqinroq hisoblanadi (chunki yulduz kattaligining 5 birlik farqi 2.512^5 $\approx$ 100 ni tashkil qiladi)."
+            }
+        ];
+
+        let userAnswers = {};
+        let correctScore = 0;
+
+        function initQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, qIdx) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                
+                let html = `<div class="question-title">${q.question}</div><div class="options-list">`;
+                q.options.forEach((opt, optIdx) => {
+                    html += `<button class="option-btn" id="q${qIdx}opt${optIdx}" onclick="selectAnswer(${qIdx}, ${optIdx})">${opt}</button>`;
+                });
+                html += `</div><div class="explanation" id="expl${qIdx}">${q.explanation}</div>`;
+                
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        function selectAnswer(qIdx, optIdx) {
+            if (userAnswers[qIdx] !== undefined) return; // Already answered
+
+            userAnswers[qIdx] = optIdx;
+            const q = quizData[qIdx];
+            const expDiv = document.getElementById(`expl${qIdx}`);
+            expDiv.style.display = 'block';
+
+            for (let i = 0; i < q.options.length; i++) {
+                const btn = document.getElementById(`q${qIdx}opt${i}`);
+                btn.disabled = true;
+                if (i === q.correct) {
+                    btn.classList.add('correct');
+                } else if (i === optIdx && optIdx !== q.correct) {
+                    btn.classList.add('incorrect');
+                }
+            }
+
+            if (optIdx === q.correct) {
+                correctScore++;
+            }
+
+            document.getElementById('scoreBoard').style.display = 'block';
+            document.getElementById('correctCount').innerText = correctScore;
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
