@@ -35,23 +35,21 @@
 <body>
   <div class="container">
     <h1>Astronomiya 11-sinf</h1>
-    <p class="subtitle">Interaktiv simulyatsiyalar va darsliklar</p>
+    <p class="subtitle">Interaktiv simulyatsiyalar va darsliklar (1–50 mavzular)</p>
 
-    <div class="grid">
-      <!-- 1-mavzu -->
-      <a href="1_mavzu.html" class="card">
-        <div class="card-title">1-mavzu</div>
-        <div class="card-desc">Interaktiv dars va simulyatsiyani ochish →</div>
-      </a>
-
-      <!-- 2-mavzu -->
-      <a href="2_mavzu.html" class="card">
-        <div class="card-title">2-mavzu</div>
-        <div class="card-desc">Interaktiv dars va simulyatsiyani ochish →</div>
-      </a>
-
-      <!-- Keyingi mavzularni qo'shish uchun shu yerdan davom etasiz -->
-    </div>
+    <div class="grid" id="menu"></div>
   </div>
+
+  <script>
+    const menu = document.getElementById('menu');
+    for (let i = 1; i <= 50; i++) {
+      menu.innerHTML += `
+        <a href="${i}_mavzu.html" class="card">
+          <div class="card-title">${i}-mavzu</div>
+          <div class="card-desc">Interaktiv dars va simulyatsiyani ochish →</div>
+        </a>
+      `;
+    }
+  </script>
 </body>
 </html>
