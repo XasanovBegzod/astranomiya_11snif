@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8-§. Yulduzlarning ko‘rinma yulduz kattaliklari | 11-sinf Astronomiya</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-border: #334155;
+      --sky: #38bdf8;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-top {
+      max-width: 980px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sky);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+    .badge {
+      font-size: 0.8rem;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .title-box { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; color: var(--text); font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    section.module {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+    .step-num {
+      background: var(--sky);
+      color: #0b1120;
+      font-weight: 800;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    h2 { font-size: 1.2rem; color: var(--sky); }
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 18px;
+      font-size: 0.94rem;
+    }
+    .theory-box ul { padding-left: 20px; margin-top: 8px; }
+    .theory-box li { margin-bottom: 6px; color: #e2e8f0; }
+    .hl-amber { color: var(--amber); font-weight: 600; }
+    .hl-sky { color: var(--sky); font-weight: 600; }
+    .hl-emerald { color: var(--emerald); font-weight: 600; }
+
+    .formula-card {
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 1.08rem;
+      color: var(--sky);
+      text-align: center;
+      letter-spacing: 0.4px;
+    }
+
+    /* Simulyator konteyneri */
+    .sim-wrapper {
+      background: #070b14;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+    .controls {
+      background: #0f172a;
+      padding: 14px 16px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slider-group {
+      flex: 1;
+      min-width: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.btn:hover { border-color: var(--sky); color: var(--sky); }
+    button.btn.active {
+      background: var(--sky);
+      color: #0b1120;
+      border-color: var(--sky);
+    }
+    button.btn.amber-btn.active, button.btn.amber-btn:hover {
+      background: var(--amber);
+      color: #0b1120;
+      border-color: var(--amber);
+    }
+    button.btn.emerald-btn.active, button.btn.emerald-btn:hover {
+      background: var(--emerald);
+      color: #0b1120;
+      border-color: var(--emerald);
+    }
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 0.77rem; }
+    .info-item strong { color: var(--amber); font-size: 0.94rem; }
+
+    /* Obyekt tanlash paneli */
+    .select-pair {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    select {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* Pogson Kalkulyatori */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .calc-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .calc-card h4 { color: var(--amber); margin-bottom: 10px; font-size: 0.95rem; }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .input-row label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .input-row input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .calc-out {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: var(--sky);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    /* Test */
+    .quiz-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .quiz-q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--sky); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .quiz-opt.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--rose); color: #fda4af; }
+    .quiz-exp {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sky);
+      display: none;
+    }
+    .score-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.25rem; }
+      section.module { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="back-btn">← Bosh menyuga qaytish</a>
+    <span class="badge">11-Sinf • Astronomiya</span>
+  </div>
+  <div class="title-box">
+    <h1>8-§. Yulduzlarning ko‘rinma yulduz kattaliklari</h1>
+    <p class="subtitle">Yoritilganlik, qadimgi Gipparx shkalasi va Pogsonning matematik formulasi</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- I REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">I</div>
+      <h2>Kirish: Yulduzlar yorqinligi va ko‘rinma yulduz kattaligi tushunchasi</h2>
+    </div>
+
+    <div class="theory-box">
+      <p><span class="hl-sky">Ko‘rinma yulduz kattaligi (m)</span> — yulduzning haqiqiy fizik o‘lchamini emas, balki uning Yerda turgan kuzatuvchiga ko‘rinadigan yorqinligini (yoritilganlik <em>E</em> ni) xarakterlovchi kattalikdir.</p>
+      <ul>
+        <li>Yulduz hosil qiladigan yoritilganlik uning haqiqiy yorqinligiga (<em>L</em>) to‘g‘ri proporsional va masofa (<em>r</em>) kvadratiga teskari proporsional: <strong>E ∝ L / r²</strong>.</li>
+        <li><span class="hl-amber">Teskari bog‘liqlik qoidasi:</span> Yulduz qanchalik yorqin ko‘rinsa, uning ko‘rinma yulduz kattaligi (<strong>m</strong>) shunchalik <strong>kichik</strong> (hatto manfiy) bo‘ladi.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas1" height="360"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>B yulduz masofasi (r<sub>B</sub>): <strong id="c1-dist-lbl" style="color:#38bdf8">60 yorug‘lik yili</strong></span>
+            </div>
+            <input type="range" id="c1-dist" min="15" max="200" value="60">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>B yulduz haqiqiy yorqinligi (L<sub>B</sub>): <strong id="c1-lum-lbl" style="color:#f59e0b">100 L☉</strong></span>
+            </div>
+            <input type="range" id="c1-lum" min="5" max="1000" step="5" value="100">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>A yulduz (r=15 y.y., L=4 L☉)</span><strong id="c1-ma" style="color:#38bdf8">m<sub>A</sub> = +1.8<sup>m</sup></strong></div>
+          <div class="info-item"><span>B yulduz ko‘rinma kattaligi</span><strong id="c1-mb" style="color:#f59e0b">m<sub>B</sub> = +1.3<sup>m</sup></strong></div>
+          <div class="info-item"><span>Kuzatuvchi ko‘ziga xulosa</span><strong id="c1-verdict" style="color:#10b981">B yulduz yorqinroq ko‘rinadi!</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- II REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">II</div>
+      <h2>Tarixiy ma'lumot: Qadimgi Gipparx shkalasi</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Miloddan avvalgi II asrda qadimgi yunon astronomi <span class="hl-amber">Gipparx</span> oddiy ko‘zga ko‘rinadigan barcha yulduzlarni yorqinligiga qarab <strong>6 ta sinfga</strong> bo‘lgan:</p>
+      <ul>
+        <li>Eng yorqin yulduzlar — <strong>1-kattalikdagi (1<sup>m</sup>)</strong>, oddiy ko‘z zo‘rg‘a ilg‘aydigan eng xira yulduzlar — <strong>6-kattalikdagi (6<sup>m</sup>)</strong> deb atalgan.</li>
+        <li><span class="hl-sky">Veber–Fexner qonuni:</span> Inson ko‘zi yorqinlikning arifmetik farqini emas, balki geometrik nisbatini sezadi. Har 1 pog‘ona o‘tganda yoritilganlik <strong>2,512 marta</strong> kamayadi (5 pog‘ona farq = <strong>100 marta</strong>).</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas2" height="390"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group" id="c2-mag-btns">
+            <button class="btn amber-btn active" data-m="1">1<sup>m</sup></button>
+            <button class="btn amber-btn" data-m="2">2<sup>m</sup></button>
+            <button class="btn amber-btn" data-m="3">3<sup>m</sup></button>
+            <button class="btn amber-btn" data-m="4">4<sup>m</sup></button>
+            <button class="btn amber-btn" data-m="5">5<sup>m</sup></button>
+            <button class="btn amber-btn" data-m="6">6<sup>m</sup></button>
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Shahar yorug‘ligi (fon yoritilishi): <strong id="c2-lp-lbl" style="color:#38bdf8">0% (Musaffo tog‘ osmoni)</strong></span>
+            </div>
+            <input type="range" id="c2-lp" min="0" max="100" value="0">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>6<sup>m</sup> yulduzga nisbatan yorqinligi</span><strong id="c2-ratio6" style="color:#f59e0b">100.0 marta yorqin</strong></div>
+          <div class="info-item"><span>1<sup>m</sup> yulduzga tenglashish uchun</span><strong id="c2-eq1" style="color:#10b981">1 dona 1<sup>m</sup> yulduz yetarli</strong></div>
+          <div class="info-item"><span>Hozirgi fonda ko‘rinadi</span><strong id="c2-vis-lim" style="color:#38bdf8">1<sup>m</sup> dan 6<sup>m</sup> gacha</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">III</div>
+      <h2>Pogson formulasi va zamonaviy matematik shkala</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>1856-yilda ingliz astronomi <span class="hl-sky">Norman Pogson</span> Gipparx shkalasiga aniq matematik ta'rif berdi: <strong>E<sub>1</sub> / E<sub>6</sub> = 100</strong>, bundan bir pog‘ona koeffitsienti <strong><sup>5</sup>√100 = 10<sup>0.4</sup> ≈ 2.512</strong> ga teng.</p>
+      <div class="formula-card">
+        E<sub>1</sub> / E<sub>2</sub> = 2.512<sup>(m<sub>2</sub> − m<sub>1</sub>)</sup> = 10<sup>0.4(m<sub>2</sub> − m<sub>1</sub>)</sup> &nbsp;&nbsp;|&nbsp;&nbsp; m<sub>2</sub> − m<sub>1</sub> = 2.5 · lg(E<sub>1</sub> / E<sub>2</sub>)
+      </div>
+      <ul>
+        <li><span class="hl-amber">Zamonaviy kengaytirilgan shkala:</span> Teleskoplar ixtiro qilingach, shkala ikki tomonga kengaytirildi va o‘nli hamda manfiy qiymatlar kiritildi: <strong>Quyosh (-26.74<sup>m</sup>)</strong>, <strong>To‘lin Oy (-12.7<sup>m</sup>)</strong>, <strong>Venera (-4.6<sup>m</sup>)</strong>, <strong>Sirius (-1.46<sup>m</sup>)</strong>, <strong>Vega (0.0<sup>m</sup>)</strong>, <strong>Hubble/JWST teleskoplari (+31<sup>m</sup>)</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas3" height="390"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group" id="c3-tool-btns">
+            <button class="btn active" data-lim="6">👁 Oddiy ko‘z (+6<sup>m</sup>)</button>
+            <button class="btn" data-lim="10">🔭 Durbin (+10<sup>m</sup>)</button>
+            <button class="btn" data-lim="14.5">🔬 Teleskop (+14.5<sup>m</sup>)</button>
+            <button class="btn" data-lim="31">🛰 Hubble / JWST (+31<sup>m</sup>)</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="select-pair">
+            <span style="font-size:0.84rem; color:var(--muted);">Taqqoslash:</span>
+            <select id="c3-obj1"></select>
+            <span style="color:var(--amber); font-weight:bold;">va</span>
+            <select id="c3-obj2"></select>
+          </div>
+          <div style="font-size:0.88rem; color:var(--emerald); font-weight:700;" id="c3-comp-out">
+            Sirius Vegadan 3.84 marta yorqin!
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV. QO'SHIMCHA BLOKLAR -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">IV</div>
+      <h2>Pogson Kalkulyatori va O‘z-o‘zini tekshirish testi</h2>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--amber); margin-bottom:10px;">1. Interaktiv Pogson Kalkulyatori (2 rejimli)</h3>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>1-rejim: Kattaliklar (m<sub>1</sub>, m<sub>2</sub>) → Yoritilganlik nisbati (E<sub>1</sub>/E<sub>2</sub>)</h4>
+        <div class="input-row">
+          <label>m<sub>1</sub>:</label>
+          <input type="number" id="in-m1" step="0.1" value="-1.46">
+          <label>m<sub>2</sub>:</label>
+          <input type="number" id="in-m2" step="0.1" value="1.0">
+        </div>
+        <div class="calc-out" id="out-ratio">E₁ / E₂ = 9.64 marta (1-obyekt yorqin)</div>
+      </div>
+
+      <div class="calc-card">
+        <h4>2-rejim: Yoritilganlik nisbati (E<sub>1</sub>/E<sub>2</sub>) → Farq (Δm = m<sub>2</sub> − m<sub>1</sub>)</h4>
+        <div class="input-row">
+          <label>E<sub>1</sub> / E<sub>2</sub>:</label>
+          <input type="number" id="in-rat" step="0.5" min="0.0001" value="100">
+        </div>
+        <div class="calc-out" id="out-dm">Δm = m₂ − m₁ = +5.00ᵐ</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--sky); margin-bottom:12px;">2. Mavzu yuzasidan tezkor test (5 ta savol)</h3>
+    <div id="quiz-container"></div>
+    <div class="score-box" id="quiz-score">Natija: 0 / 5 ta to‘g‘ri javob</div>
+  </section>
+
+</main>
+
+<script>
+function setupHiDPI(canvas, height) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w: rect.width, h: height };
+}
+
+// ==================== 1-SIMULYATSIYA: MASOFA, YORQINLIK VA KO'RINMA KATTALIK ====================
+(function() {
+  const canvas = document.getElementById("canvas1");
+  const distSlider = document.getElementById("c1-dist");
+  const lumSlider = document.getElementById("c1-lum");
+  const distLbl = document.getElementById("c1-dist-lbl");
+  const lumLbl = document.getElementById("c1-lum-lbl");
+  const maOut = document.getElementById("c1-ma");
+  const mbOut = document.getElementById("c1-mb");
+  const verdictOut = document.getElementById("c1-verdict");
+
+  let phase = 0;
+
+  // Absolyut kattalik M_sun = +4.83
+  // m = M + 5 * log10(d_pc) - 5, bu yerda d_pc = r_ly / 3.26156
+  function calcApparentMag(r_ly, L_sun) {
+    const M = 4.83 - 2.5 * Math.log10(L_sun);
+    const d_pc = r_ly / 3.26156;
+    return M + 5 * Math.log10(d_pc) - 5;
+  }
+
+  function render() {
+    phase += 0.04;
+    const rB = parseFloat(distSlider.value);
+    const lB = parseFloat(lumSlider.value);
+
+    // A yulduz o'zgarmas: rA = 15 y.y., LA = 4 L_sun
+    const rA = 15;
+    const lA = 4;
+
+    const mA = calcApparentMag(rA, lA);
+    const mB = calcApparentMag(rB, lB);
+
+    distLbl.textContent = `${rB} yorug‘lik yili`;
+    lumLbl.textContent = `${lB} L☉`;
+    maOut.textContent = `mA = ${mA >= 0 ? "+" : ""}${mA.toFixed(2)}m`;
+    mbOut.textContent = `mB = ${mB >= 0 ? "+" : ""}${mB.toFixed(2)}m`;
+
+    if (Math.abs(mA - mB) < 0.08) {
+      verdictOut.textContent = "Ikkala yulduz bir xil yorqinlikda ko‘rinadi!";
+      verdictOut.style.color = "#f8fafc";
+    } else if (mB < mA) {
+      const ratio = Math.pow(10, 0.4 * (mA - mB)).toFixed(1);
+      verdictOut.textContent = `B yulduz ${ratio}× yorqinroq ko‘rinadi!`;
+      verdictOut.style.color = "#f59e0b";
+    } else {
+      const ratio = Math.pow(10, 0.4 * (mB - mA)).toFixed(1);
+      verdictOut.textContent = `A yulduz ${ratio}× yorqinroq ko‘rinadi!`;
+      verdictOut.style.color = "#38bdf8";
+    }
+
+    const { ctx, w, h } = setupHiDPI(canvas, 360);
+    ctx.clearRect(0, 0, w, h);
+
+    const obsX = 58;
+    const obsY = h * 0.52;
+
+    // Masofa shkalasi chizig'i
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(obsX, h - 32);
+    ctx.lineTo(w - 30, h - 32);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#64748b";
+    ctx.font = "11px sans-serif";
+    ctx.fillText("Masofa shkalasi (yorug‘lik yili)", obsX + 10, h - 14);
+
+    // Kuzatuvchi (Yer / Ko'z)
+    ctx.fillStyle = "#10b981";
+    ctx.beginPath();
+    ctx.arc(obsX, obsY, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Kuzatuvchi", obsX, obsY + 28);
+    ctx.fillText("(Yer)", obsX, obsY + 41);
+
+    // Yulduz A koordinatasi (yuqori yo'lak)
+    const mapX = r => obsX + 55 + ((r - 10) / 190) * (w - obsX - 105);
+    const ax = mapX(rA);
+    const ay = h * 0.28;
+
+    // Yulduz B koordinatasi (quyi yo'lak)
+    const bx = mapX(rB);
+    const by = h * 0.72;
+
+    // Foton to'lqinlari animatsiyasi
+    function drawWaves(sx, sy, color, intensity) {
+      const count = 4;
+      for (let i = 0; i < count; i++) {
+        const prog = ((phase * 0.35 + i / count) % 1);
+        const wx = sx + (obsX - sx) * prog;
+        const wy = sy + (obsY - sy) * prog;
+        ctx.fillStyle = color;
+        ctx.globalAlpha = (1 - prog) * Math.min(1, 0.35 + intensity * 0.25);
+        ctx.beginPath();
+        ctx.arc(wx, wy, 3 + intensity * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.22;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(obsX, obsY);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    const intA = Math.max(0.3, (4 - mA) * 0.35);
+    const intB = Math.max(0.3, (4 - mB) * 0.35);
+
+    drawWaves(ax, ay, "#38bdf8", intA);
+    drawWaves(bx, by, "#f59e0b", intB);
+
+    // Yulduz A chizish
+    ctx.fillStyle = "#38bdf8";
+    ctx.beginPath();
+    ctx.arc(ax, ay, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#f8fafc";
+    ctx.textAlign = "left";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText(`A yulduz (mA = ${mA.toFixed(1)}m)`, ax + 16, ay - 2);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "11px sans-serif";
+    ctx.fillText(`r = 15 y.y., L = 4 L☉`, ax + 16, ay + 13);
+
+    // Yulduz B chizish (radiusi haqiqiy L ga qarab o'zgaradi)
+    const rVisualB = 8 + Math.log10(lB) * 6.5;
+    const gradB = ctx.createRadialGradient(bx, by, 2, bx, by, rVisualB * 1.8);
+    gradB.addColorStop(0, "#fef08a");
+    gradB.addColorStop(0.5, "#f59e0b");
+    gradB.addColorStop(1, "rgba(245, 158, 11, 0)");
+    ctx.fillStyle = gradB;
+    ctx.beginPath();
+    ctx.arc(bx, by, rVisualB * 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#fbbf24";
+    ctx.beginPath();
+    ctx.arc(bx, by, rVisualB, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.textAlign = bx > w - 150 ? "right" : "left";
+    const lblOff = bx > w - 150 ? -rVisualB - 10 : rVisualB + 10;
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText(`B yulduz (mB = ${mB.toFixed(1)}m)`, bx + lblOff, by - 2);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "11px sans-serif";
+    ctx.fillText(`r = ${rB} y.y., L = ${lB} L☉`, bx + lblOff, by + 13);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 2-SIMULYATSIYA: GIPPARX SHKALASI (1m - 6m) ====================
+(function() {
+  const canvas = document.getElementById("canvas2");
+  const magBtns = document.querySelectorAll("#c2-mag-btns button");
+  const lpSlider = document.getElementById("c2-lp");
+  const lpLbl = document.getElementById("c2-lp-lbl");
+  const ratio6Out = document.getElementById("c2-ratio6");
+  const eq1Out = document.getElementById("c2-eq1");
+  const visLimOut = document.getElementById("c2-vis-lim");
+
+  let selectedM = 1;
+  let tick = 0;
+
+  magBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      magBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      selectedM = parseInt(btn.dataset.m, 10);
+    });
+  });
+
+  function render() {
+    tick += 0.05;
+    const lp = parseInt(lpSlider.value, 10);
+    // Shahar yorug'ligi chegaraviy ko'rinishni 6m dan 2.5m gacha tushiradi
+    const maxVisibleMag = 6.0 - (lp / 100) * 3.5;
+
+    lpLbl.textContent = `${lp}% (${lp < 20 ? "Tog‘ osmoni" : (lp < 65 ? "Shahar cheti" : "Yorug‘ shahar markazi")})`;
+    visLimOut.textContent = `1m dan ${maxVisibleMag.toFixed(1)}m gacha`;
+
+    const ratioVs6 = Math.pow(2.511886, 6 - selectedM);
+    const neededFor1 = Math.round(Math.pow(2.511886, selectedM - 1));
+
+    ratio6Out.textContent = selectedM === 6
+      ? "1.0 marta (tayanch 6m yulduz)"
+      : `${ratioVs6.toFixed(2)} marta yorqin`;
+    eq1Out.textContent = `${neededFor1} ta ${selectedM}m yulduz = 1 ta 1m yulduz`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 390);
+    ctx.clearRect(0, 0, w, h);
+
+    // Osmon foni (shahar yorug'ligiga qarab ochiladi)
+    const skyAlpha = (lp / 100) * 0.42;
+    ctx.fillStyle = `rgba(56, 189, 248, ${skyAlpha})`;
+    ctx.fillRect(0, 0, w, h);
+
+    const cols = 6;
+    const colW = (w - 40) / cols;
+
+    for (let m = 1; m <= 6; m++) {
+      const cx = 20 + colW * (m - 0.5);
+      const starY = 64;
+      const isSelected = m === selectedM;
+      const isVisible = m <= maxVisibleMag;
+
+      // Tanlangan ustun ramkasi
+      if (isSelected) {
+        ctx.fillStyle = "rgba(245, 158, 11, 0.12)";
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.5)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(cx - colW * 0.44, 16, colW * 0.88, 225, 10);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Yulduz doirasi (xaritadagi kabi diametr)
+      const radius = (7 - m) * 2.4;
+      ctx.globalAlpha = isVisible ? 1 : 0.15;
+      ctx.fillStyle = isSelected ? "#fbbf24" : "#f8fafc";
+      ctx.beginPath();
+      ctx.arc(cx, starY, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Foton zarralari oqimi (yorqin yulduzda tez va ko'p)
+      const flux = Math.pow(2.511886, 6 - m); // 1 .. 100
+      const particleCount = Math.max(1, Math.round(Math.sqrt(flux) * 1.4));
+      if (isVisible) {
+        for (let p = 0; p < particleCount; p++) {
+          const py = starY + 18 + (((tick * 25 + p * (110 / particleCount)) % 110));
+          ctx.fillStyle = "#38bdf8";
+          ctx.beginPath();
+          ctx.arc(cx + Math.sin(p + tick) * 3, py, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Detektor ustuni (logarifmik-vizual balandlik)
+      const barMaxH = 55;
+      const barH = (Math.sqrt(flux) / 10) * barMaxH;
+      ctx.fillStyle = isSelected ? "#f59e0b" : "#38bdf8";
+      ctx.fillRect(cx - 12, 232 - barH, 24, barH);
+
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = isSelected ? "#fbbf24" : "#e2e8f0";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`${m}m`, cx, 32);
+
+      if (!isVisible) {
+        ctx.fillStyle = "#f43f5e";
+        ctx.font = "10px sans-serif";
+        ctx.fillText("Ko‘rinmas", cx, starY + 24);
+      }
+    }
+
+    // Pastki qism: 1m yulduzga tenglashish uchun kerakli yulduzlar to'plami vizualizatsiyasi
+    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+    ctx.strokeStyle = "#334155";
+    ctx.beginPath();
+    ctx.roundRect(20, 255, w - 40, 118, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#10b981";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(`Vizual tenglik: 1 ta 1m yulduz yorqinligi = ${neededFor1} ta ${selectedM}m yulduz yig‘indisiga teng`, 34, 277);
+
+    // Yulduzchalar panjarasini chizish (maksimum 100 ta)
+    const colsGrid = 25;
+    const stepX = (w - 80) / colsGrid;
+    for (let i = 0; i < neededFor1; i++) {
+      const gx = 38 + (i % colsGrid) * stepX;
+      const gy = 298 + Math.floor(i / colsGrid) * 18;
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(gx, gy, Math.max(2.2, 6 - selectedM * 0.6), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 3-SIMULYATSIYA: ZAMONAVIY LOGARIFMIK SHKALA ====================
+(function() {
+  const canvas = document.getElementById("canvas3");
+  const toolBtns = document.querySelectorAll("#c3-tool-btns button");
+  const sel1 = document.getElementById("c3-obj1");
+  const sel2 = document.getElementById("c3-obj2");
+  const compOut = document.getElementById("c3-comp-out");
+
+  let limitMag = 6.0;
+
+  const OBJECTS = [
+    { name: "Quyosh", m: -26.74, color: "#fef08a" },
+    { name: "To‘lin Oy", m: -12.70, color: "#e2e8f0" },
+    { name: "Venera (eng yorqin)", m: -4.60, color: "#fde047" },
+    { name: "Sirius (eng yorqin yulduz)", m: -1.46, color: "#38bdf8" },
+    { name: "Vega (0-nuqta)", m: 0.00, color: "#93c5fd" },
+    { name: "Qutb yulduzi", m: 1.98, color: "#cbd5e1" },
+    { name: "Oddiy ko‘z chegarasi", m: 6.00, color: "#10b981" },
+    { name: "Neptun sayyorasi", m: 7.80, color: "#60a5fa" },
+    { name: "Pluton", m: 14.00, color: "#94a3b8" },
+    { name: "Hubble / JWST chegarasi", m: 31.00, color: "#f43f5e" }
+  ];
+
+  OBJECTS.forEach((o, idx) => {
+    const opt1 = new Option(`${o.name} (${o.m > 0 ? "+" : ""}${o.m}m)`, idx);
+    const opt2 = new Option(`${o.name} (${o.m > 0 ? "+" : ""}${o.m}m)`, idx);
+    sel1.add(opt1);
+    sel2.add(opt2);
+  });
+  sel1.value = 3; // Sirius
+  sel2.value = 4; // Vega
+
+  toolBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      toolBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      limitMag = parseFloat(btn.dataset.lim);
+      draw();
+    });
+  });
+
+  sel1.addEventListener("change", draw);
+  sel2.addEventListener("change", draw);
+
+  function draw() {
+    const o1 = OBJECTS[parseInt(sel1.value, 10)];
+    const o2 = OBJECTS[parseInt(sel2.value, 10)];
+
+    // Pogson formulasi: E1 / E2 = 10^(0.4 * (m2 - m1))
+    const diff = o2.m - o1.m;
+    const ratio = Math.pow(10, 0.4 * diff);
+
+    let ratioTxt = "";
+    if (Math.abs(diff) < 0.01) {
+      ratioTxt = "Ikkala obyekt bir xil yoritilganlik beradi (1 : 1)";
+    } else if (ratio >= 1) {
+      const fmt = ratio > 1e6 ? ratio.toExponential(2) : ratio.toLocaleString("en-US", {maximumFractionDigits: 2});
+      ratioTxt = `${o1.name} ${o2.name}dan ${fmt} marta yorqin!`;
+    } else {
+      const inv = 1 / ratio;
+      const fmt = inv > 1e6 ? inv.toExponential(2) : inv.toLocaleString("en-US", {maximumFractionDigits: 2});
+      ratioTxt = `${o2.name} ${o1.name}dan ${fmt} marta yorqin!`;
+    }
+    compOut.textContent = ratioTxt;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 390);
+    ctx.clearRect(0, 0, w, h);
+
+    const padL = 26, padR = 26;
+    const scaleW = w - padL - padR;
+    const minM = -28, maxM = 32;
+    const magToX = m => padL + ((m - minM) / (maxM - minM)) * scaleW;
+
+    const axisY = 175;
+
+    // Ko'rish diapazoni oynasi (-28m dan limitMag gacha)
+    const limX = magToX(limitMag);
+    ctx.fillStyle = "rgba(16, 185, 129, 0.14)";
+    ctx.fillRect(padL, 45, limX - padL, 210);
+
+    ctx.strokeStyle = "#10b981";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(limX, 45);
+    ctx.lineTo(limX, 255);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#10b981";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(`Ko‘rinish chegarasi: +${limitMag}m →`, limX - 6, 60);
+
+    // Asosiy gorizontal shkala chizig'i
+    ctx.strokeStyle = "#475569";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padL, axisY);
+    ctx.lineTo(w - padR, axisY);
+    ctx.stroke();
+
+    // Shkala bo'linmalari
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    for (let m = -25; m <= 30; m += 5) {
+      const tx = magToX(m);
+      ctx.beginPath();
+      ctx.moveTo(tx, axisY - 5);
+      ctx.lineTo(tx, axisY + 5);
+      ctx.stroke();
+      ctx.fillText(`${m > 0 ? "+" : ""}${m}m`, tx, axisY + 20);
+    }
+
+    // Obyektlarni shkalaga joylashtirish
+    OBJECTS.forEach((obj, idx) => {
+      const ox = magToX(obj.m);
+      const isSelected = obj === o1 || obj === o2;
+      const inRange = obj.m <= limitMag;
+
+      ctx.globalAlpha = inRange ? 1 : 0.35;
+      ctx.fillStyle = isSelected ? "#f59e0b" : obj.color;
+      ctx.beginPath();
+      ctx.arc(ox, axisY, isSelected ? 7 : 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Yozuvlar ustma-ust tushmasligi uchun yuqori/pastki qatorlarga ajratamiz
+      const row = idx % 3;
+      const lblY = idx % 2 === 0 ? axisY - 22 - row * 22 : axisY + 42 + row * 18;
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(ox, axisY);
+      ctx.lineTo(ox, lblY + (idx % 2 === 0 ? 4 : -10));
+      ctx.stroke();
+
+      ctx.fillStyle = isSelected ? "#fbbf24" : "#e2e8f0";
+      ctx.font = isSelected ? "bold 11px sans-serif" : "10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`${obj.name.split(" ")[0]} (${obj.m}m)`, ox, lblY);
+      ctx.globalAlpha = 1;
+    });
+
+    // Pastki izoh paneli
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("← Eng yorqin obyektlar (manfiy m)", padL, 30);
+    ctx.textAlign = "right";
+    ctx.fillText("Eng xira obyektlar (musbat m) →", w - padR, 30);
+  }
+  draw();
+})();
+
+// ==================== IV. POGSON KALKULYATORI ====================
+(function() {
+  const inM1 = document.getElementById("in-m1");
+  const inM2 = document.getElementById("in-m2");
+  const outRatio = document.getElementById("out-ratio");
+
+  const inRat = document.getElementById("in-rat");
+  const outDm = document.getElementById("out-dm");
+
+  function calc1() {
+    const m1 = parseFloat(inM1.value) || 0;
+    const m2 = parseFloat(inM2.value) || 0;
+    const ratio = Math.pow(10, 0.4 * (m2 - m1));
+    if (ratio >= 1) {
+      const fmt = ratio > 1e6 ? ratio.toExponential(2) : ratio.toFixed(2);
+      outRatio.textContent = `E₁ / E₂ = ${fmt} marta (1-obyekt yorqin)`;
+    } else {
+      const inv = (1 / ratio);
+      const fmt = inv > 1e6 ? inv.toExponential(2) : inv.toFixed(2);
+      outRatio.textContent = `E₂ / E₁ = ${fmt} marta (2-obyekt yorqin)`;
+    }
+  }
+
+  function calc2() {
+    const r = parseFloat(inRat.value);
+    if (!r || r <= 0) { outDm.textContent = "Musbat son kiriting!"; return; }
+    const dm = 2.5 * Math.log10(r);
+    outDm.textContent = `Δm = m₂ − m₁ = ${dm >= 0 ? "+" : ""}${dm.toFixed(2)}ᵐ`;
+  }
+
+  inM1.addEventListener("input", calc1);
+  inM2.addEventListener("input", calc1);
+  inRat.addEventListener("input", calc2);
+})();
+
+// ==================== IV. O'Z-O'ZINI TEKSHIRISH TESTI ====================
+(function() {
+  const QUESTIONS = [
+    {
+      q: "1. Miloddan avvalgi II asrda yulduzlarni yorqinligiga qarab 6 ta sinfga ajratgan olim kim?",
+      opts: ["Klavdiy Ptolemey", "Gipparx", "Norman Pogson"],
+      ans: 1,
+      exp: "Qadimgi yunon astronomi Gipparx eng yorqin yulduzlarni 1-kattalik, ko‘zga zo‘rg‘a ko‘rinadiganlarini 6-kattalik deb belgilagan."
+    },
+    {
+      q: "2. 1-kattalikdagi (1m) yulduz 6-kattalikdagi (6m) yulduzdan necha marta yorqinroq ko‘rinadi?",
+      opts: ["6 marta", "25,12 marta", "100 marta"],
+      ans: 2,
+      exp: "Pogson shkalasiga ko‘ra 5 yulduz kattaligi farqi (6 - 1 = 5) yoritilganlikning 2.512^5 = 100 marta farqiga teng."
+    },
+    {
+      q: "3. Bir yulduz kattaligi pog‘onasi o‘zgarganda yoritilganlik necha marta o‘zgaradi?",
+      opts: ["2,512 marta", "10 marta", "5 marta"],
+      ans: 0,
+      exp: "100 ning beshinchi darajali ildizi (10^0.4) taxminan 2,512 ga teng."
+    },
+    {
+      q: "4. Quyidagi osmon jismlaridan qaysi birining ko‘rinma yulduz kattaligi (m) eng kichik (manfiy qiymati eng katta)?",
+      opts: ["Sirius (-1.46m)", "To‘lin Oy (-12.7m)", "Quyosh (-26.74m)"],
+      ans: 2,
+      exp: "Osmon jismi qanchalik yorqin bo‘lsa, uning m qiymati shuncha kichik bo‘ladi. Eng yorqin jism — Quyosh (-26.74m)."
+    },
+    {
+      q: "5. Ikki yulduzning ko‘rinma yulduz kattaliklari farqi m2 - m1 = 2 ga teng bo‘lsa, ularning yoritilganliklari nisbati (E1 / E2) nechaga teng?",
+      opts: ["5,02 marta", "6,31 marta", "20 marta"],
+      ans: 1,
+      exp: "Pogson formulasiga ko‘ra: E1 / E2 = 2.512^2 ≈ 6,31 marta."
+    }
+  ];
+
+  const container = document.getElementById("quiz-container");
+  const scoreBox = document.getElementById("quiz-score");
+  let score = 0;
+
+  QUESTIONS.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "quiz-item";
+    div.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-opts"></div><div class="quiz-exp">${item.exp}</div>`;
+    const optsDiv = div.querySelector(".quiz-opts");
+    const expDiv = div.querySelector(".quiz-exp");
+
+    item.opts.forEach((optText, oIdx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const allBtns = optsDiv.querySelectorAll("button");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (oIdx === item.ans) {
+          btn.classList.add("correct");
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          allBtns[item.ans].classList.add("correct");
+        }
+        expDiv.style.display = "block";
+        scoreBox.textContent = `Natija: ${score} / ${QUESTIONS.length} ta to‘g‘ri javob`;
+      });
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
