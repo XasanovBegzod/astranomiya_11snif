@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6-§. Osmon koordinatalari | 11-sinf Astronomiya</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-border: #334155;
+      --sky: #38bdf8;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-top {
+      max-width: 980px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sky);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+    .badge {
+      font-size: 0.8rem;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .title-box { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; color: var(--text); font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    section.module {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+    .step-num {
+      background: var(--sky);
+      color: #0b1120;
+      font-weight: 800;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    h2 { font-size: 1.2rem; color: var(--sky); }
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 18px;
+      font-size: 0.94rem;
+    }
+    .theory-box ul { padding-left: 20px; margin-top: 8px; }
+    .theory-box li { margin-bottom: 6px; color: #e2e8f0; }
+    .hl-amber { color: var(--amber); font-weight: 600; }
+    .hl-sky { color: var(--sky); font-weight: 600; }
+    .hl-emerald { color: var(--emerald); font-weight: 600; }
+
+    /* Simulyator konteyneri */
+    .sim-wrapper {
+      background: #070b14;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+    .controls {
+      background: #0f172a;
+      padding: 14px 16px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slider-group {
+      flex: 1;
+      min-width: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.btn:hover { border-color: var(--sky); color: var(--sky); }
+    button.btn.active {
+      background: var(--sky);
+      color: #0b1120;
+      border-color: var(--sky);
+    }
+    button.btn.amber-btn.active, button.btn.amber-btn:hover {
+      background: var(--amber);
+      color: #0b1120;
+      border-color: var(--amber);
+    }
+    button.btn.emerald-btn.active, button.btn.emerald-btn:hover {
+      background: var(--emerald);
+      color: #0b1120;
+      border-color: var(--emerald);
+    }
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 0.77rem; }
+    .info-item strong { color: var(--amber); font-size: 0.95rem; }
+
+    /* Jadval */
+    .table-wrap { overflow-x: auto; margin-bottom: 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 11px 14px;
+      border: 1px solid #334155;
+      text-align: left;
+    }
+    th { background: #1e293b; color: var(--sky); font-weight: 700; }
+
+    /* Konvertor Kalkulyator */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .calc-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .calc-card h4 { color: var(--amber); margin-bottom: 10px; font-size: 0.95rem; }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .input-row input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .calc-out {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--sky);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    /* Test */
+    .quiz-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .quiz-q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--sky); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .quiz-opt.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--rose); color: #fda4af; }
+    .quiz-exp {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sky);
+      display: none;
+    }
+    .score-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.25rem; }
+      section.module { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="back-btn">← Bosh menyuga qaytish</a>
+    <span class="badge">11-Sinf • Astronomiya</span>
+  </div>
+  <div class="title-box">
+    <h1>6-§. Osmon koordinatalari</h1>
+    <p class="subtitle">Osmon sferasi, Gorizontal (A, h) va Ekvatorial (α, δ) koordinatalar sistemalari</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- I REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">I</div>
+      <h2>Kirish: Osmon koordinatalari tizimining zaruriyati</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Yer sirtidagi har bir nuqta geografik kenglik (φ) va uzunlik (λ) bilan aniqlanganidek, osmon yoritgichlarining o‘rnini aniq belgilash uchun <strong>sferik osmon koordinatalari</strong> kiritiladi.</p>
+      <ul>
+        <li><span class="hl-sky">Osmon sferasi</span> — markazi kuzatuvchining ko‘zida bo‘lgan ixtiyoriy radiusli xayoliy sfera.</li>
+        <li><strong>Zenit (Z) va Nadir (Z'):</strong> Kuzatuvchi turgan joydan o‘tuvchi vertikal (shovul) chizig‘ining osmon sferasi bilan kesishgan yuqori (Z) va quyi (Z') nuqtalari.</li>
+        <li><strong>Matematik ufq (gorizont):</strong> Osmon sferasining markazidan o‘tib, shovul chizig‘iga (ZZ') tik bo‘lgan tekislik. U ufq tomonlarini (S, W, N, E) belgilaydi.</li>
+        <li><span class="hl-emerald">Qutb balandligi teoremasi:</span> Olamning Shimoliy qutbi (P) ning matematik ufqdan balandligi kuzatuvchi turgan joyning geografik kengligiga teng: <strong>h<sub>P</sub> = φ</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas1" height="400"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Kuzatuvchi geografik kengligi (φ): <strong id="c1-lat-lbl" style="color:#10b981">41° (Toshkent)</strong></span>
+            </div>
+            <input type="range" id="c1-lat" min="0" max="90" value="41">
+          </div>
+          <div class="btn-group">
+            <button class="btn" data-lat="0">Ekvator (0°)</button>
+            <button class="btn emerald-btn active" data-lat="41">Toshkent (41°)</button>
+            <button class="btn" data-lat="90">Shimoliy qutb (90°)</button>
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Geografik kenglik (φ)</span><strong id="c1-phi" style="color:#38bdf8">41°</strong></div>
+          <div class="info-item"><span>Olam qutbi balandligi (h<sub>P</sub>)</span><strong id="c1-hp" style="color:#10b981">41°</strong></div>
+          <div class="info-item"><span>3D Boshqaruv</span><strong>Barmoq/sichqoncha bilan aylantiring</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- II REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">II</div>
+      <h2>1-Sistema: Gorizontal koordinatalar sistemasi</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Bu sistemada asosiy tekislik sifatida <span class="hl-sky">Matematik ufq</span>, asosiy chiziq sifatida esa Shovul chizig‘i (ZZ') olinadi:</p>
+      <ul>
+        <li><span class="hl-sky">1. Yoritgich balandligi (h):</span> Matematik ufqdan yoritgichgacha vertikal aylana bo‘ylab o‘lchanadigan burchak (<strong>0° dan +90° gacha</strong> — ufq ustida; <strong>0° dan -90° gacha</strong> — ufq ostida). Zenit masofasi: <strong>z = 90° - h</strong>.</li>
+        <li><span class="hl-amber">2. Astronomik azimut (A):</span> Janub nuqtasidan (S) g‘arb (W) tomonga qarab, yoritgichning vertikal aylanasi kesishgan nuqtagacha matematik ufq bo‘ylab o‘lchanadigan burchak (<strong>0° dan 360° gacha</strong>; S=0°, W=90°, N=180°, E=270°).</li>
+        <li><strong>Kamchiligi:</strong> Yerning sutkalik aylanishi tufayli yulduzning <em>A</em> va <em>h</em> qiymatlari har soniyada va kuzatuvchining joyiga qarab o‘zgaradi.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas2" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Azimut (A): <strong id="c2-az-lbl" style="color:#f59e0b">45° (SW)</strong></span>
+            </div>
+            <input type="range" id="c2-az" min="0" max="360" value="45">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Balandlik (h): <strong id="c2-alt-lbl" style="color:#38bdf8">+35°</strong></span>
+            </div>
+            <input type="range" id="c2-alt" min="-30" max="90" value="35">
+          </div>
+          <div class="btn-group">
+            <button class="btn amber-btn" id="c2-play">▶ Sutkalik aylanish</button>
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Azimut (A)</span><strong id="c2-az-val">45°</strong></div>
+          <div class="info-item"><span>Balandlik (h)</span><strong id="c2-alt-val" style="color:#38bdf8">+35°</strong></div>
+          <div class="info-item"><span>Zenit masofasi (z = 90°-h)</span><strong id="c2-zen-val" style="color:#10b981">55°</strong></div>
+          <div class="info-item"><span>Ko‘rinish holati</span><strong id="c2-vis-val">Ufq ustida (Ko‘rinadi)</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">III</div>
+      <h2>2-Sistema: Ekvatorial koordinatalar sistemasi</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Yulduz kataloglari va osmon xaritalarini tuzishda Yerning sutkalik aylanishiga bog‘liq bo‘lmagan <span class="hl-sky">Osmon ekvatori</span> tekisligiga asoslangan sistema qo‘llaniladi:</p>
+      <ul>
+        <li><span class="hl-emerald">1. Og‘ish (δ):</span> Osmon ekvatoridan yoritgichgacha og‘ish aylanasi bo‘ylab o‘lchanadigan burchak (<strong>0° dan +90° gacha</strong> — shimoliy yarimsharda; <strong>0° dan -90° gacha</strong> — janubiy yarimsharda).</li>
+        <li><span class="hl-amber">2. To‘g‘ri chiqish (α):</span> Bahorgi tengkunlik nuqtasidan (♈) sharqqa qarab osmon ekvatori bo‘ylab o‘lchanadigan burchak. Soat birligida o‘lchanadi: <strong>0<sup>h</sup> dan 24<sup>h</sup> gacha</strong> (1<sup>h</sup> = 15°, 1<sup>m</sup> = 15', 1<sup>s</sup> = 15'').</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas3" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>To‘g‘ri chiqish (α): <strong id="c3-ra-lbl" style="color:#f59e0b">6.75h (101.3°)</strong></span>
+            </div>
+            <input type="range" id="c3-ra" min="0" max="24" step="0.05" value="6.75">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Og‘ish (δ): <strong id="c3-dec-lbl" style="color:#10b981">-16.7°</strong></span>
+            </div>
+            <input type="range" id="c3-dec" min="-90" max="90" step="0.5" value="-16.7">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="btn-group">
+            <button class="btn" data-star="2.53,89.26,Qutb yulduzi">★ Qutb yulduzi</button>
+            <button class="btn active" data-star="6.75,-16.72,Sirius">★ Sirius</button>
+            <button class="btn" data-star="18.62,38.78,Vega">★ Vega</button>
+            <button class="btn" data-star="4.60,16.51,Aldebaran">★ Aldebaran</button>
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Tanlangan obyekt</span><strong id="c3-star-name" style="color:#38bdf8">Sirius</strong></div>
+          <div class="info-item"><span>To‘g‘ri chiqish (α)</span><strong id="c3-ra-val">6h 45m</strong></div>
+          <div class="info-item"><span>Og‘ish (δ)</span><strong id="c3-dec-val" style="color:#10b981">-16° 43'</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV. QO'SHIMCHA BLOKLAR -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">IV</div>
+      <h2>Taqqoslash jadvali, Konvertor va O‘z-o‘zini tekshirish testi</h2>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--sky); margin-bottom:10px;">1. Koordinatalar sistemalarini taqqoslash jadvali</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Ko‘rsatkichlar</th>
+            <th>Gorizontal sistema (A, h)</th>
+            <th>Ekvatorial sistema (α, δ)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Asosiy tekislik</strong></td>
+            <td>Matematik ufq (gorizont)</td>
+            <td>Osmon ekvatori</td>
+          </tr>
+          <tr>
+            <td><strong>1-koordinata</strong></td>
+            <td>Balandlik (<em>h</em>): -90° dan +90° gacha</td>
+            <td>Og‘ish (<em>δ</em>): -90° dan +90° gacha</td>
+          </tr>
+          <tr>
+            <td><strong>2-koordinata va sanoq boshi</strong></td>
+            <td>Azimut (<em>A</em>): Janub (S) nuqtasidan G‘arb (W) ga 0°–360°</td>
+            <td>To‘g‘ri chiqish (<em>α</em>): Bahorgi tengkunlik (♈) dan Sharqqa 0<sup>h</sup>–24<sup>h</sup></td>
+          </tr>
+          <tr>
+            <td><strong>Sutkalik aylanish ta'siri</strong></td>
+            <td>Har soniyada va joyga qarab o‘zgaradi</td>
+            <td>O‘zgarmaydi (kataloglar uchun qulay)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--amber); margin-bottom:10px;">2. Astronomik Konvertor Kalkulyator</h3>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>Soat birligini (α) Gradusga o‘tkazish (1<sup>h</sup> = 15°)</h4>
+        <div class="input-row">
+          <input type="number" id="in-h" min="0" max="23" value="6" placeholder="Soat (h)">
+          <input type="number" id="in-m" min="0" max="59" value="45" placeholder="Daqiqa (m)">
+        </div>
+        <div class="calc-out" id="out-deg">Natija: 101° 15' (101.25°)</div>
+      </div>
+
+      <div class="calc-card">
+        <h4>Balandlik (h) va Zenit masofasi (z = 90° - h)</h4>
+        <div class="input-row">
+          <input type="number" id="in-alt" min="-90" max="90" value="41" placeholder="Balandlik h (°)">
+        </div>
+        <div class="calc-out" id="out-zen">Zenit masofasi (z): 49°</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--emerald); margin-bottom:12px;">3. Mavzu yuzasidan tezkor test (5 ta savol)</h3>
+    <div id="quiz-container"></div>
+    <div class="score-box" id="quiz-score">Natija: 0 / 5 ta to‘g‘ri javob</div>
+  </section>
+
+</main>
+
+<script>
+// ==================== UMUMIY 3D PROYEKSIYA YORDAMCHISI ====================
+function setupHiDPI(canvas, height) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w: rect.width, h: height };
+}
+
+function attach3DDrag(canvas, state) {
+  let dragging = false, lx = 0, ly = 0;
+  const start = (x, y) => { dragging = true; lx = x; ly = y; };
+  const move = (x, y) => {
+    if (!dragging) return;
+    state.rotY += (x - lx) * 0.008;
+    state.rotX += (y - ly) * 0.008;
+    state.rotX = Math.max(-1.35, Math.min(1.35, state.rotX));
+    lx = x; ly = y;
+  };
+  const end = () => { dragging = false; };
+
+  canvas.addEventListener("mousedown", e => start(e.clientX, e.clientY));
+  window.addEventListener("mousemove", e => move(e.clientX, e.clientY));
+  window.addEventListener("mouseup", end);
+
+  canvas.addEventListener("touchstart", e => {
+    if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive: true});
+  canvas.addEventListener("touchmove", e => {
+    if (e.touches.length === 1) move(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive: true});
+  canvas.addEventListener("touchend", end);
+}
+
+function proj3D(x, y, z, cx, cy, R, rotX, rotY) {
+  const x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+  const z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+  const y2 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+  const z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+  const scale = 3.4 / (3.4 - z2 * 0.55);
+  return { px: cx + x1 * R * scale, py: cy - y2 * R * scale, z: z2 };
+}
+
+function draw3DRing(ctx, cx, cy, R, rotX, rotY, pointFn, color, width = 2, dashed = false) {
+  if (dashed) ctx.setLineDash([4, 4]);
+  for (let i = 0; i < 100; i++) {
+    const a1 = (i / 100) * Math.PI * 2;
+    const a2 = ((i + 1) / 100) * Math.PI * 2;
+    const p1 = pointFn(a1);
+    const p2 = pointFn(a2);
+    const s1 = proj3D(p1.x, p1.y, p1.z, cx, cy, R, rotX, rotY);
+    const s2 = proj3D(p2.x, p2.y, p2.z, cx, cy, R, rotX, rotY);
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = s1.z >= 0 ? width : width * 0.6;
+    ctx.globalAlpha = s1.z >= 0 ? 0.95 : 0.25;
+    ctx.beginPath();
+    ctx.moveTo(s1.px, s1.py);
+    ctx.lineTo(s2.px, s2.py);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.setLineDash([]);
+}
+
+// ==================== 1-SIMULYATSIYA: OSMON SFERASI VA QUTB BALANDLIGI ====================
+(function() {
+  const canvas = document.getElementById("canvas1");
+  const latSlider = document.getElementById("c1-lat");
+  const latLbl = document.getElementById("c1-lat-lbl");
+  const phiOut = document.getElementById("c1-phi");
+  const hpOut = document.getElementById("c1-hp");
+  const presetBtns = document.querySelectorAll("[data-lat]");
+
+  const view = { rotX: 0.32, rotY: -0.65 };
+  attach3DDrag(canvas, view);
+
+  let lat = 41;
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      presetBtns.forEach(b => b.classList.remove("active", "emerald-btn"));
+      btn.classList.add("active", "emerald-btn");
+      lat = parseInt(btn.dataset.lat, 10);
+      latSlider.value = lat;
+    });
+  });
+
+  latSlider.addEventListener("input", () => {
+    lat = parseInt(latSlider.value, 10);
+    presetBtns.forEach(b => b.classList.remove("active", "emerald-btn"));
+  });
+
+  function render() {
+    const city = lat === 41 ? " (Toshkent)" : (lat === 0 ? " (Ekvator)" : (lat === 90 ? " (Qutb)" : ""));
+    latLbl.textContent = `${lat}°${city}`;
+    phiOut.textContent = `${lat}°`;
+    hpOut.textContent = `${lat}°`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 400);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const R = Math.min(w, h) * 0.37;
+    const phiRad = (lat * Math.PI) / 180;
+
+    // Tashqi osmon sferasi
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Matematik ufq (y = 0 tekisligi; N = -z, S = +z, E = +x, W = -x)
+    draw3DRing(ctx, cx, cy, R, view.rotX, view.rotY, a => ({
+      x: Math.cos(a), y: 0, z: Math.sin(a)
+    }), "#38bdf8", 2.4);
+
+    // Osmon meridiani (x = 0 tekisligi: S - Z - N - Z')
+    draw3DRing(ctx, cx, cy, R, view.rotX, view.rotY, a => ({
+      x: 0, y: Math.sin(a), z: Math.cos(a)
+    }), "rgba(148, 163, 184, 0.55)", 1.5, true);
+
+    // Shovul chizig'i (Z - Z')
+    const pZ = proj3D(0, 1.15, 0, cx, cy, R, view.rotX, view.rotY);
+    const pZ2 = proj3D(0, -1.15, 0, cx, cy, R, view.rotX, view.rotY);
+    ctx.strokeStyle = "rgba(248, 250, 252, 0.45)";
+    ctx.beginPath();
+    ctx.moveTo(pZ.px, pZ.py);
+    ctx.lineTo(pZ2.px, pZ2.py);
+    ctx.stroke();
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("Z (Zenit)", pZ.px + 6, pZ.py);
+    ctx.fillText("Z' (Nadir)", pZ2.px + 6, pZ2.py + 6);
+
+    // Olam o'qi (P - P'): Shimoliy qutb P ufqning N nuqtasidan phi burchakka ko'tarilgan
+    const py = Math.sin(phiRad);
+    const pz = -Math.cos(phiRad);
+    const pP = proj3D(0, py * 1.15, pz * 1.15, cx, cy, R, view.rotX, view.rotY);
+    const pP2 = proj3D(0, -py * 1.15, -pz * 1.15, cx, cy, R, view.rotX, view.rotY);
+
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(pP.px, pP.py);
+    ctx.lineTo(pP2.px, pP2.py);
+    ctx.stroke();
+
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText("P (Olam qutbi)", pP.px + 8, pP.py - 4);
+    ctx.fillText("P'", pP2.px + 8, pP2.py + 8);
+
+    // Qutb balandligi yoyi (N dan P gacha yashil yoy)
+    if (lat > 0) {
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let i = 0; i <= 30; i++) {
+        const a = (i / 30) * phiRad;
+        const pt = proj3D(0, Math.sin(a), -Math.cos(a), cx, cy, R, view.rotX, view.rotY);
+        if (i === 0) ctx.moveTo(pt.px, pt.py);
+        else ctx.lineTo(pt.px, pt.py);
+      }
+      ctx.stroke();
+
+      const midA = phiRad / 2;
+      const lblPt = proj3D(0, Math.sin(midA) * 1.12, -Math.cos(midA) * 1.12, cx, cy, R, view.rotX, view.rotY);
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText(`hP = ${lat}°`, lblPt.px + 8, lblPt.py);
+    }
+
+    // Ufq tomonlari (N, S, E, W)
+    const dirs = [
+      { x: 0, z: -1, t: "N (Shimol)" },
+      { x: 0, z: 1, t: "S (Janub)" },
+      { x: 1, z: 0, t: "E" },
+      { x: -1, z: 0, t: "W" }
+    ];
+    dirs.forEach(d => {
+      const pt = proj3D(d.x * 1.06, 0, d.z * 1.06, cx, cy, R, view.rotX, view.rotY);
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText(d.t, pt.px - 10, pt.py + 4);
+    });
+
+    // Markazdagi kuzatuvchi
+    ctx.fillStyle = "#f8fafc";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 2-SIMULYATSIYA: GORIZONTAL SISTEMA (A, h) ====================
+(function() {
+  const canvas = document.getElementById("canvas2");
+  const azSlider = document.getElementById("c2-az");
+  const altSlider = document.getElementById("c2-alt");
+  const playBtn = document.getElementById("c2-play");
+
+  const azLbl = document.getElementById("c2-az-lbl");
+  const altLbl = document.getElementById("c2-alt-lbl");
+  const azVal = document.getElementById("c2-az-val");
+  const altVal = document.getElementById("c2-alt-val");
+  const zenVal = document.getElementById("c2-zen-val");
+  const visVal = document.getElementById("c2-vis-val");
+
+  const view = { rotX: 0.36, rotY: 0.55 };
+  attach3DDrag(canvas, view);
+
+  let A = 45;
+  let h = 35;
+  let playing = false;
+  let hourAngle = 0;
+
+  playBtn.addEventListener("click", () => {
+    playing = !playing;
+    playBtn.classList.toggle("active", playing);
+    playBtn.textContent = playing ? "⏸ To‘xtatish" : "▶ Sutkalik aylanish";
+  });
+
+  azSlider.addEventListener("input", () => {
+    playing = false;
+    playBtn.classList.remove("active");
+    playBtn.textContent = "▶ Sutkalik aylanish";
+    A = parseFloat(azSlider.value);
+  });
+
+  altSlider.addEventListener("input", () => {
+    playing = false;
+    playBtn.classList.remove("active");
+    playBtn.textContent = "▶ Sutkalik aylanish";
+    h = parseFloat(altSlider.value);
+  });
+
+  function render() {
+    if (playing) {
+      // Toshkent kengligi (41°) uchun yulduzning sutkalik harakati (delta = +20°)
+      hourAngle += 0.015;
+      const latR = (41 * Math.PI) / 180;
+      const decR = (20 * Math.PI) / 180;
+      const sinH = Math.sin(latR) * Math.sin(decR) + Math.cos(latR) * Math.cos(decR) * Math.cos(hourAngle);
+      const hRad = Math.asin(Math.max(-1, Math.min(1, sinH)));
+      const cosA = (sinH * Math.sin(latR) - Math.sin(decR)) / (Math.cos(hRad) * Math.cos(latR));
+      let aRad = Math.acos(Math.max(-1, Math.min(1, cosA)));
+      if (Math.sin(hourAngle) < 0) aRad = Math.PI * 2 - aRad;
+
+      A = Math.round((aRad * 180) / Math.PI);
+      h = Math.round((hRad * 180) / Math.PI);
+      azSlider.value = A;
+      altSlider.value = Math.max(-30, h);
+    }
+
+    const dirTxt = A === 0 || A === 360 ? "S" : (A < 90 ? "SW" : (A === 90 ? "W" : (A < 180 ? "NW" : (A === 180 ? "N" : (A < 270 ? "NE" : (A === 270 ? "E" : "SE"))))));
+    azLbl.textContent = `${A}° (${dirTxt})`;
+    altLbl.textContent = `${h >= 0 ? "+" : ""}${h}°`;
+    azVal.textContent = `${A}°`;
+    altVal.textContent = `${h >= 0 ? "+" : ""}${h}°`;
+    zenVal.textContent = `${90 - h}°`;
+    visVal.textContent = h >= 0 ? "Ufq ustida (Ko‘rinadi)" : "Ufq ostida (Ko‘rinmaydi)";
+    visVal.style.color = h >= 0 ? "#10b981" : "#f43f5e";
+
+    const { ctx, w, canvasH } = { ...setupHiDPI(canvas, 410), canvasH: 410 };
+    ctx.clearRect(0, 0, w, canvasH);
+
+    const cx = w / 2, cy = canvasH / 2;
+    const R = Math.min(w, canvasH) * 0.37;
+
+    // Tashqi sfera
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Matematik ufq
+    draw3DRing(ctx, cx, cy, R, view.rotX, view.rotY, a => ({
+      x: Math.cos(a), y: 0, z: Math.sin(a)
+    }), "#38bdf8", 2.2);
+
+    // Zenit (Z)
+    const pZ = proj3D(0, 1.05, 0, cx, cy, R, view.rotX, view.rotY);
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("Z (Zenit)", pZ.px + 6, pZ.py);
+
+    // Ufq nuqtalari: Janub S (z = +1, x = 0), G'arb W (x = -1, z = 0)
+    const dirs = [
+      { x: 0, z: 1, t: "S (0°)" },
+      { x: -1, z: 0, t: "W (90°)" },
+      { x: 0, z: -1, t: "N (180°)" },
+      { x: 1, z: 0, t: "E (270°)" }
+    ];
+    dirs.forEach(d => {
+      const pt = proj3D(d.x * 1.08, 0, d.z * 1.08, cx, cy, R, view.rotX, view.rotY);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "bold 11px sans-serif";
+      ctx.fillText(d.t, pt.px - 14, pt.py + 4);
+    });
+
+    const aRad = (A * Math.PI) / 180;
+    const hRad = (h * Math.PI) / 180;
+
+    // 1. Azimut yoyi (Janub S dan G'arb W tomonga ufq bo'ylab)
+    // S: (0, 0, 1), W: (-1, 0, 0) -> x = -sin(a), z = cos(a)
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let i = 0; i <= 40; i++) {
+      const curA = (i / 40) * aRad;
+      const pt = proj3D(-Math.sin(curA), 0, Math.cos(curA), cx, cy, R, view.rotX, view.rotY);
+      if (i === 0) ctx.moveTo(pt.px, pt.py);
+      else ctx.lineTo(pt.px, pt.py);
+    }
+    ctx.stroke();
+
+    // 2. Vertikal aylana (Z dan ufqdagi A nuqtasi orqali Z' ga)
+    draw3DRing(ctx, cx, cy, R, view.rotX, view.rotY, t => ({
+      x: -Math.sin(aRad) * Math.cos(t),
+      y: Math.sin(t),
+      z: Math.cos(aRad) * Math.cos(t)
+    }), "rgba(148, 163, 184, 0.35)", 1.2, true);
+
+    // 3. Balandlik (h) yoyi (ufqdan yulduzgacha)
+    ctx.strokeStyle = h >= 0 ? "#38bdf8" : "#f43f5e";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let i = 0; i <= 25; i++) {
+      const curH = (i / 25) * hRad;
+      const pt = proj3D(
+        -Math.sin(aRad) * Math.cos(curH),
+        Math.sin(curH),
+        Math.cos(aRad) * Math.cos(curH),
+        cx, cy, R, view.rotX, view.rotY
+      );
+      if (i === 0) ctx.moveTo(pt.px, pt.py);
+      else ctx.lineTo(pt.px, pt.py);
+    }
+    ctx.stroke();
+
+    // Yulduz nuqtasi
+    const sx = -Math.sin(aRad) * Math.cos(hRad);
+    const sy = Math.sin(hRad);
+    const sz = Math.cos(aRad) * Math.cos(hRad);
+    const sPt = proj3D(sx, sy, sz, cx, cy, R, view.rotX, view.rotY);
+
+    ctx.fillStyle = h >= 0 ? "#fbbf24" : "#f43f5e";
+    ctx.beginPath();
+    ctx.arc(sPt.px, sPt.py, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("★ Yoritgich", sPt.px + 10, sPt.py - 4);
+
+    // Legenda
+    ctx.fillStyle = "#f59e0b";
+    ctx.fillText("● Azimut (A)", 16, 24);
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillText("● Balandlik (h)", 16, 44);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 3-SIMULYATSIYA: EKVATORIAL SISTEMA (alpha, delta) ====================
+(function() {
+  const canvas = document.getElementById("canvas3");
+  const raSlider = document.getElementById("c3-ra");
+  const decSlider = document.getElementById("c3-dec");
+  const raLbl = document.getElementById("c3-ra-lbl");
+  const decLbl = document.getElementById("c3-dec-lbl");
+  const starNameOut = document.getElementById("c3-star-name");
+  const raValOut = document.getElementById("c3-ra-val");
+  const decValOut = document.getElementById("c3-dec-val");
+  const starBtns = document.querySelectorAll("[data-star]");
+
+  const view = { rotX: 0.35, rotY: -0.55 };
+  attach3DDrag(canvas, view);
+
+  let ra = 6.75;
+  let dec = -16.72;
+  let starName = "Sirius";
+
+  starBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      starBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const parts = btn.dataset.star.split(",");
+      ra = parseFloat(parts[0]);
+      dec = parseFloat(parts[1]);
+      starName = parts[2];
+      raSlider.value = ra;
+      decSlider.value = dec;
+    });
+  });
+
+  raSlider.addEventListener("input", () => {
+    ra = parseFloat(raSlider.value);
+    starName = "Erkin nuqta";
+    starBtns.forEach(b => b.classList.remove("active"));
+  });
+
+  decSlider.addEventListener("input", () => {
+    dec = parseFloat(decSlider.value);
+    starName = "Erkin nuqta";
+    starBtns.forEach(b => b.classList.remove("active"));
+  });
+
+  function render() {
+    const degRA = (ra * 15).toFixed(1);
+    const hInt = Math.floor(ra);
+    const mInt = Math.round((ra - hInt) * 60);
+
+    const dSign = dec >= 0 ? "+" : "-";
+    const dAbs = Math.abs(dec);
+    const dInt = Math.floor(dAbs);
+    const dMin = Math.round((dAbs - dInt) * 60);
+
+    raLbl.textContent = `${ra.toFixed(2)}h (${degRA}°)`;
+    decLbl.textContent = `${dSign}${dec.toFixed(1)}°`;
+    starNameOut.textContent = starName;
+    raValOut.textContent = `${hInt}h ${String(mInt).padStart(2, "0")}m (${degRA}°)`;
+    decValOut.textContent = `${dSign}${dInt}° ${String(dMin).padStart(2, "0")}'`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const R = Math.min(w, h) * 0.37;
+
+    // Tashqi sfera
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Olam o'qi (P - P')
+    const pP = proj3D(0, 1.12, 0, cx, cy, R, view.rotX, view.rotY);
+    const pP2 = proj3D(0, -1.12, 0, cx, cy, R, view.rotX, view.rotY);
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.45)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pP.px, pP.py);
+    ctx.lineTo(pP2.px, pP2.py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("P (Shimoliy qutb)", pP.px + 6, pP.py);
+    ctx.fillText("P' (Janubiy qutb)", pP2.px + 6, pP2.py + 8);
+
+    // Osmon ekvatori
+    draw3DRing(ctx, cx, cy, R, view.rotX, view.rotY, a => ({
+      x: Math.cos(a), y: 0, z: Math.sin(a)
+    }), "#38bdf8", 2.2);
+
+    // Bahorgi tengkunlik nuqtasi (Upsilon: x = 1, y = 0, z = 0)
+    const pUps = proj3D(1, 0, 0, cx, cy, R, view.rotX, view.rotY);
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath();
+    ctx.arc(pUps.px, pUps.py, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillText("♈ (0h — Bahorgi tengkunlik)", pUps.px + 8, pUps.py + 4);
+
+    // To'g'ri chiqish (alpha) yoyi: Upsilon dan sharqqa (soat miliga teskari: x = cos(a), z = -sin(a))
+    const raRad = (ra * 15 * Math.PI) / 180;
+    const decRad = (dec * Math.PI) / 180;
+
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let i = 0; i <= 50; i++) {
+      const curA = (i / 50) * raRad;
+      const pt = proj3D(Math.cos(curA), 0, -Math.sin(curA), cx, cy, R, view.rotX, view.rotY);
+      if (i === 0) ctx.moveTo(pt.px, pt.py);
+      else ctx.lineTo(pt.px, pt.py);
+    }
+    ctx.stroke();
+
+    // Og'ish aylanasi (P dan yulduz orqali P' ga)
+    draw3DRing(ctx, cx, cy, R, view.rotX, view.rotY, t => ({
+      x: Math.cos(raRad) * Math.cos(t),
+      y: Math.sin(t),
+      z: -Math.sin(raRad) * Math.cos(t)
+    }), "rgba(148, 163, 184, 0.35)", 1.2, true);
+
+    // Og'ish (delta) yoyi (ekvatordan yulduzgacha)
+    ctx.strokeStyle = "#10b981";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let i = 0; i <= 25; i++) {
+      const curD = (i / 25) * decRad;
+      const pt = proj3D(
+        Math.cos(raRad) * Math.cos(curD),
+        Math.sin(curD),
+        -Math.sin(raRad) * Math.cos(curD),
+        cx, cy, R, view.rotX, view.rotY
+      );
+      if (i === 0) ctx.moveTo(pt.px, pt.py);
+      else ctx.lineTo(pt.px, pt.py);
+    }
+    ctx.stroke();
+
+    // Yulduz
+    const sx = Math.cos(raRad) * Math.cos(decRad);
+    const sy = Math.sin(decRad);
+    const sz = -Math.sin(raRad) * Math.cos(decRad);
+    const sPt = proj3D(sx, sy, sz, cx, cy, R, view.rotX, view.rotY);
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.beginPath();
+    ctx.arc(sPt.px, sPt.py, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillText(`★ ${starName}`, sPt.px + 10, sPt.py - 4);
+
+    // Legenda
+    ctx.fillStyle = "#f59e0b";
+    ctx.fillText("● To‘g‘ri chiqish (α)", 16, 24);
+    ctx.fillStyle = "#10b981";
+    ctx.fillText("● Og‘ish (δ)", 16, 44);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== IV. KONVERTOR KALKULYATOR ====================
+(function() {
+  const inH = document.getElementById("in-h");
+  const inM = document.getElementById("in-m");
+  const outDeg = document.getElementById("out-deg");
+
+  const inAlt = document.getElementById("in-alt");
+  const outZen = document.getElementById("out-zen");
+
+  function calcRA() {
+    const h = parseFloat(inH.value) || 0;
+    const m = parseFloat(inM.value) || 0;
+    const totalDeg = (h + m / 60) * 15;
+    const d = Math.floor(totalDeg);
+    const min = Math.round((totalDeg - d) * 60);
+    outDeg.textContent = `Natija: ${d}° ${min}' (${totalDeg.toFixed(2)}°)`;
+  }
+
+  function calcZen() {
+    const alt = parseFloat(inAlt.value) || 0;
+    const z = 90 - alt;
+    outZen.textContent = `Zenit masofasi (z): ${z}°`;
+  }
+
+  inH.addEventListener("input", calcRA);
+  inM.addEventListener("input", calcRA);
+  inAlt.addEventListener("input", calcZen);
+})();
+
+// ==================== IV. O'Z-O'ZINI TEKSHIRISH TESTI ====================
+(function() {
+  const QUESTIONS = [
+    {
+      q: "1. Olamning Shimoliy qutbi (P) ning matematik ufqdan balandligi nimaga teng?",
+      opts: [
+        "Kuzatuvchi turgan joyning geografik uzunligiga (λ)",
+        "Kuzatuvchi turgan joyning geografik kengligiga (φ)",
+        "Doimo 90° ga teng"
+      ],
+      ans: 1,
+      exp: "Qutb balandligi teoremasiga ko‘ra, Olam qutbining ufqdan balandligi joyning geografik kengligiga teng: hP = φ."
+    },
+    {
+      q: "2. Gorizontal koordinatalar sistemasida astronomik azimut (A) qayerdan boshlab hisoblanadi?",
+      opts: [
+        "Shimol nuqtasidan (N) sharqqa qarab",
+        "Bahorgi tengkunlik nuqtasidan (♈)",
+        "Janub nuqtasidan (S) g‘arb (W) tomonga qarab"
+      ],
+      ans: 2,
+      exp: "Astronomiyada azimut Janub nuqtasidan (S = 0°) g‘arb (W = 90°) tomonga qarab 0° dan 360° gacha o‘lchanadi."
+    },
+    {
+      q: "3. Yoritgichning matematik ufqdan balandligi h = +32° bo‘lsa, uning zenit masofasi (z) nimaga teng?",
+      opts: ["58°", "122°", "32°"],
+      ans: 0,
+      exp: "Balandlik va zenit masofasi yig‘indisi 90° ga teng: z = 90° - h = 90° - 32° = 58°."
+    },
+    {
+      q: "4. Ekvatorial koordinatalar sistemasida To‘g‘ri chiqish (α = 4h) gradus hisobida nimaga teng?",
+      opts: ["40°", "60°", "90°"],
+      ans: 1,
+      exp: "Yer 24 soatda 360° ga aylangani uchun 1h = 15° ga teng. Demak, 4h × 15° = 60°."
+    },
+    {
+      q: "5. Nima uchun yulduz kataloglari gorizontal sistemada emas, balki ekvatorial sistemada tuziladi?",
+      opts: [
+        "Chunki osmon ekvatori tekisligi gorizontal tekislikdan kattaroq",
+        "Chunki α va δ koordinatalar Yerning sutkalik aylanishiga va kuzatuvchi joyiga bog‘liq emas",
+        "Chunki gorizontal sistemada manfiy burchaklar yo‘q"
+      ],
+      ans: 1,
+      exp: "Yerning sutkalik aylanishi tufayli yoritgichning A va h koordinatalari tinimsiz o‘zgaradi, α va δ esa o‘zgarmas bo‘lib qoladi."
+    }
+  ];
+
+  const container = document.getElementById("quiz-container");
+  const scoreBox = document.getElementById("quiz-score");
+  let score = 0;
+
+  QUESTIONS.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "quiz-item";
+    div.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-opts"></div><div class="quiz-exp">${item.exp}</div>`;
+    const optsDiv = div.querySelector(".quiz-opts");
+    const expDiv = div.querySelector(".quiz-exp");
+
+    item.opts.forEach((optText, oIdx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const allBtns = optsDiv.querySelectorAll("button");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (oIdx === item.ans) {
+          btn.classList.add("correct");
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          allBtns[item.ans].classList.add("correct");
+        }
+        expDiv.style.display = "block";
+        scoreBox.textContent = `Natija: ${score} / ${QUESTIONS.length} ta to‘g‘ri javob`;
+      });
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
