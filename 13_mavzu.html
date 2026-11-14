@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>13-§. Vaqtni o‘lchashning asoslari | 11-sinf Astronomiya</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-border: #334155;
+      --sky: #38bdf8;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-top {
+      max-width: 980px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sky);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+    .badge {
+      font-size: 0.8rem;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .title-box { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 1.42rem; color: var(--text); font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    section.module {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+    .step-num {
+      background: var(--sky);
+      color: #0b1120;
+      font-weight: 800;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    h2 { font-size: 1.2rem; color: var(--sky); }
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 18px;
+      font-size: 0.94rem;
+    }
+    .theory-box ul { padding-left: 20px; margin-top: 8px; }
+    .theory-box li { margin-bottom: 6px; color: #e2e8f0; }
+    .hl-amber { color: var(--amber); font-weight: 600; }
+    .hl-sky { color: var(--sky); font-weight: 600; }
+    .hl-emerald { color: var(--emerald); font-weight: 600; }
+
+    .formula-card {
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 1.05rem;
+      color: var(--sky);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    /* Simulyator konteyneri */
+    .sim-wrapper {
+      background: #070b14;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .drag-hint {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid #334155;
+      color: var(--muted);
+      font-size: 0.74rem;
+      padding: 4px 9px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+    canvas.grab { cursor: grab; }
+    canvas.grab:active { cursor: grabbing; }
+    .controls {
+      background: #0f172a;
+      padding: 14px 16px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slider-group {
+      flex: 1;
+      min-width: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.btn:hover { border-color: var(--sky); color: var(--sky); }
+    button.btn.active {
+      background: var(--sky);
+      color: #0b1120;
+      border-color: var(--sky);
+    }
+    button.btn.amber-btn.active, button.btn.amber-btn:hover {
+      background: var(--amber);
+      color: #0b1120;
+      border-color: var(--amber);
+    }
+    button.btn.emerald-btn.active, button.btn.emerald-btn:hover {
+      background: var(--emerald);
+      color: #0b1120;
+      border-color: var(--emerald);
+    }
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 0.77rem; }
+    .info-item strong { color: var(--amber); font-size: 0.94rem; }
+
+    /* Kalkulyator */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .calc-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .calc-card h4 { color: var(--amber); margin-bottom: 10px; font-size: 0.95rem; }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .input-row label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .input-row input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .calc-out {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #6ee7b7;
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    /* Test */
+    .quiz-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .quiz-q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--sky); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .quiz-opt.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--rose); color: #fda4af; }
+    .quiz-exp {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sky);
+      display: none;
+    }
+    .score-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.2rem; }
+      section.module { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="back-btn">← Bosh menyuga qaytish</a>
+    <span class="badge">11-Sinf • Astronomiya</span>
+  </div>
+  <div class="title-box">
+    <h1>13-§. Vaqtni o‘lchashning asoslari</h1>
+    <p class="subtitle">Yulduz sutkasi, haqiqiy quyosh sutkasi, o‘rtacha quyosh vaqti va mahalliy vaqt</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- I REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">I</div>
+      <h2>Kirish: Vaqt o‘lchashning astronomik asoslari</h2>
+    </div>
+
+    <div class="theory-box">
+      <p><span class="hl-sky">Vaqt o‘lchashning tabiati:</span> Tabiatdagi davriy jarayonlar — Yerning o‘z o‘qi atrofida aylanishi (sutka), Oyning Yer atrofida aylanishi (oy) va Yerning Quyosh atrofida aylanishi (yil) vaqtni o‘lchashning tabiiy astronomik asoslari hisoblanadi.</p>
+      <ul>
+        <li><strong>Astronomik vaqt:</strong> Mexanik va elektron soatlar koinotdagi tabiat qonunlari — yulduzlar va sayyoralarning sutkalik harakatiga qarab tozalanadi va soflanadi.</li>
+        <li>Osmon sferasining sutkalik aylanishi va vaqtni belgilashda <span class="hl-amber">osmon meridiani</span> va <span class="hl-amber">yulduz vaqti</span> asosiy o‘lchov birliklari sanaladi.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <span class="drag-hint">↻ Sichqoncha/barmoq bilan 3D aylantiring</span>
+      <canvas id="canvas1" class="grab" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group">
+            <button class="btn amber-btn active" id="c1-play">⏸ To‘xtatish</button>
+            <button class="btn" id="c1-fast">⚡ Tezlashtirilgan rejim</button>
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Kuzatuvchi meridiani (λ): <strong id="c1-lon-lbl" style="color:#38bdf8">0° (Grinvich)</strong></span>
+            </div>
+            <input type="range" id="c1-lon" min="0" max="360" value="0">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Yerning aylanish burchagi</span><strong id="c1-ang-out" style="color:#10b981">0.0°</strong></div>
+          <div class="info-item"><span>Astronomik vaqt (S)</span><strong id="c1-time-out" style="color:#38bdf8">0h 00m 00s</strong></div>
+          <div class="info-item"><span>Meridiandan o‘tish holati</span><strong id="c1-status-out" style="color:#f59e0b">Kulminatsiya</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- II REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">II</div>
+      <h2>Yulduz sutkasi va haqiqiy quyosh sutkasi</h2>
+    </div>
+
+    <div class="theory-box">
+      <ul>
+        <li><span class="hl-sky">Yulduz sutkasi (S):</span> Yoritgichning osmon meridianidan ketma-ket ikki marta yuqori kulminatsiyasidan o‘tishi orasidagi vaqt. Yerning yulduzlarga nisbatan to‘la aylanishi bo‘lib, davomiyligi <span class="hl-emerald">23 soat 56 daqiqa 04 soniya</span>.</li>
+        <li><span class="hl-amber">Haqiqiy quyosh sutkasi (S<sub>☉</sub>):</span> Quyosh markazining osmon meridianidan ketma-ket ikki marta o‘tishi orasidagi vaqt (<span class="hl-amber">24 soat</span>).</li>
+        <li><strong>Nima uchun ular farq qiladi?</strong> Yer o‘z o‘qi atrofida aylanar ekan, bir vaqtning o‘zida Quyosh atrofida ham oldinga siljiydi. Shu sababli Quyoshga nisbatan qaytib kelish uchun Yer qo‘shimcha ravishda ~4 daqiqa ko‘proq aylanishi kerak bo‘ladi!</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas2" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group">
+            <button class="btn emerald-btn active" id="c2-play">⏸ Sutkani kuzatish</button>
+            <button class="btn" id="c2-step">⏭ 1 qadam (Orbita siljishi)</button>
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Orbita bo‘ylab siljish tezligi: <strong id="c2-spd-lbl" style="color:#38bdf8">1x</strong></span>
+            </div>
+            <input type="range" id="c2-spd" min="0.5" max="3" step="0.5" value="1">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Yulduz sutkasi</span><strong style="color:#38bdf8">23h 56m 04s</strong></div>
+          <div class="info-item"><span>Quyosh sutkasi</span><strong style="color:#f59e0b">24h 00m 00s</strong></div>
+          <div class="info-item"><span>Farq (Qo‘shimcha aylanish)</span><strong style="color:#10b981">3m 56s (~1% doira)</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">III</div>
+      <h2>O‘rtacha quyosh vaqti va Mahalliy vaqt</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Yer orbitasining elliptikligi va ekvatorga qiyaligi sababli haqiqiy quyosh sutkasi uzunligi yil davomida o‘zgarib turadi. Bu qiyinchilikni bartaraf etish uchun ekvator bo‘ylab bir tekis harakatlanuvchi xayoliy <span class="hl-amber">"o‘rtacha quyosh"</span> vaqti kiritilgan.</p>
+      <div class="formula-card">
+        T<sub>mahalliy</sub> = T<sub>Greenwich</sub> + λ / 15° &nbsp;&nbsp;&nbsp; (Har 15° uzunlik = 1 soat vaqt farqi)
+      </div>
+      <ul>
+        <li><strong>Mahalliy vaqt (T<sub>λ</sub>):</strong> Bir xil meridian ustida yotuvchi barcha punktlar uchun bir xil bo‘lgan vaqt. Sharqqa yurganda vaqt oldinda, g‘arbga yurganda orqada bo‘ladi.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas3" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Geografik uzunlik (λ): <strong id="c3-lon-lbl" style="color:#38bdf8">69.3° Sh.u. (Toshkent)</strong></span>
+            </div>
+            <input type="range" id="c3-lon" min="0" max="360" step="1" value="69.3">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Grinvich vaqti (UTC): <strong id="c3-utc-lbl" style="color:#f59e0b">12:00</strong></span>
+            </div>
+            <input type="range" id="c3-utc" min="0" max="24" step="0.25" value="12">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item" style="grid-column: 1 / -1;">
+            <span>Tanlangan meridianning Mahalliy o‘rtacha vaqti (T<sub>λ</sub>)</span>
+            <strong id="c3-local-out" style="color:#10b981; font-size: 1rem;">16:37 (UTC + 4h 37m)</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV. QO'SHIMCHA BLOKLAR -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">IV</div>
+      <h2>Uzunlik va Vaqt Kalkulyatori va Test</h2>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--amber); margin-bottom:10px;">1. Geografik uzunlik va Vaqt farqi Kalkulyatori</h3>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>Grinvich vaqti bo‘yicha Mahalliy vaqtni topish</h4>
+        <div class="input-row">
+          <label>UTC (soat):</label>
+          <input type="number" id="in-utc" min="0" max="24" step="0.1" value="10">
+          <label>Uzunlik (°):</label>
+          <input type="number" id="in-lon" min="-180" max="360" value="69.3">
+        </div>
+        <div class="calc-out" id="out-calc1"></div>
+      </div>
+
+      <div class="calc-card">
+        <h4>Ikki shahar orasidagi vaqt farqini hisoblash</h4>
+        <div class="input-row">
+          <label>1-shahar λ (°):</label>
+          <input type="number" id="in-lon1" value="0">
+          <label>2-shahar λ (°):</label>
+          <input type="number" id="in-lon2" value="69.3">
+        </div>
+        <div class="calc-out" id="out-calc2"></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--sky); margin-bottom:12px;">2. O‘z-o‘zini tekshirish testi (5 ta savol)</h3>
+    <div id="quiz-container"></div>
+    <div class="score-box" id="quiz-score">Natija: 0 / 5 ta to‘g‘ri javob</div>
+  </section>
+
+</main>
+
+<script>
+function setupHiDPI(canvas, height) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w: rect.width, h: height };
+}
+
+// ==================== 1-SIMULYATSIYA: YERNING 3D O'QI ATROFIDA AYLANISHI ====================
+(function() {
+  const canvas = document.getElementById("canvas1");
+  const playBtn = document.getElementById("c1-play");
+  const fastBtn = document.getElementById("c1-fast");
+  const lonSlider = document.getElementById("c1-lon");
+  const lonLbl = document.getElementById("c1-lon-lbl");
+
+  const angOut = document.getElementById("c1-ang-out");
+  const timeOut = document.getElementById("c1-time-out");
+  const statusOut = document.getElementById("c1-status-out");
+
+  let rotY = 0.5, rotX = 0.35;
+  let dragging = false, lx = 0, ly = 0;
+  canvas.addEventListener("pointerdown", e => { dragging = true; lx = e.clientX; ly = e.clientY; canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    rotY += (e.clientX - lx) * 0.008;
+    rotX = Math.max(-1.1, Math.min(1.1, rotX + (e.clientY - ly) * 0.008));
+    lx = e.clientX; ly = e.clientY;
+  });
+  canvas.addEventListener("pointerup", () => dragging = false);
+
+  let playing = true;
+  let speedMult = 1.0;
+  let earthAngle = 0;
+
+  playBtn.addEventListener("click", () => {
+    playing = !playing;
+    playBtn.classList.toggle("active", playing);
+    playBtn.textContent = playing ? "⏸ To‘xtatish" : "▶ Davom ettirish";
+  });
+
+  fastBtn.addEventListener("click", () => {
+    speedMult = speedMult === 1.0 ? 4.0 : 1.0;
+    fastBtn.classList.toggle("active", speedMult > 1);
+    fastBtn.textContent = speedMult > 1 ? "🐢 Oddiy rejim" : "⚡ Tezlashtirilgan rejim";
+  });
+
+  function render() {
+    if (playing) {
+      earthAngle = (earthAngle + 0.6 * speedMult) % 360;
+    }
+
+    const selLon = parseFloat(lonSlider.value);
+    lonLbl.textContent = `${selLon}°`;
+
+    angOut.textContent = `${earthAngle.toFixed(1)}°`;
+
+    // Vaqtni hisoblash (360° = 24 soat)
+    const totalHours = (earthAngle / 360) * 24;
+    const hh = Math.floor(totalHours);
+    const mm = Math.floor((totalHours - hh) * 60);
+    const ss = Math.floor(((totalHours - hh) * 60 - mm) * 60);
+    timeOut.textContent = `${hh < 10 ? "0" : ""}${hh}h ${mm < 10 ? "0" : ""}${mm}m ${ss < 10 ? "0" : ""}${ss}s`;
+
+    statusOut.textContent = (earthAngle % 360 < 5 || Math.abs((earthAngle % 360) - 360) < 5) ? "⚡ MERIDIAN KESISHISHI!" : "Normal aylanish";
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h * 0.52, R = Math.min(w, h) * 0.38;
+
+    function p3d(x, y, z) {
+      const x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+      const z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+      const y2 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+      const z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+      return { px: cx + x1 * R, py: cy - y2 * R, z: z2 };
+    }
+
+    // Yer sferasi asosi
+    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Meridian tarmoqlari va tanlangan meridian
+    const earthRad = (earthAngle * Math.PI) / 180;
+    for (let m = 0; m < 360; m += 30) {
+      const mRad = (m * Math.PI) / 180 + earthRad;
+      const isSelected = Math.abs(m - selLon) < 2;
+
+      ctx.strokeStyle = isSelected ? "#f59e0b" : "rgba(148, 163, 184, 0.22)";
+      ctx.lineWidth = isSelected ? 3 : 1;
+
+      ctx.beginPath();
+      for (let lat = -90; lat <= 90; lat += 10) {
+        const latRad = (lat * Math.PI) / 180;
+        const x = Math.cos(latRad) * Math.sin(mRad);
+        const y = Math.sin(latRad);
+        const z = Math.cos(latRad) * Math.cos(mRad);
+        const pt = p3d(x, y, z);
+        if (lat === -90) ctx.moveTo(pt.px, pt.py); else ctx.lineTo(pt.px, pt.py);
+      }
+      ctx.stroke();
+    }
+
+    // Ekvator halqasi
+    ctx.strokeStyle = "rgba(16, 185, 129, 0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= 72; i++) {
+      const a = (i / 72) * Math.PI * 2;
+      const pt = p3d(Math.cos(a), 0, Math.sin(a));
+      if (i === 0) ctx.moveTo(pt.px, pt.py); else ctx.lineTo(pt.px, pt.py);
+    }
+    ctx.stroke();
+
+    // Qutb o'qi P - P'
+    const pTop = p3d(0, 1.25, 0);
+    const pBot = p3d(0, -1.25, 0);
+    ctx.strokeStyle = "#f43f5e";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pTop.px, pTop.py);
+    ctx.lineTo(pBot.px, pBot.py);
+    ctx.stroke();
+
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("P (Shimoliy qutb)", pTop.px, pTop.py - 6);
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillText("● Tanlangan meridian (λ)", 14, 24);
+    ctx.fillStyle = "#f59e0b";
+    ctx.fillText("● Astronomik vaqt o‘lchovi", 14, 42);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 2-SIMULYATSIYA: YULDUZ VA QUYOSH SUTKASI FARQLANISHI ====================
+(function() {
+  const canvas = document.getElementById("canvas2");
+  const playBtn = document.getElementById("c2-play");
+  const stepBtn = document.getElementById("c2-step");
+  const spdSlider = document.getElementById("c2-spd");
+  const spdLbl = document.getElementById("c2-spd-lbl");
+
+  let playing = true;
+  let orbitAngle = 0; // Yerning Quyosh atrofida aylanishi
+  let spinAngle = 0;  // Yerning o'z o'qi atrofida aylanishi
+
+  playBtn.addEventListener("click", () => {
+    playing = !playing;
+    playBtn.classList.toggle("active", playing);
+    playBtn.textContent = playing ? "⏸ Sutkani kuzatish" : "▶ Davom ettirish";
+  });
+
+  stepBtn.addEventListener("click", () => {
+    orbitAngle += 0.1;
+    spinAngle += Math.PI * 2 + 0.1;
+  });
+
+  function render() {
+    const spd = parseFloat(spdSlider.value);
+    spdLbl.textContent = `${spd.toFixed(1)}x`;
+
+    if (playing) {
+      orbitAngle = (orbitAngle + 0.008 * spd) % (Math.PI * 2);
+      spinAngle = (spinAngle + 0.05 * spd) % (Math.PI * 2);
+    }
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const R_orb = Math.min(w, h) * 0.34;
+
+    // Markazda Quyosh
+    const sunGrad = ctx.createRadialGradient(cx, cy, 6, cx, cy, 34);
+    sunGrad.addColorStop(0, "#fef08a");
+    sunGrad.addColorStop(0.6, "#f59e0b");
+    sunGrad.addColorStop(1, "rgba(245, 158, 11, 0)");
+    ctx.fillStyle = sunGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 34, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#f59e0b";
+    ctx.fillText("Quyosh (☉)", cx, cy - 42);
+
+    // Yer orbitasi yo'li
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.25)";
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, R_orb, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Yerning orbitadagi o'rni
+    const earthX = cx + Math.cos(orbitAngle) * R_orb;
+    const earthY = cy + Math.sin(orbitAngle) * R_orb;
+    const earthR = 18;
+
+    ctx.fillStyle = "#0284c7";
+    ctx.beginPath();
+    ctx.arc(earthX, earthY, earthR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Yerning o'z o'qi va meridian chizig'i (kuzatuvchi yo'nalishi)
+    ctx.save();
+    ctx.translate(earthX, earthY);
+    ctx.rotate(spinAngle);
+
+    ctx.strokeStyle = "#10b981";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -earthR - 8);
+    ctx.lineTo(0, earthR + 8);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Uzoqdagi yulduz yo'nalishi (yuqoriga parallel chiziqlar)
+    ctx.strokeStyle = "rgba(253, 224, 71, 0.45)";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(earthX, earthY - 45);
+    ctx.lineTo(earthX + 80, earthY - 45);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#fde047";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("★ Uzoq yulduz yo‘nalishi", earthX + 85, earthY - 41);
+
+    // Izohlar
+    ctx.fillStyle = "#e2e8f0";
+    ctx.textAlign = "left";
+    ctx.font = "12px sans-serif";
+    ctx.fillText("• Yulduz sutkasi: Yer yulduzga nisbatan 360° to‘la aylanadi (23h 56m)", 20, 32);
+    ctx.fillText("• Quyosh sutkasi: Orbita siljishi sababli ~4 daqiqa ko‘proq aylanadi (24h 00m)", 20, 52);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 3-SIMULYATSIYA: MERIDIANLAR VA MAHALLIY VAQT ====================
+(function() {
+  const canvas = document.getElementById("canvas3");
+  const lonSlider = document.getElementById("c3-lon");
+  const utcSlider = document.getElementById("c3-utc");
+  const lonLbl = document.getElementById("c3-lon-lbl");
+  const utcLbl = document.getElementById("c3-utc-lbl");
+  const localOut = document.getElementById("c3-local-out");
+
+  [lonSlider, utcSlider].forEach(sl => sl.addEventListener("input", updateCalc));
+
+  function updateCalc() {
+    const lon = parseFloat(lonSlider.value);
+    const utc = parseFloat(utcSlider.value);
+
+    lonLbl.textContent = `${lon.toFixed(1)}° Sh.u.`;
+    const utcHr = Math.floor(utc);
+    const utcMin = Math.round((utc - utcHr) * 60);
+    utcLbl.textContent = `${utcHr < 10 ? "0" : ""}${utcHr}:${utcMin < 10 ? "0" : ""}${utcMin}`;
+
+    // Mahalliy vaqt formula: T_local = UTC + lon / 15
+    const diffHours = lon / 15;
+    let localTime = utc + diffHours;
+    localTime = (localTime + 24) % 24;
+
+    const lhh = Math.floor(localTime);
+    const lmm = Math.round((localTime - lhh) * 60);
+    const sign = diffHours >= 0 ? "+" : "";
+
+    localOut.textContent = `${lhh < 10 ? "0" : ""}${lhh}:${lmm < 10 ? "0" : ""}${lmm} (UTC ${sign}${diffHours.toFixed(2)}h)`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.38;
+
+    // Yer sharining yuqoridan ekvatorial kesimi
+    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Grinvich meridiani (0°) va tanlangan meridian (lon)
+    const greenAngle = -Math.PI / 2;
+    const lonAngle = -Math.PI / 2 + (lon * Math.PI) / 180;
+
+    // Grinvich chizig'i
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.5)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(greenAngle) * R, cy + Math.sin(greenAngle) * R);
+    ctx.stroke();
+
+    // Tanlangan meridian chizig'i
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(lonAngle) * R, cy + Math.sin(lonAngle) * R);
+    ctx.stroke();
+
+    // Quyosh nuri yo'nalishi (Grinvichga tushganda)
+    ctx.strokeStyle = "rgba(253, 224, 71, 0.6)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx - R * 1.3, cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#fde047";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("Quyosh nurlari ☉", cx - R * 0.7, cy - 10);
+
+    // Belgilar
+    ctx.fillStyle = "#f8fafc";
+    ctx.textAlign = "center";
+    ctx.fillText("0° (Grinvich)", cx + Math.cos(greenAngle) * (R + 20), cy + Math.sin(greenAngle) * (R + 20));
+    ctx.fillStyle = "#f59e0b";
+    ctx.fillText(`λ = ${lon.toFixed(1)}°`, cx + Math.cos(lonAngle) * (R + 24), cy + Math.sin(lonAngle) * (R + 24));
+  }
+  updateCalc();
+})();
+
+// ==================== IV. KALKULYATORLAR ====================
+(function() {
+  const inUtc = document.getElementById("in-utc");
+  const inLon = document.getElementById("in-lon");
+  const out1 = document.getElementById("out-calc1");
+
+  const inLon1 = document.getElementById("in-lon1");
+  const inLon2 = document.getElementById("in-lon2");
+  const out2 = document.getElementById("out-calc2");
+
+  function calc1() {
+    const utc = parseFloat(inUtc.value) || 0;
+    const lon = parseFloat(inLon.value) || 0;
+    let local = utc + lon / 15;
+    local = (local + 24) % 24;
+    const hh = Math.floor(local);
+    const mm = Math.round((local - hh) * 60);
+    out1.innerHTML = `Mahalliy vaqt: <strong>${hh < 10 ? "0" : ""}${hh}:${mm < 10 ? "0" : ""}${mm}</strong> (UTC + ${(lon / 15).toFixed(2)} soat)`;
+  }
+
+  function calc2() {
+    const l1 = parseFloat(inLon1.value) || 0;
+    const l2 = parseFloat(inLon2.value) || 0;
+    const diffDeg = Math.abs(l1 - l2);
+    const diffHours = diffDeg / 15;
+    out2.innerHTML = `Uzunlik farqi: <strong>${diffDeg.toFixed(1)}°</strong><br>` +
+      `Vaqt farqi: <strong>${diffHours.toFixed(2)} soat</strong> (${Math.floor(diffHours)} soat ${Math.round((diffHours - Math.floor(diffHours))*60)} daqiqa)`;
+  }
+
+  inUtc.addEventListener("input", calc1);
+  inLon.addEventListener("input", calc1);
+  inLon1.addEventListener("input", calc2);
+  inLon2.addEventListener("input", calc2);
+  calc1();
+  calc2();
+})();
+
+// ==================== IV. O'Z-O'ZINI TEKSHIRISH TESTI ====================
+(function() {
+  const QUESTIONS = [
+    {
+      q: "1. Yulduz sutkasi (S) qancha davom etadi?",
+      opts: ["24 soat 00 daqiqa 00 soniya", "23 soat 56 daqiqa 04 soniya", "12 soat 26 daqiqa"],
+      ans: 1,
+      exp: "Yulduz sutkasi Yerning yulduzlarga nisbatan to‘la aylanishi bo‘lib, roppa-rosa 23h 56m 04s davom etadi."
+    },
+    {
+      q: "2. Nima uchun haqiqiy quyosh sutkasi yulduz sutkasidan taxminan 4 daqiqaga uzun?",
+      opts: [
+        "Yer o‘z o‘qi atrofida sekinroq aylanadi",
+        "Yer o‘z o‘qi atrofida aylanar ekan, bir vaqtning o‘zida Quyosh atrofida ham oldinga siljiydi",
+        "Atmosfera refraksiyasi tufayli"
+      ],
+      ans: 1,
+      exp: "Yer orbitada siljigani uchun Quyoshga nisbatan qaytib kelish uchun qo‘shimcha ~4 daqiqa aylanishi kerak bo‘ladi."
+    },
+    {
+      q: "3. Geografik uzunlikdagi har 15° farq vaqt bo‘yicha qancha farqni keltirib chiqaradi?",
+      opts: ["1 daqiqa", "1 soat", "15 soat"],
+      ans: 1,
+      exp: "Yer 24 soatda 360° aylanadi: 360° / 24 = 15° / soat. Demak, har 15° uzunlik 1 soat vaqt farqini beradi."
+    },
+    {
+      q: "4. Toshkent shahri sharqiy uzunlikda λ = 69.3° da joylashgan. Uning Grinvichga nisbatan vaqt farqi taxminan qancha?",
+      opts: ["+4 soat 37 daqiqa", "-2 soat", "+6 soat"],
+      ans: 0,
+      exp: "69.3° / 15° = 4.62 soat, ya'ni 4 soat 37 daqiqa oldinda."
+    },
+    {
+      q: "5. Haqiqiy quyosh vaqtining yil davomida notekis o‘zgarishini bartaraf etish uchun qanday xayoliy tushuncha kiritilgan?",
+      opts: ["O‘rtacha quyosh", "Mutlaq vaqt", "Yulduz meridiani"],
+      ans: 0,
+      exp: "Ekvator bo‘ylab bir tekis harakatlanuvchi xayoliy 'o‘rtacha quyosh' vaqti barcha mexanik va elektron soatlar uchun asos qilib olingan."
+    }
+  ];
+
+  const container = document.getElementById("quiz-container");
+  const scoreBox = document.getElementById("quiz-score");
+  let score = 0;
+
+  QUESTIONS.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "quiz-item";
+    div.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-opts"></div><div class="quiz-exp">${item.exp}</div>`;
+    const optsDiv = div.querySelector(".quiz-opts");
+    const expDiv = div.querySelector(".quiz-exp");
+
+    item.opts.forEach((optText, oIdx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const allBtns = optsDiv.querySelectorAll("button");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (oIdx === item.ans) {
+          btn.classList.add("correct");
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          allBtns[item.ans].classList.add("correct");
+        }
+        expDiv.style.display = "block";
+        scoreBox.textContent = `Natija: ${score} / ${QUESTIONS.length} ta to‘g‘ri javob`;
+      });
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
