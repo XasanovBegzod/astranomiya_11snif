@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12-§. Astronomik kuzatishlar asosida joyning geografik kenglamasini aniqlash | 11-sinf Astronomiya</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-border: #334155;
+      --sky: #38bdf8;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-top {
+      max-width: 980px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sky);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+    .badge {
+      font-size: 0.8rem;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .title-box { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 1.42rem; color: var(--text); font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    section.module {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+    .step-num {
+      background: var(--sky);
+      color: #0b1120;
+      font-weight: 800;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    h2 { font-size: 1.2rem; color: var(--sky); }
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 18px;
+      font-size: 0.94rem;
+    }
+    .theory-box ul { padding-left: 20px; margin-top: 8px; }
+    .theory-box li { margin-bottom: 6px; color: #e2e8f0; }
+    .hl-amber { color: var(--amber); font-weight: 600; }
+    .hl-sky { color: var(--sky); font-weight: 600; }
+    .hl-emerald { color: var(--emerald); font-weight: 600; }
+
+    .formula-card {
+      background: #0f172a;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 1.08rem;
+      color: var(--emerald);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    /* Simulyator konteyneri */
+    .sim-wrapper {
+      background: #070b14;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+    .controls {
+      background: #0f172a;
+      padding: 14px 16px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slider-group {
+      flex: 1;
+      min-width: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.btn:hover { border-color: var(--sky); color: var(--sky); }
+    button.btn.active {
+      background: var(--sky);
+      color: #0b1120;
+      border-color: var(--sky);
+    }
+    button.btn.amber-btn.active, button.btn.amber-btn:hover {
+      background: var(--amber);
+      color: #0b1120;
+      border-color: var(--amber);
+    }
+    button.btn.emerald-btn.active, button.btn.emerald-btn:hover {
+      background: var(--emerald);
+      color: #0b1120;
+      border-color: var(--emerald);
+    }
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 0.77rem; }
+    .info-item strong { color: var(--amber); font-size: 0.94rem; }
+
+    /* Taqqoslash jadvali va Kalkulyator */
+    .table-wrap { overflow-x: auto; margin-bottom: 22px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.87rem;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    th {
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--sky);
+      font-weight: 700;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .calc-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .calc-card h4 { color: var(--amber); margin-bottom: 10px; font-size: 0.95rem; }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .input-row label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .input-row input, .input-row select {
+      flex: 1;
+      min-width: 75px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+    }
+    .calc-out {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #6ee7b7;
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    /* Test */
+    .quiz-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .quiz-q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--sky); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .quiz-opt.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--rose); color: #fda4af; }
+    .quiz-exp {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sky);
+      display: none;
+    }
+    .score-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.2rem; }
+      section.module { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="back-btn">← Bosh menyuga qaytish</a>
+    <span class="badge">11-Sinf • Astronomiya</span>
+  </div>
+  <div class="title-box">
+    <h1>12-§. Astronomik kuzatishlar asosida joyning geografik kenglamasini taxminiy aniqlash</h1>
+    <p class="subtitle">Sekstant, Qutb yulduzi balandligi (φ ≈ h) va tushki Quyosh kulminatsiyasi usullari</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- I REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">I</div>
+      <h2>Kirish: Geografik kenglikni aniqlashning amaliy va tarixiy ahamiyati</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Sun'iy yo‘ldosh navigatsiyasi (GPS) yaratilmasidan asrlar avval dengizchilar va karvonlar ochiq okean hamda sahrolarda o‘zlarining <span class="hl-sky">geografik kengligini (φ)</span> osmon yoritgichlarining ufqdan balandligini o‘lchab aniqlaganlar.</p>
+      <ul>
+        <li><strong>Qadimgi astronomik o‘lchov asboblari:</strong> <span class="hl-amber">Gnomon</span> (tik tayoqcha), <span class="hl-amber">Astrolabiya</span>, <span class="hl-amber">Kvadrant</span> va dengiz <span class="hl-amber">Sekstanti</span> (ikki ko‘zgu yordamida yulduz tasvirini ufq chizig‘i bilan ustma-ust tushirib burchakni o‘lchovchi asbob).</li>
+        <li><strong>O‘rta Osiyo astronomiya maktabi:</strong> Ahmad al-Farg‘oniy, Abu Rayhon Beruniy va Mirzo Ulug‘bek rasadxonasida yoritgichlar kulminatsiyasini kuzatib, shaharlar kengligi yuksak aniqlikda o‘lchangan.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas1" height="390"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Kemaning haqiqiy kengligi (φ): <strong id="c1-lat-lbl" style="color:#38bdf8">36° sh.k.</strong></span>
+            </div>
+            <input type="range" id="c1-lat" min="5" max="70" value="36">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Sekstant alidadasi (burchak o‘lchash): <strong id="c1-alid-lbl" style="color:#f59e0b">20°</strong></span>
+            </div>
+            <input type="range" id="c1-alid" min="0" max="75" step="0.5" value="20">
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="btn-group">
+            <button class="btn emerald-btn" id="c1-auto-align">🎯 Ufqqa aniq tushirish</button>
+            <button class="btn amber-btn active" id="c1-wave">🌊 To‘lqin chayqalishi: Yoqilgan</button>
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Sekstant shkalasi ko‘rsatkichi</span><strong id="c1-read-out" style="color:#f59e0b">20.0°</strong></div>
+          <div class="info-item"><span>Ko‘zgu tasviri holati</span><strong id="c1-align-out" style="color:#f43f5e">Yulduz ufqdan yuqorida!</strong></div>
+          <div class="info-item"><span>Aniqlangan kenglik</span><strong id="c1-res-out" style="color:#38bdf8">Alidadani suring...</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- II REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">II</div>
+      <h2>1-Usul: Qutb yulduzi balandligi orqali aniqlash (φ ≈ h<sub>Qutb</sub>)</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Olamning Shimoliy qutbi (<strong>P</strong>) yaqinida joylashgan <span class="hl-sky">Qutb yulduzi</span> (Kichik Ayiq α — Polyaris) ning ufqdan balandligini o‘lchab, joyning geografik kengligini taxminan topish mumkin: <strong>φ ≈ h<sub>Qutb</sub></strong>.</p>
+      <ul>
+        <li><strong>Osmon xaritasidan topish:</strong> Katta Ayiq "cho‘michi"ning chetki ikki yulduzi (<strong>Merak</strong> va <strong>Dubhe</strong>) orasidagi masofani <strong>5 marta</strong> davom ettirib, Qutb yulduzi topiladi.</li>
+        <li><span class="hl-amber">Nima uchun "taxminiy" deyiladi?</span> Qutb yulduzi Olam qutbi (<em>P</em>) bilan aniq ustma-ust tushmaydi — u qutb atrofida <strong>0° 40' (≈ 0.66°)</strong> radiusli kichik aylana chizadi. Shu sababli tuzatma kiritilmasa, <strong>±0.7°</strong> (≈ ±75 km) gacha xatolik berishi mumkin.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas2" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Kuzatuvchi kengligi (φ): <strong id="c2-phi-lbl" style="color:#38bdf8">41.3° (Toshkent)</strong></span>
+            </div>
+            <input type="range" id="c2-phi" min="15" max="75" step="0.1" value="41.3">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Sutkalik vaqt: <strong id="c2-time-lbl" style="color:#f59e0b">00:00</strong></span>
+            </div>
+            <input type="range" id="c2-time" min="0" max="24" step="0.2" value="0">
+          </div>
+          <div class="btn-group">
+            <button class="btn amber-btn active" id="c2-play">⏸ To‘xtatish</button>
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Haqiqiy kenglik (φ)</span><strong id="c2-true-out" style="color:#38bdf8">41.30°</strong></div>
+          <div class="info-item"><span>Qutb yulduzi balandligi (h<sub>Qutb</sub>)</span><strong id="c2-pol-out" style="color:#10b981">41.96°</strong></div>
+          <div class="info-item"><span>Qutbdan og‘ish xatoligi (Δφ)</span><strong id="c2-err-out" style="color:#f59e0b">+0.66° (≈ +73 km)</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">III</div>
+      <h2>2-Usul: Quyoshning tush paytidagi kulminatsiyasi yordamida aniqlash</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Kunduzi yulduzlar ko‘rinmaganda yoki Janubiy yarimsharda geografik kenglik <span class="hl-amber">Quyoshning tush paytidagi (yuqori kulminatsiyadagi) balandligi (h<sub>☉</sub>)</span> orqali aniqlanadi.</p>
+      <div class="formula-card">
+        Tengkunlikda (δ<sub>☉</sub> = 0°): &nbsp; φ = 90° − h<sub>☉</sub> &nbsp;&nbsp;|&nbsp;&nbsp; Istalgan kunda: &nbsp; φ = 90° − h<sub>☉</sub> + δ<sub>☉</sub>
+      </div>
+      <ul>
+        <li><strong>Gnomon usuli:</strong> Uzunligi <strong>L</strong> bo‘lgan tik tayoqcha (gnomon) ning tush paytidagi eng qisqa soyasi (<strong>l<sub>min</sub></strong>) o‘lchanadi: <strong>tg h<sub>☉</sub> = L / l<sub>min</sub></strong>.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas3" height="390"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group" id="c3-date-btns">
+            <button class="btn active" data-dec="0" data-name="21-Mart (Tengkunlik)">21-Mart (δ = 0°)</button>
+            <button class="btn amber-btn" data-dec="23.44" data-name="22-Iyun (Yozgi turish)">22-Iyun (δ = +23.4°)</button>
+            <button class="btn" data-dec="0" data-name="23-Sentabr (Tengkunlik)">23-Sentabr (δ = 0°)</button>
+            <button class="btn" data-dec="-23.44" data-name="22-Dekabr (Qishki turish)">22-Dekabr (δ = −23.4°)</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Joyning kengligi (φ): <strong id="c3-phi-lbl" style="color:#38bdf8">41° (Toshkent)</strong></span>
+            </div>
+            <input type="range" id="c3-phi" min="0" max="65" value="41">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Quyosh og‘ishi (δ<sub>☉</sub>): <strong id="c3-dec-lbl" style="color:#f59e0b">0.0°</strong></span>
+            </div>
+            <input type="range" id="c3-dec" min="-23.44" max="23.44" step="0.2" value="0">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Tushki Quyosh balandligi (h<sub>☉</sub>)</span><strong id="c3-hsun-out" style="color:#f59e0b">49.0°</strong></div>
+          <div class="info-item"><span>Gnomon soyasi (L = 1.00 m)</span><strong id="c3-shad-out" style="color:#38bdf8">l = 0.87 m</strong></div>
+          <div class="info-item"><span>Formula: φ = 90° − h<sub>☉</sub> + δ<sub>☉</sub></span><strong id="c3-phi-out" style="color:#10b981">φ = 41.0° sh.k.</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV. QO'SHIMCHA BLOKLAR -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">IV</div>
+      <h2>Usullarni taqqoslash, Amaliy kalkulyator va Test</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mezon</th>
+            <th>1-Usul: Qutb yulduzi (φ ≈ h<sub>Qutb</sub>)</th>
+            <th>2-Usul: Tushki Quyosh (φ = 90° − h<sub>☉</sub> + δ<sub>☉</sub>)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Kuzatuv vaqti</strong></td>
+            <td>Faqat kechasi (bulutsiz tunda)</td>
+            <td>Kunduzi (mahalliy tush paytida)</td>
+          </tr>
+          <tr>
+            <td><strong>Qo‘llanish hududi</strong></td>
+            <td>Faqat Shimoliy yarimsharda (0° &lt; φ ≤ 90°)</td>
+            <td>Yer sharining har ikkala yarimsharida</td>
+          </tr>
+          <tr>
+            <td><strong>Qo‘shimcha ma'lumot</strong></td>
+            <td>Qo‘shimcha jadval shart emas (taxminiy ±0.7°)</td>
+            <td>Astronomik taqvimdan Quyosh og‘ishi (δ<sub>☉</sub>) kerak</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--amber); margin-bottom:10px;">1. Ikki Usul Bo‘yicha Amaliy Kenglik Kalkulyatori</h3>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>Kechasi: Qutb yulduzi balandligi bo‘yicha</h4>
+        <div class="input-row">
+          <label>O‘lchangan h (°):</label>
+          <input type="number" id="in-pol-h" min="0" max="90" step="0.1" value="41.5">
+        </div>
+        <div class="input-row">
+          <label>Holati:</label>
+          <select id="in-pol-pos">
+            <option value="0">O‘rtacha (tuzatmasiz)</option>
+            <option value="-0.66">Qutbdan yuqorida (yuqori kulm.)</option>
+            <option value="0.66">Qutbdan pastda (quyi kulm.)</option>
+          </select>
+        </div>
+        <div class="calc-out" id="out-pol-calc"></div>
+      </div>
+
+      <div class="calc-card">
+        <h4>Kunduzi: Gnomon soyasi bo‘yicha (L va l)</h4>
+        <div class="input-row">
+          <label>Gnomon L (m):</label>
+          <input type="number" id="in-gn-L" min="0.1" step="0.1" value="1.0">
+          <label>Soya l (m):</label>
+          <input type="number" id="in-gn-l" min="0.01" step="0.05" value="0.87">
+        </div>
+        <div class="input-row">
+          <label>Quyosh δ<sub>☉</sub> (°):</label>
+          <input type="number" id="in-gn-dec" min="-23.5" max="23.5" step="0.5" value="0">
+        </div>
+        <div class="calc-out" id="out-gn-calc"></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--sky); margin-bottom:12px;">2. O‘z-o‘zini tekshirish testi (5 ta savol)</h3>
+    <div id="quiz-container"></div>
+    <div class="score-box" id="quiz-score">Natija: 0 / 5 ta to‘g‘ri javob</div>
+  </section>
+
+</main>
+
+<script>
+function setupHiDPI(canvas, height) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w: rect.width, h: height };
+}
+
+// ==================== 1-SIMULYATSIYA: DENGIZCHI SEKSTANTI ====================
+(function() {
+  const canvas = document.getElementById("canvas1");
+  const latSlider = document.getElementById("c1-lat");
+  const alidSlider = document.getElementById("c1-alid");
+  const latLbl = document.getElementById("c1-lat-lbl");
+  const alidLbl = document.getElementById("c1-alid-lbl");
+  const autoBtn = document.getElementById("c1-auto-align");
+  const waveBtn = document.getElementById("c1-wave");
+
+  const readOut = document.getElementById("c1-read-out");
+  const alignOut = document.getElementById("c1-align-out");
+  const resOut = document.getElementById("c1-res-out");
+
+  let waveOn = true;
+  let phase = 0;
+
+  autoBtn.addEventListener("click", () => {
+    alidSlider.value = latSlider.value;
+  });
+
+  waveBtn.addEventListener("click", () => {
+    waveOn = !waveOn;
+    waveBtn.classList.toggle("active", waveOn);
+    waveBtn.textContent = waveOn ? "🌊 To‘lqin chayqalishi: Yoqilgan" : "🌊 To‘lqin chayqalishi: O‘chirilgan";
+  });
+
+  function render() {
+    if (waveOn) phase += 0.04;
+    const waveAng = waveOn ? Math.sin(phase) * 0.06 : 0;
+
+    const trueLat = parseFloat(latSlider.value);
+    const alidAng = parseFloat(alidSlider.value);
+
+    latLbl.textContent = `${trueLat.toFixed(1)}° sh.k.`;
+    alidLbl.textContent = `${alidAng.toFixed(1)}°`;
+    readOut.textContent = `${alidAng.toFixed(1)}°`;
+
+    const diff = trueLat - alidAng;
+    if (Math.abs(diff) <= 0.6) {
+      alignOut.textContent = "✅ Yulduz ufq chizig‘iga aniq tushdi!";
+      alignOut.style.color = "#10b981";
+      resOut.textContent = `φ ≈ ${alidAng.toFixed(1)}° sh.k. (Aniq o‘lchandi!)`;
+      resOut.style.color = "#10b981";
+    } else if (diff > 0) {
+      alignOut.textContent = "⬆ Yulduz tasviri ufqdan yuqorida";
+      alignOut.style.color = "#f59e0b";
+      resOut.textContent = "Alidadani kattalashtiring →";
+      resOut.style.color = "#94a3b8";
+    } else {
+      alignOut.textContent = "⬇ Yulduz tasviri ufqdan pastda";
+      alignOut.style.color = "#f43f5e";
+      resOut.textContent = "← Alidadani kichraytiring";
+      resOut.style.color = "#94a3b8";
+    }
+
+    const { ctx, w, h } = setupHiDPI(canvas, 390);
+    ctx.clearRect(0, 0, w, h);
+
+    // Chap yarmi: Kema va Sekstant sxemasi; O'ng yarmi: Sekstant ko'rish trubasi (Okulyar)
+    const splitX = w * 0.56;
+
+    // --- CHAP QISM: DENGIZ VA SEKSTANT ---
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, splitX, h);
+    ctx.clip();
+
+    const seaY = h * 0.72;
+    // Dengiz to'lqinlari
+    ctx.fillStyle = "rgba(2, 132, 199, 0.25)";
+    ctx.fillRect(0, seaY, splitX, h - seaY);
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, seaY);
+    ctx.lineTo(splitX, seaY);
+    ctx.stroke();
+
+    // Qutb yulduzi yuqori o'ngda
+    const starX = splitX - 45;
+    const starY = seaY - Math.tan((trueLat * Math.PI) / 180) * (splitX - 130) * 0.45;
+    const clampedStarY = Math.max(35, starY);
+
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(starX, clampedStarY, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "bold 11px sans-serif";
+    ctx.fillText("★ Qutb yulduzi", starX - 40, clampedStarY - 12);
+
+    // Chayqalayotgan kema va Sekstant markazi
+    const pivotX = 95;
+    const pivotY = seaY - 38 + Math.sin(phase * 1.3) * (waveOn ? 5 : 0);
+
+    ctx.save();
+    ctx.translate(pivotX, pivotY);
+    ctx.rotate(waveAng);
+
+    // Sekstant yoyi (60 graduslik sektor)
+    const secR = 115;
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(0, 0, secR, -0.35, 0.65);
+    ctx.stroke();
+
+    // Sekstant ramasi
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(-0.35) * secR, Math.sin(-0.35) * secR);
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(0.65) * secR, Math.sin(0.65) * secR);
+    ctx.stroke();
+
+    // Harakatlanuvchi alidada dastagi
+    const alidRad = -0.35 + (alidAng / 75) * 1.0;
+    ctx.strokeStyle = "#10b981";
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(alidRad) * (secR + 8), Math.sin(alidRad) * (secR + 8));
+    ctx.stroke();
+
+    // Ko'zgu
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillRect(-5, -10, 10, 20);
+    ctx.restore();
+
+    // Yulduzdan va ufqdan kelayotgan nurlar
+    ctx.strokeStyle = "rgba(253, 224, 71, 0.45)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(starX, clampedStarY);
+    ctx.lineTo(pivotX, pivotY);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+    ctx.beginPath();
+    ctx.moveTo(splitX, seaY);
+    ctx.lineTo(pivotX, pivotY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "11px sans-serif";
+    ctx.fillText("Sekstant shkalasi", 24, 24);
+    ctx.restore();
+
+    // Ajratuvchi chiziq
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(splitX, 0);
+    ctx.lineTo(splitX, h);
+    ctx.stroke();
+
+    // --- O'NG QISM: OKULYAR KO'RINISHI (UFQ VA YULDUZ TASVIRI) ---
+    const eyeX = splitX + (w - splitX) / 2;
+    const eyeY = h * 0.5;
+    const eyeR = Math.min((w - splitX) * 0.42, h * 0.36);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Okulyar ichida ufq chizig'i (to'lqin bilan birga tebranadi)
+    ctx.translate(eyeX, eyeY);
+    ctx.rotate(waveAng * 1.4);
+
+    // Osmon va dengiz foni
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(-eyeR, -eyeR, eyeR * 2, eyeR);
+    ctx.fillStyle = "#0369a1";
+    ctx.fillRect(-eyeR, 0, eyeR * 2, eyeR);
+
+    // Ufq chizig'i
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(-eyeR, 0);
+    ctx.lineTo(eyeR, 0);
+    ctx.stroke();
+
+    // Ko'zguda aks etgan yulduz tasviri (diff = 0 bo'lganda ufq chizig'ida turadi!)
+    const starOffsetY = -diff * 2.4;
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(0, starOffsetY, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Okulyar halqasi
+    ctx.strokeStyle = Math.abs(diff) <= 0.6 ? "#10b981" : "#f59e0b";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Okulyar ko‘rinishi", eyeX, eyeY - eyeR - 10);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "10px sans-serif";
+    ctx.fillText("Yulduzni ufqqa tushiring", eyeX, eyeY + eyeR + 16);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 2-SIMULYATSIYA: KATTA AYIQ VA QUTB YULDUZI TUZATMASI ====================
+(function() {
+  const canvas = document.getElementById("canvas2");
+  const phiSlider = document.getElementById("c2-phi");
+  const timeSlider = document.getElementById("c2-time");
+  const phiLbl = document.getElementById("c2-phi-lbl");
+  const timeLbl = document.getElementById("c2-time-lbl");
+  const playBtn = document.getElementById("c2-play");
+
+  const trueOut = document.getElementById("c2-true-out");
+  const polOut = document.getElementById("c2-pol-out");
+  const errOut = document.getElementById("c2-err-out");
+
+  let playing = true;
+  playBtn.addEventListener("click", () => {
+    playing = !playing;
+    playBtn.classList.toggle("active", playing);
+    playBtn.textContent = playing ? "⏸ To‘xtatish" : "▶ Davom ettirish";
+  });
+
+  // Katta Ayiq (7 ta yulduz) nisbiy koordinatalari (Qutb P atrofida)
+  const BIG_DIPPER = [
+    { x: -115, y: 30 },  // Alkaid
+    { x: -95, y: 12 },   // Mizar
+    { x: -75, y: 8 },    // Alioth
+    { x: -55, y: 15 },   // Megrez
+    { x: -52, y: 42 },   // Phecda
+    { x: -24, y: 46 },   // Merak
+    { x: -20, y: 16 }    // Dubhe (Qutbga ko'rsatuvchi)
+  ];
+
+  function render() {
+    if (playing) {
+      let t = parseFloat(timeSlider.value) + 0.04;
+      if (t >= 24) t -= 24;
+      timeSlider.value = t.toFixed(2);
+    }
+
+    const phi = parseFloat(phiSlider.value);
+    const hrs = parseFloat(timeSlider.value);
+    const angle = (hrs / 24) * Math.PI * 2;
+
+    const hh = Math.floor(hrs);
+    const mm = Math.floor((hrs - hh) * 60);
+    phiLbl.textContent = `${phi.toFixed(1)}° ${Math.abs(phi - 41.3) < 0.2 ? "(Toshkent)" : ""}`;
+    timeLbl.textContent = `${hh < 10 ? "0" : ""}${hh}:${mm < 10 ? "0" : ""}${mm}`;
+
+    // Qutb yulduzining Olam qutbidan 0.66° og'ishi
+    const deltaErr = 0.66 * Math.cos(angle);
+    const polAlt = phi + deltaErr;
+
+    trueOut.textContent = `${phi.toFixed(2)}°`;
+    polOut.textContent = `${polAlt.toFixed(2)}°`;
+    const kmErr = Math.round(deltaErr * 111.1);
+    errOut.textContent = `${deltaErr >= 0 ? "+" : ""}${deltaErr.toFixed(2)}° (≈ ${kmErr >= 0 ? "+" : ""}${kmErr} km)`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const horY = h - 42;
+    // Shimoliy ufq chizig'i
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.fillRect(0, horY, w, 42);
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, horY);
+    ctx.lineTo(w, horY);
+    ctx.stroke();
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("N (Shimoliy ufq, h = 0°)", w * 0.42, horY + 24);
+
+    // Chap tarafda balandlik transportir shkalasi
+    const scaleX = 44;
+    const pxPerDeg = (horY - 35) / 80;
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(scaleX, horY);
+    ctx.lineTo(scaleX, 25);
+    ctx.stroke();
+
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "right";
+    for (let d = 0; d <= 75; d += 15) {
+      const sy = horY - d * pxPerDeg;
+      ctx.beginPath();
+      ctx.moveTo(scaleX - 5, sy);
+      ctx.lineTo(scaleX + 5, sy);
+      ctx.stroke();
+      ctx.fillText(`${d}°`, scaleX - 8, sy + 3);
+    }
+
+    // Olamning Shimoliy qutbi (P) ekrandagi balandligi
+    const poleX = w * 0.42;
+    const poleY = horY - phi * pxPerDeg;
+
+    // Gorizontal balandlik ko'rsatkich chizig'i
+    ctx.strokeStyle = "rgba(16, 185, 129, 0.45)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(scaleX, poleY);
+    ctx.lineTo(poleX, poleY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Qutb atrofida aylanayotgan Katta Ayiq yulduz turkumi
+    ctx.save();
+    ctx.translate(poleX, poleY);
+    ctx.rotate(-angle);
+
+    // Katta Ayiq chiziqlari
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.65)";
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    BIG_DIPPER.forEach((st, i) => {
+      if (i === 0) ctx.moveTo(st.x, st.y); else ctx.lineTo(st.x, st.y);
+    });
+    // Cho'michni yopish (Dubhe -> Megrez)
+    ctx.lineTo(BIG_DIPPER[3].x, BIG_DIPPER[3].y);
+    ctx.stroke();
+
+    // Merak -> Dubhe -> Qutb yulduzi (5 marta davom ettirish yo'nalish chizig'i)
+    ctx.strokeStyle = "rgba(245, 158, 11, 0.6)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(BIG_DIPPER[5].x, BIG_DIPPER[5].y);
+    ctx.lineTo(0, -4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Yulduz nuqtalari
+    BIG_DIPPER.forEach(st => {
+      ctx.fillStyle = "#e2e8f0";
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Qutb yulduzi (P dan kichik 4 px radiusda)
+    const polX = 0;
+    const polY = -4;
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(polX, polY, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Olam qutbi P xoch belgisi
+    ctx.strokeStyle = "#f43f5e";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(poleX - 5, poleY); ctx.lineTo(poleX + 5, poleY);
+    ctx.moveTo(poleX, poleY - 5); ctx.lineTo(poleX, poleY + 5);
+    ctx.stroke();
+
+    // --- O'NG YUQORI BURCHAKDA KATTALASHTIRILGAN LUPA OYNASI (0.66° ORBITA) ---
+    const zoomX = w - 95;
+    const zoomY = 95;
+    const zoomR = 68;
+
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.beginPath();
+    ctx.arc(zoomX, zoomY, zoomR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 0.66° orbita doirasi
+    const orbR = 38;
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.45)";
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.arc(zoomX, zoomY, orbR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Markazda Olam qutbi P
+    ctx.fillStyle = "#f43f5e";
+    ctx.beginPath();
+    ctx.arc(zoomX, zoomY, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("P (Qutb)", zoomX + 6, zoomY + 3);
+
+    // Kattalashtirilgan Qutb yulduzi holati
+    const zPolX = zoomX + Math.sin(angle) * orbR;
+    const zPolY = zoomY - Math.cos(angle) * orbR;
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(zPolX, zPolY, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#f59e0b";
+    ctx.textAlign = "center";
+    ctx.fillText("Lupa: r = 0.66° (40')", zoomX, zoomY + zoomR + 15);
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText(`h ≈ ${polAlt.toFixed(2)}°`, zoomX, zoomY + zoomR + 28);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 3-SIMULYATSIYA: GNOMON SOYASI VA TUSHKI QUYOSH ====================
+(function() {
+  const canvas = document.getElementById("canvas3");
+  const dateBtns = document.querySelectorAll("#c3-date-btns button");
+  const phiSlider = document.getElementById("c3-phi");
+  const decSlider = document.getElementById("c3-dec");
+  const phiLbl = document.getElementById("c3-phi-lbl");
+  const decLbl = document.getElementById("c3-dec-lbl");
+
+  const hsunOut = document.getElementById("c3-hsun-out");
+  const shadOut = document.getElementById("c3-shad-out");
+  const phiOut = document.getElementById("c3-phi-out");
+
+  dateBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      dateBtns.forEach(b => b.classList.remove("active", "amber-btn"));
+      btn.classList.add("active", "amber-btn");
+      decSlider.value = btn.dataset.dec;
+      draw();
+    });
+  });
+
+  [phiSlider, decSlider].forEach(sl => sl.addEventListener("input", () => {
+    dateBtns.forEach(b => b.classList.remove("active", "amber-btn"));
+    draw();
+  }));
+
+  function draw() {
+    const phi = parseFloat(phiSlider.value);
+    const dec = parseFloat(decSlider.value);
+
+    phiLbl.textContent = `${phi.toFixed(0)}° ${phi === 41 ? "(Toshkent)" : ""}`;
+    decLbl.textContent = `${dec >= 0 ? "+" : ""}${dec.toFixed(1)}°`;
+
+    // Tushki Quyosh balandligi: h_sun = 90 - |phi - dec|
+    const hSun = 90 - Math.abs(phi - dec);
+    const hRad = (hSun * Math.PI) / 180;
+    const L = 1.0; // 1 metr gnomon
+    const shadowLen = hSun >= 89.9 ? 0 : L / Math.tan(hRad);
+    const calcPhi = 90 - hSun + dec;
+
+    hsunOut.textContent = `${hSun.toFixed(1)}°`;
+    shadOut.textContent = `l = ${shadowLen.toFixed(2)} m`;
+    phiOut.textContent = `φ = ${calcPhi.toFixed(1)}° sh.k.`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 390);
+    ctx.clearRect(0, 0, w, h);
+
+    const groundY = h - 55;
+    // Yer sirti
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, groundY, w, 55);
+    ctx.strokeStyle = "#334155";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY);
+    ctx.lineTo(w, groundY);
+    ctx.stroke();
+
+    // Gnomon tayoqchasi (chap-markazda)
+    const gnomonX = w * 0.34;
+    const gnomonH = 120; // 1 metr = 120 px
+
+    // Soya uzunligi (ekranda sig'ishi uchun cheklanadi, lekin qiymat aniq chiqadi)
+    const shadowPx = Math.min(w - gnomonX - 35, shadowLen * gnomonH);
+    const shadowEndX = gnomonX + shadowPx;
+
+    // Quyosh nuri burchagi bo'yicha Quyosh holati (chap yuqorida)
+    const rayDirX = shadowPx;
+    const rayDirY = gnomonH;
+    const rayNorm = Math.hypot(rayDirX, rayDirY);
+    const ux = rayDirX / rayNorm;
+    const uy = rayDirY / rayNorm;
+
+    const sunX = gnomonX - ux * 175;
+    const sunY = Math.max(38, (groundY - gnomonH) - uy * 175);
+
+    // Quyosh nurlari
+    ctx.strokeStyle = "rgba(253, 224, 71, 0.55)";
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(sunX, sunY);
+    ctx.lineTo(shadowEndX, groundY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Quyosh diski
+    const grad = ctx.createRadialGradient(sunX, sunY, 4, sunX, sunY, 26);
+    grad.addColorStop(0, "#fef08a");
+    grad.addColorStop(0.5, "#f59e0b");
+    grad.addColorStop(1, "rgba(245, 158, 11, 0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 26, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#fde047";
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Yerda tushgan qora-ko'k soya
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(gnomonX, groundY);
+    ctx.lineTo(shadowEndX, groundY);
+    ctx.stroke();
+
+    // Gnomon ustuni
+    ctx.strokeStyle = "#f8fafc";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(gnomonX, groundY);
+    ctx.lineTo(gnomonX, groundY - gnomonH);
+    ctx.stroke();
+
+    // Burchak yoyi (h_sun soya uchida)
+    if (shadowPx > 25) {
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(shadowEndX, groundY, 34, Math.PI, Math.PI + hRad);
+      ctx.stroke();
+
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 12px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(`h☉ = ${hSun.toFixed(1)}°`, shadowEndX - 38, groundY - 12);
+    }
+
+    // Yozuvlar
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("L = 1.0 m", gnomonX - 10, groundY - gnomonH / 2);
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.textAlign = "center";
+    ctx.fillText(`Soya: l = ${shadowLen.toFixed(2)} m`, (gnomonX + shadowEndX) / 2, groundY + 22);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "11px sans-serif";
+    ctx.fillText("tg(h☉) = L / l", (gnomonX + shadowEndX) / 2, groundY + 38);
+  }
+  draw();
+})();
+
+// ==================== IV. KALKULYATORLAR ====================
+(function() {
+  const polH = document.getElementById("in-pol-h");
+  const polPos = document.getElementById("in-pol-pos");
+  const polOut = document.getElementById("out-pol-calc");
+
+  const gnL = document.getElementById("in-gn-L");
+  const gnl = document.getElementById("in-gn-l");
+  const gnDec = document.getElementById("in-gn-dec");
+  const gnOut = document.getElementById("out-gn-calc");
+
+  function calcPol() {
+    const h = parseFloat(polH.value) || 0;
+    const corr = parseFloat(polPos.value) || 0;
+    const phi = h + corr;
+    polOut.innerHTML = `Aniqlangan geografik kenglik:<br>` +
+      `<strong>φ = ${phi.toFixed(2)}° sh.k.</strong> (Tuzatma: ${corr >= 0 ? "+" : ""}${corr}°)`;
+  }
+
+  function calcGnomon() {
+    const L = parseFloat(gnL.value) || 1;
+    const l = parseFloat(gnl.value) || 0.01;
+    const dec = parseFloat(gnDec.value) || 0;
+    const hSun = (Math.atan(L / l) * 180) / Math.PI;
+    const phi = 90 - hSun + dec;
+    gnOut.innerHTML = `Quyosh balandligi: <strong>h<sub>☉</sub> = ${hSun.toFixed(1)}°</strong><br>` +
+      `Geografik kenglik: <strong>φ = ${phi.toFixed(1)}° sh.k.</strong>`;
+  }
+
+  polH.addEventListener("input", calcPol);
+  polPos.addEventListener("change", calcPol);
+  gnL.addEventListener("input", calcGnomon);
+  gnl.addEventListener("input", calcGnomon);
+  gnDec.addEventListener("input", calcGnomon);
+  calcPol();
+  calcGnomon();
+})();
+
+// ==================== IV. O'Z-O'ZINI TEKSHIRISH TESTI ====================
+(function() {
+  const QUESTIONS = [
+    {
+      q: "1. Kechasi Qutb yulduzining ufqdan balandligi h = 42° ga teng ekanligi o‘lchandi. Kuzatuvchi turgan joyning geografik kengligi (φ) taxminan qancha?",
+      opts: ["48° sh.k.", "42° sh.k.", "21° sh.k."],
+      ans: 1,
+      exp: "h_P = φ teoremasiga ko‘ra, Qutb yulduzining ufqdan balandligi joyning geografik kengligiga taxminan teng: φ ≈ 42° sh.k."
+    },
+    {
+      q: "2. Qutb yulduzi balandligi bo‘yicha kenglikni aniqlashda nima uchun ±0.7° gacha taxminiy xatolik yuzaga keladi?",
+      opts: [
+        "Qutb yulduzi Olam qutbidan taxminan 0° 40' (0.66°) masofada kichik aylana chizadi",
+        "Yer ekvatori doimo siljib turadi",
+        "Sekstant shkalasi faqat butun sonlarni o‘lchaydi"
+      ],
+      ans: 0,
+      exp: "Qutb yulduzi Olam qutbi (P) bilan aniq ustma-ust tushmaydi, u qutbdan 0° 40' burchak masofada aylanadi."
+    },
+    {
+      q: "3. Katta Ayiq yulduz turkumidan Qutb yulduzini topish uchun cho‘michning chetki ikki yulduzi (Merak va Dubhe) orasidagi masofani necha marta davom ettirish kerak?",
+      opts: ["2 marta", "5 marta", "10 marta"],
+      ans: 1,
+      exp: "Merak va Dubhe yulduzlari orasidagi kesmani shimol tomonga 5 marta davom ettirganda Qutb yulduziga boriladi."
+    },
+    {
+      q: "4. Bahorgi tengkunlik kunida (21-mart, δ☉ = 0°) tush paytida Quyoshning ufqdan balandligi h☉ = 50° bo‘lsa, joyning geografik kengligi nechaga teng?",
+      opts: ["40°", "50°", "90°"],
+      ans: 0,
+      exp: "Tengkunlikda δ☉ = 0° bo‘lgani uchun φ = 90° − h☉ = 90° − 50° = 40°."
+    },
+    {
+      q: "5. Yozgi quyosh turishi kunida (22-iyun, δ☉ = +23.5°) tush paytida Quyosh balandligi h☉ = 72.5° bo‘lsa, joyning geografik kengligi qancha?",
+      opts: ["17.5° sh.k.", "41.0° sh.k.", "66.5° sh.k."],
+      ans: 1,
+      exp: "Formula: φ = 90° − h☉ + δ☉ = 90° − 72.5° + 23.5° = 17.5° + 23.5° = 41.0° sh.k."
+    }
+  ];
+
+  const container = document.getElementById("quiz-container");
+  const scoreBox = document.getElementById("quiz-score");
+  let score = 0;
+
+  QUESTIONS.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "quiz-item";
+    div.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-opts"></div><div class="quiz-exp">${item.exp}</div>`;
+    const optsDiv = div.querySelector(".quiz-opts");
+    const expDiv = div.querySelector(".quiz-exp");
+
+    item.opts.forEach((optText, oIdx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const allBtns = optsDiv.querySelectorAll("button");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (oIdx === item.ans) {
+          btn.classList.add("correct");
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          allBtns[item.ans].classList.add("correct");
+        }
+        expDiv.style.display = "block";
+        scoreBox.textContent = `Natija: ${score} / ${QUESTIONS.length} ta to‘g‘ri javob`;
+      });
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
