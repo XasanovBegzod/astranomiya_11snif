@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>11-§. Yoritgichlarning kulminatsiyasi va kulminatsiya balandliklari | 11-sinf Astronomiya</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-border: #334155;
+      --sky: #38bdf8;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-top {
+      max-width: 980px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sky);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+    .badge {
+      font-size: 0.8rem;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .title-box { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 1.45rem; color: var(--text); font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    section.module {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+    .step-num {
+      background: var(--sky);
+      color: #0b1120;
+      font-weight: 800;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    h2 { font-size: 1.2rem; color: var(--sky); }
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 18px;
+      font-size: 0.94rem;
+    }
+    .theory-box ul { padding-left: 20px; margin-top: 8px; }
+    .theory-box li { margin-bottom: 6px; color: #e2e8f0; }
+    .hl-amber { color: var(--amber); font-weight: 600; }
+    .hl-sky { color: var(--sky); font-weight: 600; }
+    .hl-emerald { color: var(--emerald); font-weight: 600; }
+
+    .formula-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .formula-card {
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 1.02rem;
+      color: var(--sky);
+      text-align: center;
+    }
+    .formula-card small {
+      display: block;
+      font-family: system-ui, sans-serif;
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    /* Simulyator konteyneri */
+    .sim-wrapper {
+      background: #070b14;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .drag-hint {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid #334155;
+      color: var(--muted);
+      font-size: 0.74rem;
+      padding: 4px 9px;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+    canvas.grab { cursor: grab; }
+    canvas.grab:active { cursor: grabbing; }
+    .controls {
+      background: #0f172a;
+      padding: 14px 16px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slider-group {
+      flex: 1;
+      min-width: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.btn:hover { border-color: var(--sky); color: var(--sky); }
+    button.btn.active {
+      background: var(--sky);
+      color: #0b1120;
+      border-color: var(--sky);
+    }
+    button.btn.amber-btn.active, button.btn.amber-btn:hover {
+      background: var(--amber);
+      color: #0b1120;
+      border-color: var(--amber);
+    }
+    button.btn.emerald-btn.active, button.btn.emerald-btn:hover {
+      background: var(--emerald);
+      color: #0b1120;
+      border-color: var(--emerald);
+    }
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 0.77rem; }
+    .info-item strong { color: var(--amber); font-size: 0.94rem; }
+
+    /* Kalkulyator */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+    .calc-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .calc-card h4 { color: var(--amber); margin-bottom: 10px; font-size: 0.95rem; }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .input-row label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .input-row input {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .calc-out {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #6ee7b7;
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    /* Test */
+    .quiz-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .quiz-q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--sky); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .quiz-opt.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--rose); color: #fda4af; }
+    .quiz-exp {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sky);
+      display: none;
+    }
+    .score-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.22rem; }
+      section.module { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="back-btn">← Bosh menyuga qaytish</a>
+    <span class="badge">11-Sinf • Astronomiya</span>
+  </div>
+  <div class="title-box">
+    <h1>11-§. Yoritgichlarning kulminatsiyasi va kulminatsiya balandliklari</h1>
+    <p class="subtitle">Osmon meridianidan o‘tish, yuqori va quyi kulminatsiyalar hamda hisoblash formulalari</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- I REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">I</div>
+      <h2>Kirish: Kulminatsiya tushunchasi va osmon meridiandan o‘tish</h2>
+    </div>
+
+    <div class="theory-box">
+      <p><span class="hl-sky">Kulminatsiya</span> (lotincha <em>culmen</em> — cho‘qqi) — osmon sferasining sutkalik aylanishi davomida yoritgichning <strong>osmon meridiani tekisligidan</strong> o‘tish hodisasi.</p>
+      <ul>
+        <li><strong>Osmon meridiani:</strong> Zenit (<strong>Z</strong>), Olamning Shimoliy qutbi (<strong>P</strong>), Shimol nuqtasi (<strong>N</strong>), Nadir (<strong>Z'</strong>), Janubiy qutb (<strong>P'</strong>) va Janub nuqtasi (<strong>S</strong>) orqali o‘tuvchi eng katta aylana.</li>
+        <li>Har bir yoritgich bir yulduz sutkasi (<strong>23<sup>h</sup> 56<sup>m</sup> 04<sup>s</sup></strong>) davomida osmon meridianini <strong>ikki marta</strong> kesib o‘tadi — bu ikki kulminatsiya orasidagi vaqt farqi roppa-rosa <strong>11<sup>h</sup> 58<sup>m</sup> 02<sup>s</sup></strong> (yarim sutka) ga teng.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <span class="drag-hint">↻ Sichqoncha/barmoq bilan 3D aylantiring</span>
+      <canvas id="canvas1" class="grab" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group">
+            <button class="btn amber-btn active" id="c1-play">⏸ To‘xtatish</button>
+            <button class="btn emerald-btn" id="c1-jump-up">⬆ Yuqori kulminatsiyaga</button>
+            <button class="btn" id="c1-jump-low">⬇ Quyi kulminatsiyaga</button>
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Yulduz og‘ishi (δ) [φ = 41°]: <strong id="c1-dec-lbl" style="color:#38bdf8">+60°</strong></span>
+            </div>
+            <input type="range" id="c1-dec" min="-35" max="80" value="60">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Yulduzning joriy balandligi (h)</span><strong id="c1-alt-out" style="color:#10b981">+45.0°</strong></div>
+          <div class="info-item"><span>Soat burchagi (t)</span><strong id="c1-ha-out" style="color:#38bdf8">0h 00m</strong></div>
+          <div class="info-item"><span>Meridiandan o‘tish holati</span><strong id="c1-event-out" style="color:#f59e0b">Harakatlanmoqda...</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- II REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">II</div>
+      <h2>Yuqori va quyi kulminatsiya</h2>
+    </div>
+
+    <div class="theory-box">
+      <ul>
+        <li><span class="hl-emerald">Yuqori kulminatsiya (M<sub>1</sub>):</span> Yoritgichning ufqdan <strong>eng katta balandlikka</strong> ko‘tarilgan payti (soat burchagi <strong>t = 0<sup>h</sup></strong>). U ikki xil bo‘ladi: Zenitdan <strong>janubda</strong> (<strong>δ &lt; φ</strong>) yoki Zenitdan <strong>shimolda</strong> (<strong>δ &gt; φ</strong>).</li>
+        <li><span class="hl-amber">Quyi kulminatsiya (M<sub>2</sub>):</span> Yoritgichning ufqdan <strong>eng kichik balandlikka</strong> tushgan payti (<strong>t = 12<sup>h</sup></strong>). Faqat hech qachon botmaydigan yulduzlarda (<strong>δ ≥ 90° − φ</strong>) quyi kulminatsiya ufq ustida (<strong>P</strong> va <strong>N</strong> orasida) ko‘rinadi!</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas2" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group" id="c2-preset-btns">
+            <button class="btn emerald-btn active" data-p="41,70">1. Botmaydigan, Z dan shimolda (δ=70°, φ=41°)</button>
+            <button class="btn" data-p="65,55">2. Botmaydigan, Z dan janubda (δ=55°, φ=65°)</button>
+            <button class="btn" data-p="41,15">3. Chiqib-botuvchi yulduz (δ=15°, φ=41°)</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Geografik kenglik (φ): <strong id="c2-phi-lbl" style="color:#38bdf8">41°</strong></span>
+            </div>
+            <input type="range" id="c2-phi" min="15" max="85" value="41">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Yulduz og‘ishi (δ): <strong id="c2-dec-lbl" style="color:#f59e0b">+70°</strong></span>
+            </div>
+            <input type="range" id="c2-dec" min="-30" max="85" value="70">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Yuqori kulminatsiya (M<sub>1</sub>)</span><strong id="c2-hmax-out" style="color:#10b981">h<sub>max</sub> = 61° (Z dan shimolda)</strong></div>
+          <div class="info-item"><span>Quyi kulminatsiya (M<sub>2</sub>)</span><strong id="c2-hmin-out" style="color:#f59e0b">h<sub>min</sub> = +21° (Ufq ustida)</strong></div>
+          <div class="info-item"><span>Yulduz toifasi</span><strong id="c2-cat-out" style="color:#38bdf8">Hech qachon botmaydi</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">III</div>
+      <h2>Kulminatsiya balandliklarini hisoblash formulalari</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Osmon meridiani yoylarini qo‘shish va ayirish orqali kulminatsiya balandliklari formulalari keltirib chiqariladi:</p>
+      <div class="formula-grid">
+        <div class="formula-card">
+          <small>1. Zenitdan janubda (δ &lt; φ)</small>
+          h<sub>max</sub> = (90° − φ) + δ
+        </div>
+        <div class="formula-card">
+          <small>2. Zenitdan shimolda (δ &gt; φ)</small>
+          h<sub>max</sub> = 90° + φ − δ
+        </div>
+        <div class="formula-card">
+          <small>3. Quyi kulminatsiya (h<sub>min</sub>)</small>
+          h<sub>min</sub> = φ + δ − 90°
+        </div>
+      </div>
+      <p style="font-size:0.88rem; color:#cbd5e1;"><strong>Amaliy natija:</strong> Botmaydigan yulduzning Zenitdan shimolda o‘lchangan yuqori va quyi balandliklari yig‘indisining yarmi joyning geografik kengligini beradi: <span class="hl-emerald">φ = (h<sub>max</sub> + h<sub>min</sub>) / 2</span>.</p>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas3" height="410"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group" id="c3-fmode-btns">
+            <button class="btn active" data-fm="south">1) h<sub>max</sub> (δ &lt; φ: Z dan janubda)</button>
+            <button class="btn" data-fm="north">2) h<sub>max</sub> (δ &gt; φ: Z dan shimolda)</button>
+            <button class="btn amber-btn" data-fm="lower">3) h<sub>min</sub> (Quyi kulminatsiya)</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Kenglik (φ): <strong id="c3-phi-lbl" style="color:#38bdf8">45°</strong></span>
+            </div>
+            <input type="range" id="c3-phi" min="20" max="75" value="45">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Og‘ish (δ): <strong id="c3-dec-lbl" style="color:#f59e0b">+20°</strong></span>
+            </div>
+            <input type="range" id="c3-dec" min="-15" max="80" value="20">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item" style="grid-column: 1 / -1;">
+            <span>Geometrik yoylar tenglamasi va jonli hisob</span>
+            <strong id="c3-eq-out" style="color:#10b981; font-size:1rem;">h<sub>max</sub> = (90° − 45°) + 20° = 45° + 20° = 65°</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV. QO'SHIMCHA BLOKLAR -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">IV</div>
+      <h2>Kulminatsiya Kalkulyatori va O‘z-o‘zini tekshirish testi</h2>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--amber); margin-bottom:10px;">1. Ikki rejimli Kulminatsiya Masalalari Kalkulyatori</h3>
+    <div class="calc-grid">
+      <div class="calc-card">
+        <h4>1-rejim: (φ, δ) → h<sub>max</sub> va h<sub>min</sub> ni topish</h4>
+        <div class="input-row">
+          <label>φ (°):</label>
+          <input type="number" id="in-phi1" min="-90" max="90" value="41">
+          <label>δ (°):</label>
+          <input type="number" id="in-dec1" min="-90" max="90" value="65">
+        </div>
+        <div class="calc-out" id="out-calc1"></div>
+      </div>
+
+      <div class="calc-card">
+        <h4>2-rejim: (h<sub>max</sub>, h<sub>min</sub>) → φ va δ ni topish (Z dan shimolda)</h4>
+        <div class="input-row">
+          <label>h<sub>max</sub> (°):</label>
+          <input type="number" id="in-hmax2" min="0" max="90" value="66">
+          <label>h<sub>min</sub> (°):</label>
+          <input type="number" id="in-hmin2" min="0" max="90" value="16">
+        </div>
+        <div class="calc-out" id="out-calc2"></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--sky); margin-bottom:12px;">2. Mavzu yuzasidan tezkor test (5 ta savol)</h3>
+    <div id="quiz-container"></div>
+    <div class="score-box" id="quiz-score">Natija: 0 / 5 ta to‘g‘ri javob</div>
+  </section>
+
+</main>
+
+<script>
+function setupHiDPI(canvas, height) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w: rect.width, h: height };
+}
+
+// ==================== 1-SIMULYATSIYA: 3D OSMON MERIDIANI VA KESISH NUQTALARI ====================
+(function() {
+  const canvas = document.getElementById("canvas1");
+  const playBtn = document.getElementById("c1-play");
+  const jumpUpBtn = document.getElementById("c1-jump-up");
+  const jumpLowBtn = document.getElementById("c1-jump-low");
+  const decSlider = document.getElementById("c1-dec");
+  const decLbl = document.getElementById("c1-dec-lbl");
+
+  const altOut = document.getElementById("c1-alt-out");
+  const haOut = document.getElementById("c1-ha-out");
+  const eventOut = document.getElementById("c1-event-out");
+
+  let rotY = -0.58, rotX = 0.28;
+  let dragging = false, lx = 0, ly = 0;
+  canvas.addEventListener("pointerdown", e => { dragging = true; lx = e.clientX; ly = e.clientY; canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    rotY += (e.clientX - lx) * 0.008;
+    rotX = Math.max(-1.1, Math.min(1.1, rotX + (e.clientY - ly) * 0.008));
+    lx = e.clientX; ly = e.clientY;
+  });
+  canvas.addEventListener("pointerup", () => dragging = false);
+
+  let playing = true;
+  // t = PI/2 -> yuqori kulminatsiya (janub/shimol meridiani), t = -PI/2 (3PI/2) -> quyi kulminatsiya
+  let t = 0.4;
+  let flash = 0;
+
+  playBtn.addEventListener("click", () => {
+    playing = !playing;
+    playBtn.classList.toggle("active", playing);
+    playBtn.textContent = playing ? "⏸ To‘xtatish" : "▶ Davom ettirish";
+  });
+
+  jumpUpBtn.addEventListener("click", () => {
+    t = Math.PI / 2;
+    flash = 1.0;
+  });
+
+  jumpLowBtn.addEventListener("click", () => {
+    t = (3 * Math.PI) / 2;
+    flash = 1.0;
+  });
+
+  function render() {
+    if (playing) {
+      const prevT = t;
+      t = (t + 0.018) % (Math.PI * 2);
+      // Meridian kesish lahzalarini tekshirish (PI/2 va 3*PI/2)
+      if ((prevT < Math.PI / 2 && t >= Math.PI / 2) || (prevT < 1.5 * Math.PI && t >= 1.5 * Math.PI)) {
+        flash = 1.0;
+      }
+    }
+    if (flash > 0) flash = Math.max(0, flash - 0.025);
+
+    const phi = 41;
+    const dec = parseInt(decSlider.value, 10);
+    decLbl.textContent = `${dec >= 0 ? "+" : ""}${dec}°`;
+
+    const phiRad = (phi * Math.PI) / 180;
+    const decRad = (dec * Math.PI) / 180;
+
+    // Yulduz 3D koordinatalari (t = PI/2 da x = 0, meridian tekisligida!)
+    const sx = Math.cos(decRad) * Math.cos(t);
+    const sy = Math.sin(decRad) * Math.sin(phiRad) + Math.cos(decRad) * Math.sin(t) * Math.cos(phiRad);
+    const sz = -Math.sin(decRad) * Math.cos(phiRad) + Math.cos(decRad) * Math.sin(t) * Math.sin(phiRad);
+
+    const altDeg = (Math.asin(Math.max(-1, Math.min(1, sy))) * 180) / Math.PI;
+    altOut.textContent = `${altDeg >= 0 ? "+" : ""}${altDeg.toFixed(1)}°`;
+
+    // Soat burchagi (0h = yuqori kulminatsiya t = PI/2)
+    let haRad = (t - Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+    const haHours = (haRad / (Math.PI * 2)) * 24;
+    const hh = Math.floor(haHours);
+    const mm = Math.floor((haHours - hh) * 60);
+    haOut.textContent = `${hh}h ${mm < 10 ? "0" : ""}${mm}m`;
+
+    const distUp = Math.abs(t - Math.PI / 2);
+    const distLow = Math.abs(t - 1.5 * Math.PI);
+    if (distUp < 0.09) {
+      eventOut.textContent = "⚡ YUQORI KULMINATSIYA (t = 0h)!";
+      eventOut.style.color = "#10b981";
+    } else if (distLow < 0.09) {
+      eventOut.textContent = "⚡ QUYI KULMINATSIYA (t = 12h)!";
+      eventOut.style.color = "#f59e0b";
+    } else {
+      eventOut.textContent = altDeg >= 0 ? "Ufq ustida harakatlanmoqda" : "Ufq ostida harakatlanmoqda";
+      eventOut.style.color = "#94a3b8";
+    }
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h * 0.52, R = Math.min(w, h) * 0.37;
+    function p3d(x, y, z) {
+      const x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+      const z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+      const y2 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+      const z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+      return { px: cx + x1 * R, py: cy - y2 * R, z: z2 };
+    }
+
+    // Tashqi osmon sferasi
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.2)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Matematik ufq (y = 0)
+    for (let i = 0; i < 72; i++) {
+      const a1 = (i / 72) * Math.PI * 2, a2 = ((i + 1) / 72) * Math.PI * 2;
+      const s1 = p3d(Math.cos(a1), 0, Math.sin(a1)), s2 = p3d(Math.cos(a2), 0, Math.sin(a2));
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = s1.z >= 0 ? 2.2 : 1;
+      ctx.globalAlpha = s1.z >= 0 ? 0.85 : 0.25;
+      ctx.beginPath();
+      ctx.moveTo(s1.px, s1.py);
+      ctx.lineTo(s2.px, s2.py);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // OSMON MERIDIANI HALQASI (x = 0, Z - P - N - Z' - P' - S)
+    for (let i = 0; i < 72; i++) {
+      const a1 = (i / 72) * Math.PI * 2, a2 = ((i + 1) / 72) * Math.PI * 2;
+      const s1 = p3d(0, Math.sin(a1), Math.cos(a1)), s2 = p3d(0, Math.sin(a2), Math.cos(a2));
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 2.8;
+      ctx.globalAlpha = s1.z >= 0 ? 0.95 : 0.35;
+      ctx.beginPath();
+      ctx.moveTo(s1.px, s1.py);
+      ctx.lineTo(s2.px, s2.py);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Meridian nuqtalari: Z, N, S, P
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    const labels = [
+      { txt: "Z", p: p3d(0, 1.08, 0), c: "#f8fafc" },
+      { txt: "N", p: p3d(0, 0, -1.1), c: "#38bdf8" },
+      { txt: "S", p: p3d(0, 0, 1.1), c: "#38bdf8" },
+      { txt: "P", p: p3d(0, Math.sin(phiRad) * 1.1, -Math.cos(phiRad) * 1.1), c: "#fbbf24" }
+    ];
+    labels.forEach(l => {
+      ctx.fillStyle = l.c;
+      ctx.fillText(l.txt, l.p.px, l.p.py + 4);
+    });
+
+    // Yulduz sutkalik parallel aylanasi
+    for (let i = 0; i < 72; i++) {
+      const a1 = (i / 72) * Math.PI * 2, a2 = ((i + 1) / 72) * Math.PI * 2;
+      const y1 = Math.sin(decRad) * Math.sin(phiRad) + Math.cos(decRad) * Math.sin(a1) * Math.cos(phiRad);
+      const z1 = -Math.sin(decRad) * Math.cos(phiRad) + Math.cos(decRad) * Math.sin(a1) * Math.sin(phiRad);
+      const y2 = Math.sin(decRad) * Math.sin(phiRad) + Math.cos(decRad) * Math.sin(a2) * Math.cos(phiRad);
+      const z2 = -Math.sin(decRad) * Math.cos(phiRad) + Math.cos(decRad) * Math.sin(a2) * Math.sin(phiRad);
+
+      const s1 = p3d(Math.cos(decRad) * Math.cos(a1), y1, z1);
+      const s2 = p3d(Math.cos(decRad) * Math.cos(a2), y2, z2);
+
+      ctx.strokeStyle = "#10b981";
+      ctx.setLineDash(y1 < 0 ? [3, 4] : []);
+      ctx.globalAlpha = y1 < 0 ? 0.25 : 0.9;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(s1.px, s1.py);
+      ctx.lineTo(s2.px, s2.py);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    // Yuqori (M1) va Quyi (M2) kulminatsiya nuqtalari belgilari
+    const upPos = p3d(0, Math.sin(decRad) * Math.sin(phiRad) + Math.cos(decRad) * Math.cos(phiRad),
+                         -Math.sin(decRad) * Math.cos(phiRad) + Math.cos(decRad) * Math.sin(phiRad));
+    const lowPos = p3d(0, Math.sin(decRad) * Math.sin(phiRad) - Math.cos(decRad) * Math.cos(phiRad),
+                          -Math.sin(decRad) * Math.cos(phiRad) - Math.cos(decRad) * Math.sin(phiRad));
+
+    ctx.fillStyle = "#10b981";
+    ctx.beginPath(); ctx.arc(upPos.px, upPos.py, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillText("M₁ (Yuqori)", upPos.px + 34, upPos.py);
+
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath(); ctx.arc(lowPos.px, lowPos.py, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillText("M₂ (Quyi)", lowPos.px - 32, lowPos.py);
+
+    // Harakatlanayotgan yulduz
+    const curS = p3d(sx, sy, sz);
+    if (flash > 0) {
+      ctx.fillStyle = `rgba(251, 191, 36, ${flash * 0.45})`;
+      ctx.beginPath();
+      ctx.arc(curS.px, curS.py, 10 + (1 - flash) * 28, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(curS.px, curS.py, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#10b981";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.font = "11px sans-serif";
+    ctx.fillStyle = "#f59e0b"; ctx.fillText("● Osmon meridiani halqasi", 14, 22);
+    ctx.fillStyle = "#10b981"; ctx.fillText("● Yulduzning sutkalik yo‘li", 14, 40);
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 2-SIMULYATSIYA: 2D MERIDIAN KESIMI (YUQORI VA QUYI KULMINATSIYA) ====================
+(function() {
+  const canvas = document.getElementById("canvas2");
+  const presetBtns = document.querySelectorAll("#c2-preset-btns button");
+  const phiSlider = document.getElementById("c2-phi");
+  const decSlider = document.getElementById("c2-dec");
+  const phiLbl = document.getElementById("c2-phi-lbl");
+  const decLbl = document.getElementById("c2-dec-lbl");
+
+  const hmaxOut = document.getElementById("c2-hmax-out");
+  const hminOut = document.getElementById("c2-hmin-out");
+  const catOut = document.getElementById("c2-cat-out");
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      presetBtns.forEach(b => b.classList.remove("active", "emerald-btn"));
+      btn.classList.add("active", "emerald-btn");
+      const [p, d] = btn.dataset.p.split(",").map(Number);
+      phiSlider.value = p;
+      decSlider.value = d;
+      draw();
+    });
+  });
+
+  [phiSlider, decSlider].forEach(sl => sl.addEventListener("input", () => {
+    presetBtns.forEach(b => b.classList.remove("active", "emerald-btn"));
+    draw();
+  }));
+
+  function draw() {
+    const phi = parseInt(phiSlider.value, 10);
+    const dec = parseInt(decSlider.value, 10);
+
+    phiLbl.textContent = `${phi}°`;
+    decLbl.textContent = `${dec >= 0 ? "+" : ""}${dec}°`;
+
+    // Yuqori va quyi kulminatsiya balandliklari
+    const isNorthOfZ = dec > phi;
+    const hMax = isNorthOfZ ? (90 + phi - dec) : (90 - phi + dec);
+    const hMin = phi + dec - 90;
+
+    hmaxOut.textContent = `h_max = ${hMax}° (${dec === phi ? "Zenitda!" : (isNorthOfZ ? "Z dan shimolda" : "Z dan janubda")})`;
+    hminOut.textContent = `h_min = ${hMin >= 0 ? "+" : ""}${hMin}° (${hMin >= 0 ? "Ufq ustida" : "Ufq ostida"})`;
+    catOut.textContent = hMin >= 0 ? "Hech qachon botmaydi" : (hMax > 0 ? "Chiqib-botuvchi" : "Ko‘rinmaydi");
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.38;
+    const phiRad = (phi * Math.PI) / 180;
+    const decRad = (dec * Math.PI) / 180;
+
+    // Osmon meridiani aylanasi
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Ufq osti yarim doira soyasi
+    ctx.fillStyle = "rgba(15, 23, 42, 0.65)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI);
+    ctx.fill();
+
+    // Matematik ufq (N chapda, S o'ngda)
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - R * 1.12, cy);
+    ctx.lineTo(cx + R * 1.12, cy);
+    ctx.stroke();
+
+    // Shovul chizig'i (Z tepada, Z' pastda)
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - R * 1.1);
+    ctx.lineTo(cx, cy + R * 1.1);
+    ctx.stroke();
+
+    // Olam o'qi (P chap-yuqorida, burchak = PI + phiRad ekran koordinatasida: x = -cos(phi), y = -sin(phi))
+    const px = cx - Math.cos(phiRad) * R * 1.1;
+    const py = cy - Math.sin(phiRad) * R * 1.1;
+    const p2x = cx + Math.cos(phiRad) * R * 1.1;
+    const p2y = cy + Math.sin(phiRad) * R * 1.1;
+
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(p2x, p2y);
+    ctx.stroke();
+
+    // Osmon ekvatori (Q o'ng-yuqorida, Z dan o'ngga phi burchakda)
+    const qx = cx + Math.sin(phiRad) * R * 1.08;
+    const qy = cy - Math.cos(phiRad) * R * 1.08;
+    const q2x = cx - Math.sin(phiRad) * R * 1.08;
+    const q2y = cy + Math.cos(phiRad) * R * 1.08;
+
+    ctx.strokeStyle = "rgba(16, 185, 129, 0.45)";
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(qx, qy);
+    ctx.lineTo(q2x, q2y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // M1 (Yuqori kulminatsiya) va M2 (Quyi kulminatsiya) nuqtalari:
+    // Q nuqtasining standart ekran burchagi: angQ = -PI/2 + phiRad
+    // M1 Q dan shimolga (soat miliga teskari) decRad burchakda: angM1 = -PI/2 + phiRad - decRad
+    const angM1 = -Math.PI / 2 + phiRad - decRad;
+    // P nuqtasining standart ekran burchagi: angP = PI + phiRad
+    // M2 P dan N tomonga (soat miliga teskari) (90 - dec) burchakda: angM2 = PI + phiRad - (PI/2 - decRad) = PI/2 + phiRad + decRad
+    const angM2 = Math.PI / 2 + phiRad + decRad;
+
+    const m1x = cx + Math.cos(angM1) * R;
+    const m1y = cy + Math.sin(angM1) * R;
+    const m2x = cx + Math.cos(angM2) * R;
+    const m2y = cy + Math.sin(angM2) * R;
+
+    // Sutkalik parallel diametri (M1 - M2)
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(m1x, m1y);
+    ctx.lineTo(m2x, m2y);
+    ctx.stroke();
+
+    // h_max burchak sektori (ufqdan M1 gacha)
+    ctx.fillStyle = "rgba(16, 185, 129, 0.22)";
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    if (isNorthOfZ) {
+      ctx.arc(cx, cy, R * 0.45, Math.PI, angM1);
+    } else {
+      ctx.arc(cx, cy, R * 0.45, angM1, 0);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // h_min burchak sektori (N dan M2 gacha)
+    ctx.fillStyle = hMin >= 0 ? "rgba(245, 158, 11, 0.28)" : "rgba(244, 63, 94, 0.25)";
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    if (hMin >= 0) {
+      ctx.arc(cx, cy, R * 0.35, Math.PI, angM2);
+    } else {
+      ctx.arc(cx, cy, R * 0.35, angM2, Math.PI);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // M1 va M2 nuqtalari
+    ctx.fillStyle = "#10b981";
+    ctx.beginPath(); ctx.arc(m1x, m1y, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
+
+    ctx.fillStyle = hMin >= 0 ? "#f59e0b" : "#f43f5e";
+    ctx.beginPath(); ctx.arc(m2x, m2y, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Yozuvlar
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillText("N", cx - R - 14, cy + 4);
+    ctx.fillText("S", cx + R + 14, cy + 4);
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillText("Z", cx, cy - R - 10);
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText("P", px - 8, py - 4);
+    ctx.fillStyle = "#10b981";
+    ctx.fillText("Q", qx + 8, qy - 4);
+
+    ctx.fillStyle = "#6ee7b7";
+    ctx.fillText(`M₁ (h_max=${hMax}°)`, m1x + (isNorthOfZ ? -24 : 30), m1y - 12);
+    ctx.fillStyle = hMin >= 0 ? "#fde047" : "#fda4af";
+    ctx.fillText(`M₂ (h_min=${hMin}°)`, m2x - 36, m2y + (hMin >= 0 ? -12 : 16));
+  }
+  draw();
+})();
+
+// ==================== 3-SIMULYATSIYA: FORMULALAR LABORATORIYASI ====================
+(function() {
+  const canvas = document.getElementById("canvas3");
+  const fmBtns = document.querySelectorAll("#c3-fmode-btns button");
+  const phiSlider = document.getElementById("c3-phi");
+  const decSlider = document.getElementById("c3-dec");
+  const phiLbl = document.getElementById("c3-phi-lbl");
+  const decLbl = document.getElementById("c3-dec-lbl");
+  const eqOut = document.getElementById("c3-eq-out");
+
+  let fmode = "south";
+
+  fmBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      fmBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      fmode = btn.dataset.fm;
+      if (fmode === "south" && parseInt(decSlider.value) >= parseInt(phiSlider.value)) {
+        phiSlider.value = 55; decSlider.value = 20;
+      } else if (fmode !== "south" && parseInt(decSlider.value) <= parseInt(phiSlider.value)) {
+        phiSlider.value = 41; decSlider.value = 70;
+      }
+      draw();
+    });
+  });
+
+  [phiSlider, decSlider].forEach(sl => sl.addEventListener("input", draw));
+
+  function draw() {
+    const phi = parseInt(phiSlider.value, 10);
+    const dec = parseInt(decSlider.value, 10);
+
+    phiLbl.textContent = `${phi}°`;
+    decLbl.textContent = `${dec >= 0 ? "+" : ""}${dec}°`;
+
+    if (fmode === "south") {
+      const hMax = 90 - phi + dec;
+      eqOut.innerHTML = `Zenitdan janubda (δ &lt; φ): &nbsp; h<sub>max</sub> = (90° − φ) + δ = (90° − ${phi}°) + (${dec}°) = <strong>${90 - phi}° + (${dec}°) = ${hMax}°</strong>`;
+    } else if (fmode === "north") {
+      const hMax = 90 + phi - dec;
+      eqOut.innerHTML = `Zenitdan shimolda (δ &gt; φ): &nbsp; h<sub>max</sub> = 90° + φ − δ = 90° + ${phi}° − ${dec}° = <strong>${hMax}°</strong>`;
+    } else {
+      const hMin = phi + dec - 90;
+      eqOut.innerHTML = `Quyi kulminatsiya: &nbsp; h<sub>min</sub> = φ − (90° − δ) = ${phi}° − ${90 - dec}° = <strong>${hMin >= 0 ? "+" : ""}${hMin}°</strong>`;
+    }
+
+    const { ctx, w, h } = setupHiDPI(canvas, 410);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h * 0.54, R = Math.min(w, h) * 0.38;
+    const phiRad = (phi * Math.PI) / 180;
+    const decRad = (dec * Math.PI) / 180;
+
+    // Yarim aylana meridian
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, Math.PI, 0);
+    ctx.stroke();
+
+    // Ufq N - S
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - R * 1.1, cy);
+    ctx.lineTo(cx + R * 1.1, cy);
+    ctx.stroke();
+
+    // Asosiy nurlar: Z, P, Q, M1, M2
+    const angZ = -Math.PI / 2;
+    const angP = Math.PI + phiRad;
+    const angQ = -Math.PI / 2 + phiRad;
+    const angM1 = angQ - decRad;
+    const angM2 = Math.PI / 2 + phiRad + decRad;
+
+    function drawRay(ang, color, lbl) {
+      const x = cx + Math.cos(ang) * R;
+      const y = cy + Math.sin(ang) * R;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+
+      ctx.fillStyle = color;
+      ctx.font = "bold 12px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(lbl, cx + Math.cos(ang) * (R + 16), cy + Math.sin(ang) * (R + 16) + 4);
+    }
+
+    drawRay(angZ, "#94a3b8", "Z");
+    drawRay(angP, "#f59e0b", "P");
+    drawRay(angQ, "#10b981", "Q");
+
+    if (fmode === "south" || fmode === "north") {
+      drawRay(angM1, "#38bdf8", "M₁");
+      // 90 - phi yoyi (Q dan S gacha)
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.55, angQ, 0);
+      ctx.stroke();
+
+      // delta yoyi (Q dan M1 gacha)
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.68, Math.min(angQ, angM1), Math.max(angQ, angM1));
+      ctx.stroke();
+    } else {
+      drawRay(angM2, "#f43f5e", "M₂");
+      // phi yoyi (N dan P gacha)
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.55, Math.PI, angP);
+      ctx.stroke();
+
+      // 90 - delta yoyi (P dan M2 gacha)
+      ctx.strokeStyle = "#f43f5e";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.68, Math.min(angP, angM2), Math.max(angP, angM2));
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.fillText("N", cx - R - 14, cy + 4);
+    ctx.fillText("S", cx + R + 14, cy + 4);
+
+    // Rangli legenda
+    ctx.textAlign = "left";
+    ctx.font = "11px sans-serif";
+    if (fmode !== "lower") {
+      ctx.fillStyle = "#10b981"; ctx.fillText(`▬ ∠QOS = 90° − φ = ${90 - phi}°`, 14, 24);
+      ctx.fillStyle = "#f59e0b"; ctx.fillText(`▬ ∠QOM₁ = δ = ${dec}°`, 14, 42);
+    } else {
+      ctx.fillStyle = "#f59e0b"; ctx.fillText(`▬ ∠PON = φ = ${phi}°`, 14, 24);
+      ctx.fillStyle = "#f43f5e"; ctx.fillText(`▬ ∠POM₂ = 90° − δ = ${90 - dec}°`, 14, 42);
+    }
+  }
+  draw();
+})();
+
+// ==================== IV. KALKULYATORLAR ====================
+(function() {
+  const p1 = document.getElementById("in-phi1");
+  const d1 = document.getElementById("in-dec1");
+  const o1 = document.getElementById("out-calc1");
+
+  const hmax2 = document.getElementById("in-hmax2");
+  const hmin2 = document.getElementById("in-hmin2");
+  const o2 = document.getElementById("out-calc2");
+
+  function calc1() {
+    const phi = parseFloat(p1.value) || 0;
+    const dec = parseFloat(d1.value) || 0;
+    const side = dec > phi ? "Zenitdan shimolda" : (dec < phi ? "Zenitdan janubda" : "Zenitda");
+    const hMax = 90 - Math.abs(phi - dec);
+    const hMin = phi + dec - 90;
+    o1.innerHTML = `Tomoni: <strong>${side}</strong><br>` +
+      `h<sub>max</sub> = <strong>${hMax.toFixed(1)}°</strong> &nbsp;|&nbsp; h<sub>min</sub> = <strong>${hMin.toFixed(1)}°</strong>`;
+  }
+
+  function calc2() {
+    const hm = parseFloat(hmax2.value) || 0;
+    const hn = parseFloat(hmin2.value) || 0;
+    const phi = (hm + hn) / 2;
+    const dec = 90 - (hm - hn) / 2;
+    o2.innerHTML = `Geografik kenglik: <strong>φ = ${phi.toFixed(1)}° sh.k.</strong><br>` +
+      `Yulduz og‘ishi: <strong>δ = +${dec.toFixed(1)}°</strong>`;
+  }
+
+  p1.addEventListener("input", calc1);
+  d1.addEventListener("input", calc1);
+  hmax2.addEventListener("input", calc2);
+  hmin2.addEventListener("input", calc2);
+  calc1();
+  calc2();
+})();
+
+// ==================== IV. O'Z-O'ZINI TEKSHIRISH TESTI ====================
+(function() {
+  const QUESTIONS = [
+    {
+      q: "1. Yoritgichning osmon meridiani tekisligidan o‘tish hodisasi astronomiyada nima deb ataladi?",
+      opts: ["Pretsessiya", "Kulminatsiya", "Refraksiya"],
+      ans: 1,
+      exp: "Yoritgichning sutkalik aylanish davomida osmon meridiani tekisligidan o‘tishi kulminatsiya (cho‘qqi) deb ataladi."
+    },
+    {
+      q: "2. Yoritgichning yuqori va quyi kulminatsiyalari orasida qancha vaqt o‘tadi?",
+      opts: ["6 soat", "11 soat 58 daqiqa 02 soniya (yarim yulduz sutkasi)", "24 soat"],
+      ans: 1,
+      exp: "Yoritgich bir yulduz sutkasi (23h 56m 04s) davomida meridianni ikki marta kesib o‘tadi, ular orasidagi vaqt yarim yulduz sutkasiga teng."
+    },
+    {
+      q: "3. Kengligi φ = 41° bo‘lgan joyda og‘ishi δ = +21° bo‘lgan yulduzning yuqori kulminatsiya balandligi (h_max) nechaga teng?",
+      opts: ["70°", "50°", "20°"],
+      ans: 0,
+      exp: "δ < φ bo‘lgani uchun yulduz Zenitdan janubda kulminatsiyalanadi: h_max = (90° − φ) + δ = (90° − 41°) + 21° = 49° + 21° = 70°."
+    },
+    {
+      q: "4. Botmaydigan yulduzning Zenitdan shimolda o‘lchangan yuqori kulminatsiyasi h_max = 65° va quyi kulminatsiyasi h_min = 15° bo‘lsa, joyning geografik kengligi (φ) qancha?",
+      opts: ["50°", "40°", "25°"],
+      ans: 1,
+      exp: "Formula: φ = (h_max + h_min) / 2 = (65° + 15°) / 2 = 80° / 2 = 40°."
+    },
+    {
+      q: "5. Qaysi yulduzlarda quyi kulminatsiya ufq ostida emas, balki ufq ustida (Shimol nuqtasi N va Olam qutbi P orasida) kuzatiladi?",
+      opts: [
+        "Faqat ekvatorial yulduzlarda (δ = 0°)",
+        "Hech qachon botmaydigan yulduzlarda (δ ≥ 90° − φ)",
+        "Janubiy yarimshar yulduzlarida (δ < 0°)"
+      ],
+      ans: 1,
+      exp: "Faqat δ ≥ 90° − φ shartini qanoatlantiruvchi botmaydigan yulduzlarda h_min = φ + δ − 90° ≥ 0° bo‘ladi va quyi kulminatsiya ufq ustida ko‘rinadi."
+    }
+  ];
+
+  const container = document.getElementById("quiz-container");
+  const scoreBox = document.getElementById("quiz-score");
+  let score = 0;
+
+  QUESTIONS.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "quiz-item";
+    div.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-opts"></div><div class="quiz-exp">${item.exp}</div>`;
+    const optsDiv = div.querySelector(".quiz-opts");
+    const expDiv = div.querySelector(".quiz-exp");
+
+    item.opts.forEach((optText, oIdx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const allBtns = optsDiv.querySelectorAll("button");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (oIdx === item.ans) {
+          btn.classList.add("correct");
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          allBtns[item.ans].classList.add("correct");
+        }
+        expDiv.style.display = "block";
+        scoreBox.textContent = `Natija: ${score} / ${QUESTIONS.length} ta to‘g‘ri javob`;
+      });
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
