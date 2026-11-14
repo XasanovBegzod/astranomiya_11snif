@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7-§. Yulduzlarning xaritalari | 11-sinf Astronomiya</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --card-border: #334155;
+      --sky: #38bdf8;
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: linear-gradient(180deg, #0f172a 0%, #0b1120 100%);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    .nav-top {
+      max-width: 980px;
+      margin: 0 auto 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--sky);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+    .badge {
+      font-size: 0.8rem;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .title-box { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; color: var(--text); font-weight: 700; }
+    .subtitle { color: var(--muted); font-size: 0.92rem; margin-top: 3px; }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    section.module {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 10px;
+    }
+    .step-num {
+      background: var(--sky);
+      color: #0b1120;
+      font-weight: 800;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    h2 { font-size: 1.2rem; color: var(--sky); }
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border-left: 3px solid var(--amber);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 18px;
+      font-size: 0.94rem;
+    }
+    .theory-box ul { padding-left: 20px; margin-top: 8px; }
+    .theory-box li { margin-bottom: 6px; color: #e2e8f0; }
+    .hl-amber { color: var(--amber); font-weight: 600; }
+    .hl-sky { color: var(--sky); font-weight: 600; }
+    .hl-emerald { color: var(--emerald); font-weight: 600; }
+
+    /* Simulyator konteyneri */
+    .sim-wrapper {
+      background: #070b14;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+    .controls {
+      background: #0f172a;
+      padding: 14px 16px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slider-group {
+      flex: 1;
+      min-width: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky);
+      cursor: pointer;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    button.btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #475569;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.btn:hover { border-color: var(--sky); color: var(--sky); }
+    button.btn.active {
+      background: var(--sky);
+      color: #0b1120;
+      border-color: var(--sky);
+    }
+    button.btn.amber-btn.active, button.btn.amber-btn:hover {
+      background: var(--amber);
+      color: #0b1120;
+      border-color: var(--amber);
+    }
+    button.btn.emerald-btn.active, button.btn.emerald-btn:hover {
+      background: var(--emerald);
+      color: #0b1120;
+      border-color: var(--emerald);
+    }
+    .info-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+      gap: 10px;
+      background: rgba(30, 41, 59, 0.65);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .info-item span { display: block; color: var(--muted); font-size: 0.77rem; }
+    .info-item strong { color: var(--amber); font-size: 0.94rem; }
+
+    /* Obyekt inspektori (3-simulyatsiya) */
+    .inspector-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .inspector-title { font-weight: 700; color: var(--sky); font-size: 1rem; }
+    .inspector-meta { font-size: 0.85rem; color: #e2e8f0; }
+
+    /* Jadval */
+    .table-wrap { overflow-x: auto; margin-bottom: 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 11px 14px;
+      border: 1px solid #334155;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th { background: #1e293b; color: var(--sky); font-weight: 700; }
+    .sym-cell { font-size: 1.25rem; text-align: center; color: var(--amber); font-weight: bold; width: 70px; }
+
+    /* Test */
+    .quiz-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .quiz-q { font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; }
+    .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.15s;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--sky); }
+    .quiz-opt.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald); color: #6ee7b7; }
+    .quiz-opt.wrong { background: rgba(244, 63, 94, 0.2); border-color: var(--rose); color: #fda4af; }
+    .quiz-exp {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sky);
+      display: none;
+    }
+    .score-box {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--emerald);
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.25rem; }
+      section.module { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="back-btn">← Bosh menyuga qaytish</a>
+    <span class="badge">11-Sinf • Astronomiya</span>
+  </div>
+  <div class="title-box">
+    <h1>7-§. Yulduzlarning xaritalari</h1>
+    <p class="subtitle">Surilma yulduz xaritasi (Planisfera), kartografik proyeksiyalar va shartli belgilar</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- I REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">I</div>
+      <h2>Kirish: Yulduzlar xaritalarining vazifasi va zaruriyati</h2>
+    </div>
+
+    <div class="theory-box">
+      <p><span class="hl-sky">Yulduzlar xaritalari va atlaslari</span> — osmon jismlarini izlab topish, yulduz turkumlarini o‘rganish, teleskopik kuzatuvlarni rejalashtirish hamda astronomik navigatsiya uchun asosiy quroldir.</p>
+      <ul>
+        <li>Xalqaro Astronomiya Ittifoqi (XAI) qaroriga ko‘ra butun osmon sferasi rasman <strong>88 ta yulduz turkumiga</strong> bo‘lingan.</li>
+        <li><span class="hl-amber">Surilma yulduz xaritasi (Planisfera):</span> Ikki qismdan (yulduzlar doirasi va ufq oynasi tushirilgan ustki qoplamadan) iborat bo‘lib, yilning istalgan kuni va sutkaning istalgan soatida ufq ustida qaysi yulduz turkumlari ko‘rinib turishini tezkor aniqlashga xizmat qiladi.</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas1" height="430"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Sana: <strong id="c1-date-lbl" style="color:#38bdf8">14-Noyabr</strong></span>
+            </div>
+            <input type="range" id="c1-day" min="1" max="365" value="318">
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Mahalliy vaqt: <strong id="c1-time-lbl" style="color:#f59e0b">22:00</strong></span>
+            </div>
+            <input type="range" id="c1-hour" min="0" max="23.75" step="0.25" value="22">
+          </div>
+          <div class="btn-group">
+            <button class="btn amber-btn" id="c1-play">▶ Vaqt oqimi</button>
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Zenit (tepa) atrofidagi turkum</span><strong id="c1-zenith" style="color:#38bdf8">Kassiopeiya / Pegaz</strong></div>
+          <div class="info-item"><span>Janubiy ufq (S) tomonida</span><strong id="c1-south">Buzoq / Orion</strong></div>
+          <div class="info-item"><span>Qutb atrofi (doim botmaydigan)</span><strong id="c1-circ" style="color:#10b981">Katta va Kichik Ayiq</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- II REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">II</div>
+      <h2>Osmon sferasining tekislikka proyeksiyalanishi</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Sferik sirtni (osmon sferasini) qog‘oz yoki ekran tekisligiga shakllarni buzmasdan yoyib bo‘lmaydi. Shu sababli osmonning turli qismlari uchun maxsus <span class="hl-sky">kartografik proyeksiyalar</span> qo‘llaniladi:</p>
+      <ul>
+        <li><span class="hl-emerald">1. Qutbiy (Azimutal / Stereografik) proyeksiya:</span> Qutb atrofi hududlari (δ = +30°…+90° yoki -30°…-90°) uchun ishlatiladi. Osmon parallellari — <strong>konsentrik aylanalar</strong>, og‘ish aylanalari (α) esa markazdan chiquvchi <strong>radius-nurlar</strong> ko‘rinishida tasvirlanadi.</li>
+        <li><span class="hl-amber">2. Silindrik (Merkator) proyeksiya:</span> Ekvatorial mintaqa (δ = -45°…+45°) uchun qulay; parallellar va meridianlar o‘zaro perpendikulyar <strong>to‘g‘ri chiziqlar to‘rini</strong> hosil qiladi (lekin qutbga yaqinlashgan sari tasvir kuchli cho‘zilib buziladi).</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas2" height="390"></canvas>
+      <div class="controls">
+        <div class="control-row">
+          <div class="btn-group">
+            <button class="btn active" data-proj="polar">1. Qutbiy (Azimutal) proyeksiya</button>
+            <button class="btn" data-proj="cyl">2. Silindrik (Ekvatorial) proyeksiya</button>
+          </div>
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>3D Sferani tekislikka yoyish: <strong id="c2-morph-lbl" style="color:#10b981">100% (2D Xarita)</strong></span>
+            </div>
+            <input type="range" id="c2-morph" min="0" max="100" value="100">
+          </div>
+        </div>
+        <div class="info-strip">
+          <div class="info-item"><span>Parallellar (δ) shakli</span><strong id="c2-par-shape" style="color:#38bdf8">Konsentrik aylanalar</strong></div>
+          <div class="info-item"><span>Og‘ish aylanalari (α)</span><strong id="c2-mer-shape">Markazdan chiquvchi nurlar</strong></div>
+          <div class="info-item"><span>Buzilish darajasi</span><strong id="c2-distort" style="color:#10b981">Qutb atrofida minimal</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- III REJA -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">III</div>
+      <h2>Yulduz xaritalarining asosiy elementlari va shartli belgilari</h2>
+    </div>
+
+    <div class="theory-box">
+      <p>Yulduz xaritasini to‘g‘ri o‘qish uchun undagi koordinata to‘ri va maxsus astronomik belgilarni bilish zarur:</p>
+      <ul>
+        <li><span class="hl-amber">Ko‘rinma yulduz kattaligi (m):</span> Yulduzlar yorqinligiga qarab turli kattalikdagi doirachalar bilan chiziladi. <strong>m</strong> soni qancha kichik (yoki manfiy) bo‘lsa, yulduz shuncha yorqin va doirasi katta bo‘ladi. Oddiy ko‘z <strong>6<sup>m</sup></strong> gacha yulduzlarni ko‘radi.</li>
+        <li><span class="hl-sky">Bayer belgilari:</span> Har bir turkumdagi yulduzlar yorqinligi tartibida yunon alifbosi harflari (<strong>α, β, γ, δ, ε…</strong>) bilan belgilanadi.</li>
+        <li><span class="hl-emerald">Maxsus obyektlar:</span> Qo‘shaloq yulduzlar (chiziqchali doira), o‘zgaruvchan yulduzlar (halqali nuqta), yulduz to‘dalari (nuqtali aylana), tumanlik va galaktikalar (ellips yoki to‘rtburchak).</li>
+      </ul>
+    </div>
+
+    <div class="sim-wrapper">
+      <canvas id="canvas3" height="420" style="cursor:pointer;"></canvas>
+      <div class="controls">
+        <div class="inspector-box" id="c3-inspector">
+          <div>
+            <div class="inspector-title" id="ins-name">★ Betelgeyze (α Orionis) — Obyekt ustiga bosing</div>
+            <div class="inspector-meta" id="ins-desc">Ko‘rinma yulduz kattaligi: m = +0.5m | Koordinatalari: α = 5h 55m, δ = +07° 24' | Qizil o‘ta gigant yulduz</div>
+          </div>
+          <span class="badge" id="ins-type">Yorqin yulduz</span>
+        </div>
+
+        <div class="control-row">
+          <div class="slider-group">
+            <div class="slider-label">
+              <span>Chegaraviy yulduz kattaligi (m): <strong id="c3-mag-lbl" style="color:#f59e0b">6.0m (Tog‘ osmoni)</strong></span>
+            </div>
+            <input type="range" id="c3-mag" min="1" max="6" step="0.5" value="6">
+          </div>
+          <div class="btn-group">
+            <button class="btn active" id="btn-grid">Koordinata to‘ri</button>
+            <button class="btn active" id="btn-lines">Turkum chiziqlari</button>
+            <button class="btn active" id="btn-bayer">Bayer harflari (α, β)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV. QO'SHIMCHA BLOKLAR -->
+  <section class="module">
+    <div class="section-header">
+      <div class="step-num">IV</div>
+      <h2>Shartli belgilar lug‘ati va O‘z-o‘zini tekshirish testi</h2>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--amber); margin-bottom:10px;">1. Yulduz xaritalaridagi asosiy shartli belgilar jadvali</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Belgi</th>
+            <th>Obyekt turi</th>
+            <th>Astronomik tavsifi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sym-cell">●  •  ·</td>
+            <td><strong>Yulduzlar (0<sup>m</sup> — 6<sup>m</sup>)</strong></td>
+            <td>Doira diametri yulduzning ko‘rinma yorqinligiga mos keladi (katta doira — yorqin yulduz).</td>
+          </tr>
+          <tr>
+            <td class="sym-cell">⦵</td>
+            <td><strong>Qo‘shaloq yulduz</strong></td>
+            <td>Teleskopda ikkita yaqin yulduz ko‘rinadigan tizim (masalan, Mizar va Alkor).</td>
+          </tr>
+          <tr>
+            <td class="sym-cell">◎</td>
+            <td><strong>O‘zgaruvchan yulduz</strong></td>
+            <td>Yorqinligi davriy yoki nodavriy o‘zgarib turuvchi yulduz (masalan, Algol, Mira).</td>
+          </tr>
+          <tr>
+            <td class="sym-cell">◌</td>
+            <td><strong>Yulduz to‘dasi</strong></td>
+            <td>Ochiq (nuqtali aylana) yoki sharsimon (ichida xochli aylana) yulduzlar guruhi (masalan, Hulkar — M45).</td>
+          </tr>
+          <tr>
+            <td class="sym-cell">⬭  ▭</td>
+            <td><strong>Tumanlik va Galaktika</strong></td>
+            <td>Gaz-chang tumanliklari (M42) yoki tashqi galaktikalar (Andromeda — M31).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:1rem; color:var(--sky); margin-bottom:12px;">2. Mavzu yuzasidan tezkor test (5 ta savol)</h3>
+    <div id="quiz-container"></div>
+    <div class="score-box" id="quiz-score">Natija: 0 / 5 ta to‘g‘ri javob</div>
+  </section>
+
+</main>
+
+<script>
+// ==================== UMUMIY YORDAMCHILAR ====================
+const MONTHS = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
+const MONTH_DAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+function dayToText(doy) {
+  let d = ((Math.round(doy) - 1) % 365 + 365) % 365 + 1;
+  let m = 0;
+  while (d > MONTH_DAYS[m]) { d -= MONTH_DAYS[m]; m++; }
+  return `${d}-${MONTHS[m]}`;
+}
+
+function setupHiDPI(canvas, height) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.height = height + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w: rect.width, h: height };
+}
+
+// ==================== 1-SIMULYATSIYA: SURILMA YULDUZ XARITASI (PLANISFERA) ====================
+(function() {
+  const canvas = document.getElementById("canvas1");
+  const daySlider = document.getElementById("c1-day");
+  const hourSlider = document.getElementById("c1-hour");
+  const playBtn = document.getElementById("c1-play");
+  const dateLbl = document.getElementById("c1-date-lbl");
+  const timeLbl = document.getElementById("c1-time-lbl");
+  const zenithOut = document.getElementById("c1-zenith");
+  const southOut = document.getElementById("c1-south");
+
+  let playing = false;
+
+  // Shimoliy yarimshar yulduz turkumlari (RA soatda, Dec gradusda)
+  const CONSTELLATIONS = [
+    {
+      name: "Katta Ayiq",
+      stars: [[11.06,61.75],[11.03,56.38],[11.90,53.69],[12.26,57.03],[12.90,55.96],[13.40,54.93],[13.79,49.31]],
+      lines: [[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6]]
+    },
+    {
+      name: "Kichik Ayiq",
+      stars: [[2.53,89.26],[17.54,86.58],[16.76,82.03],[15.73,77.79],[14.85,74.15],[15.35,71.83],[16.29,75.75]],
+      lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3]]
+    },
+    {
+      name: "Kassiopeiya",
+      stars: [[0.15,59.15],[0.67,56.54],[0.95,60.72],[1.43,60.24],[1.91,63.67]],
+      lines: [[0,1],[1,2],[2,3],[3,4]]
+    },
+    {
+      name: "Orion",
+      stars: [[5.92,7.40],[5.24,-8.20],[5.42,6.35],[5.60,-1.20],[5.68,-1.94],[5.53,-0.30],[5.79,-9.67]],
+      lines: [[0,2],[0,4],[2,5],[5,3],[3,4],[3,1],[4,6]]
+    },
+    {
+      name: "Oqqush",
+      stars: [[20.69,45.28],[19.51,27.96],[20.37,40.26],[19.75,45.13],[21.22,30.23]],
+      lines: [[0,2],[2,1],[3,2],[2,4]]
+    },
+    {
+      name: "Lira",
+      stars: [[18.62,38.78],[18.83,33.36],[18.98,32.69],[18.74,37.60]],
+      lines: [[0,3],[3,1],[1,2],[2,3]]
+    },
+    {
+      name: "Arslon",
+      stars: [[10.14,11.97],[10.33,19.84],[11.24,20.52],[11.82,14.57],[9.76,23.77]],
+      lines: [[0,1],[1,4],[1,2],[2,3],[3,0]]
+    },
+    {
+      name: "Pegaz",
+      stars: [[23.08,15.20],[23.06,28.08],[0.14,15.18],[0.22,29.09]],
+      lines: [[0,1],[1,3],[3,2],[2,0]]
+    }
+  ];
+
+  playBtn.addEventListener("click", () => {
+    playing = !playing;
+    playBtn.classList.toggle("active", playing);
+    playBtn.textContent = playing ? "⏸ To‘xtatish" : "▶ Vaqt oqimi";
+  });
+
+  function render() {
+    if (playing) {
+      let h = parseFloat(hourSlider.value) + 0.04;
+      if (h >= 24) {
+        h -= 24;
+        let d = parseInt(daySlider.value, 10) + 1;
+        if (d > 365) d = 1;
+        daySlider.value = d;
+      }
+      hourSlider.value = h;
+    }
+
+    const day = parseInt(daySlider.value, 10);
+    const hour = parseFloat(hourSlider.value);
+    const hh = Math.floor(hour);
+    const mm = Math.round((hour - hh) * 60);
+
+    dateLbl.textContent = dayToText(day);
+    timeLbl.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;
+
+    // Mahalliy yulduz vaqti (LST) taxminiy hisobi (21-sentabr 00:00 da LST = 0h)
+    const lst = (((day - 264) / 365.25) * 24 + hour + 24) % 24;
+
+    // Zenit va Janubdagi turkumlarni aniqlash
+    if (lst >= 23 || lst < 3) { zenithOut.textContent = "Kassiopeiya / Andromeda"; southOut.textContent = "Pegaz / Baliq"; }
+    else if (lst < 7) { zenithOut.textContent = "Persey / Aravakash"; southOut.textContent = "Buzoq / Orion"; }
+    else if (lst < 11) { zenithOut.textContent = "Katta Ayiq / Silovsin"; southOut.textContent = "Egizaklar / Arslon"; }
+    else if (lst < 15) { zenithOut.textContent = "Katta Ayiq (cho‘mich)"; southOut.textContent = "Sunbula / Ho‘kizboqar"; }
+    else if (lst < 19) { zenithOut.textContent = "Ajdar / Gerkules"; southOut.textContent = "Chayon / Iloneltuvchi"; }
+    else { zenithOut.textContent = "Oqqush / Lira (Vega)"; southOut.textContent = "O‘qotar / Burgut"; }
+
+    const { ctx, w, h } = setupHiDPI(canvas, 430);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const maxR = Math.min(w, h) * 0.45;
+    // Dec = +90° -> r = 0, Dec = -35° -> r = maxR * 0.86
+    const decToR = dec => ((90 - dec) / 125) * (maxR * 0.86);
+
+    // 1. Aylanuvchi osmon doirasi (LST bo'yicha buriladi, janub pastda)
+    ctx.save();
+    ctx.translate(cx, cy);
+    // Janub (S) pastda (+PI/2). RA = LST janubda turishi uchun burchak:
+    const rotAngle = Math.PI / 2 - (lst * 15 * Math.PI) / 180;
+    ctx.rotate(rotAngle);
+
+    // Osmon foni
+    ctx.fillStyle = "#090f1d";
+    ctx.beginPath();
+    ctx.arc(0, 0, maxR * 0.88, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Parallellar (Dec = +60°, +30°, 0° Osmon ekvatori, -30°)
+    [60, 30, 0, -30].forEach(dec => {
+      ctx.strokeStyle = dec === 0 ? "rgba(56, 189, 248, 0.45)" : "rgba(148, 163, 184, 0.15)";
+      ctx.lineWidth = dec === 0 ? 1.5 : 1;
+      ctx.beginPath();
+      ctx.arc(0, 0, decToR(dec), 0, Math.PI * 2);
+      ctx.stroke();
+    });
+
+    // Ekliptika (sariq punktir aylana)
+    ctx.strokeStyle = "rgba(245, 158, 11, 0.4)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (let i = 0; i <= 72; i++) {
+      const raA = (i / 72) * Math.PI * 2;
+      const decE = 23.44 * Math.sin(raA);
+      const rE = decToR(decE);
+      const x = Math.cos(raA) * rE;
+      const y = Math.sin(raA) * rE;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Yulduz turkumlari
+    CONSTELLATIONS.forEach(c => {
+      const pts = c.stars.map(([ra, dec]) => {
+        const a = (ra * 15 * Math.PI) / 180;
+        const r = decToR(dec);
+        return { x: Math.cos(a) * r, y: Math.sin(a) * r };
+      });
+
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.55)";
+      ctx.lineWidth = 1.3;
+      c.lines.forEach(([i, j]) => {
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.stroke();
+      });
+
+      pts.forEach(p => {
+        ctx.fillStyle = "#f8fafc";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Turkum nomi (teskari burib to'g'ri o'qiladigan qilamiz)
+      ctx.save();
+      ctx.translate(pts[0].x, pts[0].y - 8);
+      ctx.rotate(-rotAngle);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(c.name, 0, 0);
+      ctx.restore();
+    });
+
+    // Qutb yulduzi (markazda)
+    ctx.fillStyle = "#fbbf24";
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // 2. Ustki qoplama (Toshkent kengligi phi=41° uchun Ufq oynasi maskasi)
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+    // Oval ufq oynasi (markazi janubga biroz siljigan)
+    const ovalCy = cy + maxR * 0.22;
+    const ovalRx = maxR * 0.68;
+    const ovalRy = maxR * 0.56;
+    ctx.ellipse(cx, ovalCy, ovalRx, ovalRy, 0, 0, Math.PI * 2, true);
+    ctx.fillStyle = "rgba(15, 23, 42, 0.86)";
+    ctx.fill();
+
+    // Ufq oynasi ramkasi
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.ellipse(cx, ovalCy, ovalRx, ovalRy, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // Soat shkalasi (tashqi halqada)
+    ctx.fillStyle = "#f59e0b";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (let s = 0; s < 24; s += 2) {
+      // Janub pastda (00h/22h)
+      const ang = Math.PI / 2 + ((s - 22) / 24) * Math.PI * 2;
+      const sx = cx + Math.cos(ang) * (maxR * 0.93);
+      const sy = cy + Math.sin(ang) * (maxR * 0.93);
+      ctx.fillText(`${s}h`, sx, sy);
+    }
+
+    // Ufq tomonlari (N, S, E, W)
+    ctx.fillStyle = "#10b981";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("N (Shimol)", cx, ovalCy - ovalRy - 10);
+    ctx.fillText("S (Janub)", cx, ovalCy + ovalRy + 12);
+    ctx.fillText("E (Sharq)", cx - ovalRx - 24, ovalCy);
+    ctx.fillText("W (G‘arb)", cx + ovalRx + 24, ovalCy);
+
+    // Zenit xochi (+)
+    ctx.strokeStyle = "rgba(245, 158, 11, 0.7)";
+    ctx.beginPath();
+    ctx.moveTo(cx - 6, ovalCy); ctx.lineTo(cx + 6, ovalCy);
+    ctx.moveTo(cx, ovalCy - 6); ctx.lineTo(cx, ovalCy + 6);
+    ctx.stroke();
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// ==================== 2-SIMULYATSIYA: PROYEKSIYA TRANSFORMERI ====================
+(function() {
+  const canvas = document.getElementById("canvas2");
+  const morphSlider = document.getElementById("c2-morph");
+  const morphLbl = document.getElementById("c2-morph-lbl");
+  const parShape = document.getElementById("c2-par-shape");
+  const merShape = document.getElementById("c2-mer-shape");
+  const distortOut = document.getElementById("c2-distort");
+  const projBtns = document.querySelectorAll("[data-proj]");
+
+  let projType = "polar"; // 'polar' yoki 'cyl'
+
+  projBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      projBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      projType = btn.dataset.proj;
+
+      if (projType === "polar") {
+        parShape.textContent = "Konsentrik aylanalar";
+        merShape.textContent = "Markazdan chiquvchi radius-nurlar";
+        distortOut.textContent = "Qutb atrofida minimal (Qutbiy xarita)";
+        distortOut.style.color = "#10b981";
+      } else {
+        parShape.textContent = "Parallel gorizontal to‘g‘ri chiziqlar";
+        merShape.textContent = "Parallel vertikal to‘g‘ri chiziqlar";
+        distortOut.textContent = "Ekvatorda aniq, qutbga yaqin cho‘ziladi!";
+        distortOut.style.color = "#f59e0b";
+      }
+      draw();
+    });
+  });
+
+  morphSlider.addEventListener("input", draw);
+
+  // Katta Ayiq koordinatalari (proyeksiya buzilishini ko'rsatish uchun)
+  const BIG_DIPPER = [
+    [165, 62], [165, 56], [178, 54], [184, 57], [193, 56], [201, 55], [207, 49]
+  ];
+
+  function draw() {
+    const t = parseInt(morphSlider.value, 10) / 100;
+    morphLbl.textContent = `${Math.round(t * 100)}% ${t === 1 ? "(2D Xarita)" : (t === 0 ? "(3D Sfera)" : "(Yoyilmoqda...)")}`;
+
+    const { ctx, w, h } = setupHiDPI(canvas, 390);
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const R = Math.min(w, h) * 0.36;
+
+    // 3D sfera nuqtasi va 2D proyeksiya nuqtasi orasida silliq interpolyatsiya
+    function mapPoint(raDeg, decDeg) {
+      const ra = (raDeg * Math.PI) / 180;
+      const dec = (decDeg * Math.PI) / 180;
+
+      // 1) 3D sfera (oldingi ko'rinish)
+      const x3 = Math.cos(dec) * Math.sin(ra);
+      const y3 = Math.sin(dec);
+      const sx = cx + x3 * R;
+      const sy = cy - y3 * R;
+
+      // 2) 2D proyeksiya nuqtasi
+      let px = sx, py = sy;
+      if (projType === "polar") {
+        // Shimoliy qutb markazda: r = (90 - dec) / 120 * R * 1.15
+        const r = ((90 - decDeg) / 120) * (R * 1.12);
+        px = cx + Math.cos(ra - Math.PI / 2) * r;
+        py = cy + Math.sin(ra - Math.PI / 2) * r;
+      } else {
+        // Silindrik proyeksiya (to'rtburchak to'r)
+        const normRA = (((raDeg + 180) % 360) - 180) / 180; // -1 .. +1
+        px = cx + normRA * (w * 0.42);
+        py = cy - (decDeg / 85) * (h * 0.38);
+      }
+
+      return {
+        x: sx * (1 - t) + px * t,
+        y: sy * (1 - t) + py * t
+      };
+    }
+
+    // Parallellar to'ri (Dec = -60, -30, 0, +30, +60)
+    [-60, -30, 0, 30, 60].forEach(dec => {
+      if (projType === "polar" && dec < -20) return;
+      ctx.strokeStyle = dec === 0 ? "#38bdf8" : "rgba(148, 163, 184, 0.25)";
+      ctx.lineWidth = dec === 0 ? 2 : 1;
+      ctx.beginPath();
+      const startRA = projType === "polar" ? 0 : -180;
+      const endRA = projType === "polar" ? 360 : 180;
+      for (let ra = startRA; ra <= endRA; ra += 6) {
+        const pt = mapPoint(ra, dec);
+        if (ra === startRA) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.stroke();
+    });
+
+    // Meridianlar / Og'ish aylanalari (har 30° da)
+    const startM = projType === "polar" ? 0 : -180;
+    const endM = projType === "polar" ? 330 : 180;
+    for (let ra = startM; ra <= endM; ra += 30) {
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      const minDec = projType === "polar" ? -20 : -80;
+      const maxDec = projType === "polar" ? 90 : 80;
+      for (let dec = minDec; dec <= maxDec; dec += 5) {
+        const pt = mapPoint(ra, dec);
+        if (dec === minDec) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.stroke();
+    }
+
+    // Katta Ayiq yulduz turkumi (har ikki proyeksiyada shakli qanday o'zgarishini ko'rsatadi)
+    const dipPts = BIG_DIPPER.map(([ra, dec]) => mapPoint(ra - 180, dec));
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    dipPts.forEach((p, idx) => {
+      if (idx === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
+
+    dipPts.forEach(p => {
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("Katta Ayiq (δ ≈ +55°)", dipPts[3].x - 30, dipPts[3].y - 14);
+
+    // Qutb nuqtasi belgisi
+    if (projType === "polar") {
+      const pole = mapPoint(0, 90);
+      ctx.fillStyle = "#10b981";
+      ctx.beginPath();
+      ctx.arc(pole.x, pole.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText("P (Shimoliy qutb)", pole.x + 8, pole.y + 4);
+    }
+  }
+  draw();
+})();
+
+// ==================== 3-SIMULYATSIYA: YULDUZ XARITASI O'QISH LABORATORIYASI ====================
+(function() {
+  const canvas = document.getElementById("canvas3");
+  const magSlider = document.getElementById("c3-mag");
+  const magLbl = document.getElementById("c3-mag-lbl");
+
+  const insName = document.getElementById("ins-name");
+  const insDesc = document.getElementById("ins-desc");
+  const insType = document.getElementById("ins-type");
+
+  const btnGrid = document.getElementById("btn-grid");
+  const btnLines = document.getElementById("btn-lines");
+  const btnBayer = document.getElementById("btn-bayer");
+
+  let showGrid = true, showLines = true, showBayer = true;
+  let selectedId = 0;
+  let hitTargets = [];
+
+  [ [btnGrid, () => showGrid = !showGrid],
+    [btnLines, () => showLines = !showLines],
+    [btnBayer, () => showBayer = !showBayer]
+  ].forEach(([btn, toggle]) => {
+    btn.addEventListener("click", () => {
+      toggle();
+      btn.classList.toggle("active");
+      draw();
+    });
+  });
+
+  // Xaritadagi asosiy astronomik obyektlar (x: 0..1, y: 0..1 nisbiy koordinata)
+  const OBJECTS = [
+    { id: 0, name: "Betelgeyze (α Orionis)", bayer: "α", mag: 0.5, type: "Yorqin yulduz", sym: "star", x: 0.34, y: 0.44, info: "m = +0.5m | α = 5h 55m, δ = +07° 24' | Qizil o‘ta gigant yulduz" },
+    { id: 1, name: "Rigel (β Orionis)", bayer: "β", mag: 0.1, type: "Yorqin yulduz", sym: "star", x: 0.45, y: 0.78, info: "m = +0.1m | α = 5h 14m, δ = -08° 12' | Moviy o‘ta gigant yulduz" },
+    { id: 2, name: "Bellatriks (γ Orionis)", bayer: "γ", mag: 1.6, type: "Yulduz", sym: "star", x: 0.44, y: 0.46, info: "m = +1.6m | α = 5h 25m, δ = +06° 21' | Orionning chap yelkasi" },
+    { id: 3, name: "Alnitak (ζ Orionis)", bayer: "ζ", mag: 1.8, type: "Yulduz", sym: "star", x: 0.37, y: 0.62, info: "m = +1.8m | α = 5h 40m, δ = -01° 56' | Orion kamari yulduzi" },
+    { id: 4, name: "Alnilam (ε Orionis)", bayer: "ε", mag: 1.7, type: "Yulduz", sym: "star", x: 0.39, y: 0.61, info: "m = +1.7m | α = 5h 36m, δ = -01° 12' | Orion kamarining markazi" },
+    { id: 5, name: "Mintaka (δ Orionis)", bayer: "δ", mag: 2.2, type: "Qo‘shaloq yulduz", sym: "double", x: 0.41, y: 0.60, info: "m = +2.2m | α = 5h 32m, δ = -00° 18' | Chiziqchali doira — qo‘shaloq yulduz belgisi" },
+    { id: 6, name: "Orion tumanligi (M42)", bayer: "M42", mag: 4.0, type: "Diffuz tumanlik", sym: "nebula", x: 0.39, y: 0.69, info: "m = +4.0m | α = 5h 35m, δ = -05° 23' | Yulduzlar tug‘ilayotgan gaz-chang tumanligi" },
+    { id: 7, name: "Aldebaran (α Tauri)", bayer: "α", mag: 0.9, type: "Yorqin yulduz", sym: "star", x: 0.62, y: 0.34, info: "m = +0.9m | α = 4h 35m, δ = +16° 30' | Buzoq yulduz turkumining eng yorqin yulduzi" },
+    { id: 8, name: "Hulkar / Pleyada (M45)", bayer: "M45", mag: 1.6, type: "Ochiq yulduz to‘dasi", sym: "cluster", x: 0.74, y: 0.22, info: "m = +1.6m | α = 3h 47m, δ = +24° 07' | Nuqtali aylana — ochiq yulduz to‘dasi" },
+    { id: 9, name: "Algol (β Persei)", bayer: "β", mag: 2.1, type: "O‘zgaruvchan yulduz", sym: "variable", x: 0.82, y: 0.14, info: "m = +2.1m…+3.4m | α = 3h 08m, δ = +40° 57' | Halqali nuqta — tutiluvchi o‘zgaruvchan yulduz" },
+    { id: 10, name: "Andromeda galaktikasi (M31)", bayer: "M31", mag: 3.4, type: "Spiral galaktika", sym: "galaxy", x: 0.91, y: 0.18, info: "m = +3.4m | α = 0h 42m, δ = +41° 16' | Ellips belgisi — qo‘shni spiral galaktika" }
+  ];
+
+  // Fon uchun xira yulduzlar (m = 3.5 .. 6.0)
+  const FAINT_STARS = Array.from({length: 85}, (_, i) => ({
+    x: ((i * 73 + 19) % 96 + 2) / 100,
+    y: ((i * 41 + 11) % 92 + 4) / 100,
+    mag: 3.2 + (i % 6) * 0.55
+  }));
+
+  magSlider.addEventListener("input", () => {
+    const m = parseFloat(magSlider.value);
+    const desc = m <= 2.5 ? "Shahar markazi" : (m <= 4.5 ? "Shahar cheti" : "Tog‘ osmoni (to‘liq)");
+    magLbl.textContent = `${m.toFixed(1)}m (${desc})`;
+    draw();
+  });
+
+  canvas.addEventListener("click", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    let closest = null, minD = 26;
+    hitTargets.forEach(t => {
+      const d = Math.hypot(mx - t.px, my - t.py);
+      if (d < minD) { minD = d; closest = t.obj; }
+    });
+
+    if (closest) {
+      selectedId = closest.id;
+      insName.textContent = `★ ${closest.name}`;
+      insDesc.textContent = closest.info;
+      insType.textContent = closest.type;
+      draw();
+    }
+  });
+
+  function draw() {
+    const maxMag = parseFloat(magSlider.value);
+    const { ctx, w, h } = setupHiDPI(canvas, 420);
+    ctx.clearRect(0, 0, w, h);
+
+    // Somon yo'li tasmasi (xira ko'kimtir tumanlik foni)
+    const mwGrad = ctx.createLinearGradient(0, 0, w, h);
+    mwGrad.addColorStop(0, "rgba(56, 189, 248, 0)");
+    mwGrad.addColorStop(0.45, "rgba(56, 189, 248, 0.08)");
+    mwGrad.addColorStop(0.75, "rgba(56, 189, 248, 0)");
+    ctx.fillStyle = mwGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Koordinata to'ri (alpha va delta)
+    if (showGrid) {
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.18)";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#64748b";
+      ctx.font = "10px sans-serif";
+
+      const ras = ["6h", "5h", "4h", "3h", "2h", "1h"];
+      for (let i = 1; i <= 6; i++) {
+        const gx = (i / 7) * w;
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+        ctx.fillText(`α=${ras[i - 1]}`, gx + 4, 14);
+      }
+      const decs = ["+40°", "+20°", "0° (Ekvator)", "-10°"];
+      for (let j = 1; j <= 4; j++) {
+        const gy = (j / 5) * h;
+        ctx.strokeStyle = j === 3 ? "rgba(56, 189, 248, 0.35)" : "rgba(148, 163, 184, 0.18)";
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+        ctx.fillText(`δ=${decs[j - 1]}`, 8, gy - 4);
+      }
+    }
+
+    // Fon xira yulduzlar
+    FAINT_STARS.forEach(s => {
+      if (s.mag <= maxMag) {
+        const r = Math.max(0.8, (6.5 - s.mag) * 0.45);
+        ctx.fillStyle = "rgba(226, 232, 240, 0.55)";
+        ctx.beginPath();
+        ctx.arc(s.x * w, s.y * h, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    // Orion turkumi chiziqlari
+    if (showLines) {
+      const pairs = [[0,2],[2,5],[5,1],[1,6],[6,3],[3,0],[3,4],[4,5]];
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+      ctx.lineWidth = 1.4;
+      pairs.forEach(([a, b]) => {
+        ctx.beginPath();
+        ctx.moveTo(OBJECTS[a].x * w, OBJECTS[a].y * h);
+        ctx.lineTo(OBJECTS[b].x * w, OBJECTS[b].y * h);
+        ctx.stroke();
+      });
+    }
+
+    hitTargets = [];
+
+    // Asosiy obyektlar va shartli belgilar
+    OBJECTS.forEach(obj => {
+      if (obj.mag > maxMag) return;
+      const px = obj.x * w;
+      const py = obj.y * h;
+      hitTargets.push({ px, py, obj });
+
+      // Tanlangan obyekt halqasi
+      if (obj.id === selectedId) {
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(px, py, 16, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      const r = Math.max(2.5, (5.5 - obj.mag) * 1.35);
+
+      if (obj.sym === "star") {
+        ctx.fillStyle = "#f8fafc";
+        ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+      } else if (obj.sym === "double") {
+        ctx.fillStyle = "#f8fafc";
+        ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(px - r - 4, py); ctx.lineTo(px + r + 4, py); ctx.stroke();
+      } else if (obj.sym === "variable") {
+        ctx.fillStyle = "#fbbf24";
+        ctx.beginPath(); ctx.arc(px, py, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#fbbf24"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.stroke();
+      } else if (obj.sym === "cluster") {
+        ctx.strokeStyle = "#10b981"; ctx.lineWidth = 1.6;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+      } else if (obj.sym === "nebula") {
+        ctx.strokeStyle = "#f43f5e"; ctx.lineWidth = 1.6;
+        ctx.strokeRect(px - 6, py - 6, 12, 12);
+      } else if (obj.sym === "galaxy") {
+        ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.ellipse(px, py, 11, 5, -0.5, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      if (showBayer) {
+        ctx.fillStyle = obj.id === selectedId ? "#fbbf24" : "#cbd5e1";
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillText(obj.bayer, px + 9, py - 6);
+      }
+    });
+  }
+  draw();
+})();
+
+// ==================== IV. O'Z-O'ZINI TEKSHIRISH TESTI ====================
+(function() {
+  const QUESTIONS = [
+    {
+      q: "1. Xalqaro Astronomiya Ittifoqi (XAI) qaroriga ko‘ra osmon sferasi nechta yulduz turkumiga bo‘lingan?",
+      opts: ["12 ta", "88 ta", "108 ta"],
+      ans: 1,
+      exp: "Osmon sferasi chegaralari aniq belgilangan 88 ta rasmiy yulduz turkumiga bo‘lingan."
+    },
+    {
+      q: "2. Istalgan sana va soatda ufq ustida qaysi yulduz turkumlari ko‘rinib turishini tezkor aniqlash uchun qaysi xaritadan foydalaniladi?",
+      opts: [
+        "Surilma yulduz xaritasidan (planisferadan)",
+        "Faqat Quyosh sistemasi xaritasidan",
+        "Oy sirti atlasidan"
+      ],
+      ans: 0,
+      exp: "Surilma yulduz xaritasi (planisfera) sana va soatni moslashtirish orqali ufq ustidagi yulduzlarni darhol ko‘rsatadi."
+    },
+    {
+      q: "3. Qutbiy (azimutal) proyeksiyada osmon parallellari (δ) qanday shaklda tasvirlanadi?",
+      opts: [
+        "O‘zaro parallel gorizontal to‘g‘ri chiziqlar ko‘rinishida",
+        "Markazi olam qutbida bo‘lgan konsentrik aylanalar ko‘rinishida",
+        "Parabolalar ko‘rinishida"
+      ],
+      ans: 1,
+      exp: "Qutbiy proyeksiyada olam qutbi markazda joylashadi, parallellar esa uning atrofidagi konsentrik aylanalar bo‘ladi."
+    },
+    {
+      q: "4. Yulduz xaritasida yulduzning doirachasi qancha katta chizilgan bo‘lsa, bu nimani anglatadi?",
+      opts: [
+        "Yulduzning ko‘rinma yulduz kattaligi (m) kichik va u juda yorqin ekanligini",
+        "Yulduz Yerdan eng uzoqda joylashganligini",
+        "Yulduzning harorati eng past ekanligini"
+      ],
+      ans: 0,
+      exp: "Astronomiyada yorqin yulduzlarning yulduz kattaligi (m) kichik yoki manfiy bo‘ladi va xaritada katta doira bilan belgilanadi."
+    },
+    {
+      q: "5. Oddiy (qurollanmagan) ko‘z bilan toza tungi osmonda ko‘rinadigan eng xira yulduzlarning ko‘rinma yulduz kattaligi nechaga teng?",
+      opts: ["1m", "6m", "15m"],
+      ans: 1,
+      exp: "Inson ko‘zi qorong‘i va musaffo osmonda 6m (oltinchi yulduz kattaligi) gacha bo‘lgan yulduzlarni ajrata oladi."
+    }
+  ];
+
+  const container = document.getElementById("quiz-container");
+  const scoreBox = document.getElementById("quiz-score");
+  let score = 0;
+
+  QUESTIONS.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "quiz-item";
+    div.innerHTML = `<div class="quiz-q">${item.q}</div><div class="quiz-opts"></div><div class="quiz-exp">${item.exp}</div>`;
+    const optsDiv = div.querySelector(".quiz-opts");
+    const expDiv = div.querySelector(".quiz-exp");
+
+    item.opts.forEach((optText, oIdx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.textContent = optText;
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        const allBtns = optsDiv.querySelectorAll("button");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (oIdx === item.ans) {
+          btn.classList.add("correct");
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          allBtns[item.ans].classList.add("correct");
+        }
+        expDiv.style.display = "block";
+        scoreBox.textContent = `Natija: ${score} / ${QUESTIONS.length} ta to‘g‘ri javob`;
+      });
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+      </html>
