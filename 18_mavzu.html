@@ -1,0 +1,2686 @@
+```html
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>18-§. Quyosh sistemasining tuzilishi — Interaktiv Astronomiya Darsligi</title>
+  <style>
+    /* ==========================================================================
+       1. KOSMIK DARK-MODE DIZAYN TIZIMI VA RANG PALITRASI
+       ========================================================================== */
+    :root {
+      --bg-deep: #0b0f19;
+      --bg-panel: rgba(17, 24, 39, 0.78);
+      --bg-subcard: rgba(15, 23, 42, 0.72);
+      --border-subtle: rgba(148, 163, 184, 0.18);
+      --border-glow: rgba(56, 189, 248, 0.45);
+      --text-main: #f1f5f9;
+      --text-sec: #cbd5e1;
+      --text-muted: #94a3b8;
+      --gold: #fbbf24;
+      --gold-dim: rgba(251, 191, 36, 0.16);
+      --sky: #38bdf8;
+      --sky-dim: rgba(56, 189, 248, 0.16);
+      --orange: #f97316;
+      --orange-dim: rgba(249, 115, 22, 0.16);
+      --purple: #a855f7;
+      --purple-dim: rgba(168, 85, 247, 0.16);
+      --emerald: #10b981;
+      --emerald-dim: rgba(16, 185, 129, 0.16);
+      --crimson: #ef4444;
+      --crimson-dim: rgba(239, 68, 68, 0.16);
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --shadow-deep: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(ellipse at 12% 8%, rgba(251, 191, 36, 0.08) 0%, transparent 42%),
+        radial-gradient(ellipse at 88% 15%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 92%, rgba(168, 85, 247, 0.09) 0%, transparent 48%);
+      color: var(--text-main);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Yulduzli kosmik fon */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(1px 1px at 8% 14%, rgba(255,255,255,0.45) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 24% 38%, rgba(56,189,248,0.45) 50%, transparent 100%),
+        radial-gradient(1px 1px at 41% 11%, rgba(255,255,255,0.5) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 62% 27%, rgba(251,191,36,0.42) 50%, transparent 100%),
+        radial-gradient(1px 1px at 79% 19%, rgba(255,255,255,0.42) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 92% 54%, rgba(168,85,247,0.45) 50%, transparent 100%),
+        radial-gradient(1px 1px at 17% 78%, rgba(255,255,255,0.35) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 54% 84%, rgba(255,255,255,0.3) 50%, transparent 100%),
+        radial-gradient(1px 1px at 76% 71%, rgba(16,185,129,0.4) 50%, transparent 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 18px 16px 56px;
+    }
+
+    /* ==========================================================================
+       2. SARLAVHA VA ASOSIY NAVIGATSIYA
+       ========================================================================== */
+    .hero-header {
+      background: linear-gradient(135deg, rgba(19, 28, 49, 0.92), rgba(11, 15, 25, 0.94));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px 26px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-deep);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #ffffff 0%, #fbbf24 45%, #38bdf8 80%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .hero-subtitle {
+      color: var(--text-sec);
+      font-size: 0.95rem;
+      max-width: 740px;
+    }
+
+    .score-pill {
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(16, 185, 129, 0.38);
+      border-radius: var(--radius-lg);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 195px;
+    }
+
+    .score-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--emerald-dim);
+      color: var(--emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .score-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--emerald);
+    }
+
+    /* 3 ta asosiy bo‘lim tab tugmalari */
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+      position: sticky;
+      top: 10px;
+      z-index: 40;
+      background: rgba(11, 15, 25, 0.85);
+      padding: 8px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: 1px solid transparent;
+      background: rgba(30, 41, 59, 0.55);
+      color: var(--text-sec);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.22s ease;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-height: 54px;
+    }
+
+    .tab-btn:hover {
+      background: rgba(30, 41, 59, 0.92);
+      border-color: rgba(148, 163, 184, 0.32);
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.16), rgba(56, 189, 248, 0.18));
+      border-color: rgba(56, 189, 248, 0.55);
+      color: #ffffff;
+      box-shadow: 0 6px 22px rgba(56, 189, 248, 0.16);
+    }
+
+    .tab-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .tab-btn.active .tab-num {
+      background: var(--gold);
+      color: #0b0f19;
+      border-color: var(--gold);
+    }
+
+    .tab-text-wrap {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tab-sub {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tab-title {
+      font-size: 0.91rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ==========================================================================
+       3. KARTOCHKALAR, NAZARIYA VA JADVALLAR
+       ========================================================================== */
+    .section-panel {
+      display: none;
+      animation: fadeSlideUp 0.32s ease;
+    }
+
+    .section-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-deep);
+      backdrop-filter: blur(12px);
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: var(--sky-dim);
+      color: var(--sky);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+    }
+
+    .theory-lead {
+      font-size: 0.95rem;
+      color: var(--text-sec);
+      margin-bottom: 14px;
+    }
+
+    .theory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+      gap: 14px;
+    }
+
+    .theory-box {
+      background: var(--bg-subcard);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius-lg);
+      padding: 15px 16px;
+    }
+
+    .theory-box h4 {
+      font-size: 0.97rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theory-box p {
+      font-size: 0.92rem;
+      color: var(--text-sec);
+    }
+
+    .hl-gold { color: var(--gold); font-weight: 700; }
+    .hl-sky { color: var(--sky); font-weight: 700; }
+    .hl-orange { color: var(--orange); font-weight: 700; }
+    .hl-purple { color: #c084fc; font-weight: 700; }
+    .hl-emerald { color: var(--emerald); font-weight: 700; }
+
+    .formula-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .formula-pill {
+      background: rgba(30, 41, 59, 0.78);
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      border-radius: var(--radius-md);
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      color: #f8fafc;
+      font-family: "Consolas", "Courier New", monospace;
+    }
+
+    /* Qiyosiy jadval */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    table.astro-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    table.astro-table th, table.astro-table td {
+      padding: 10px 13px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    table.astro-table th {
+      background: rgba(30, 41, 59, 0.85);
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       4. SIMULYATSIYA KONTEYNERI, TELEMETRIYA VA BOSHQARUV ELEMENTLARI
+       ========================================================================== */
+    .sim-wrapper {
+      position: relative;
+      width: 100%;
+      background: #060912;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    canvas.sim-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      touch-action: pan-y;
+    }
+
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tele-item {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+    }
+
+    .tele-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 3px;
+    }
+
+    .tele-val {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .badge-sky { background: var(--sky-dim); color: var(--sky); border: 1px solid rgba(56, 189, 248, 0.42); }
+    .badge-purple { background: var(--purple-dim); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.42); }
+    .badge-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(251, 191, 36, 0.42); }
+    .badge-emerald { background: var(--emerald-dim); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.42); }
+    .badge-crimson { background: var(--crimson-dim); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.42); }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .control-group {
+      background: var(--bg-subcard);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius-lg);
+      padding: 12px 15px;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--text-sec);
+    }
+
+    .control-readout {
+      color: var(--gold);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: rgba(51, 65, 85, 0.85);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--sky);
+      border: 3px solid #0b0f19;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.65);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--sky);
+      border: 3px solid #0b0f19;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.65);
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .sim-btn {
+      appearance: none;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(30, 41, 59, 0.82);
+      color: var(--text-main);
+      padding: 9px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 42px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn:hover {
+      background: rgba(51, 65, 85, 0.95);
+      border-color: var(--sky);
+      transform: translateY(-1px);
+    }
+
+    .sim-btn.active-mode {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.28), rgba(168, 85, 247, 0.25));
+      border-color: var(--sky);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.22);
+    }
+
+    .sim-btn.btn-gold {
+      background: rgba(251, 191, 36, 0.16);
+      border-color: rgba(251, 191, 36, 0.45);
+      color: var(--gold);
+    }
+
+    .sim-btn.btn-emerald {
+      background: rgba(16, 185, 129, 0.16);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+
+    .sim-btn.btn-purple {
+      background: rgba(168, 85, 247, 0.16);
+      border-color: rgba(168, 85, 247, 0.45);
+      color: #d8b4fe;
+    }
+
+    .sim-btn.btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: rgba(56, 189, 248, 0.65);
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       5. TEST SAVOLLARI BLOKI
+       ========================================================================== */
+    .quiz-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .quiz-item {
+      background: var(--bg-subcard);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+    }
+
+    .quiz-q {
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 9px;
+    }
+
+    .quiz-opt {
+      appearance: none;
+      text-align: left;
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      color: var(--text-sec);
+      border-radius: var(--radius-md);
+      padding: 11px 14px;
+      font-size: 0.89rem;
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.18s ease;
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.92);
+      border-color: var(--sky);
+      color: #ffffff;
+    }
+
+    .quiz-opt.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--emerald);
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--crimson);
+      color: #fecaca;
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .quiz-feedback.fb-ok {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #a7f3d0;
+    }
+
+    .quiz-feedback.fb-err {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fecaca;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    @media (max-width: 820px) {
+      .nav-tabs {
+        grid-template-columns: 1fr;
+        position: static;
+      }
+      .hero-header { padding: 18px; }
+      .glass-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- BOSH SARLAVHA -->
+    <header class="hero-header">
+      <div>
+        <div class="hero-badge">11-Sinf Astronomiya • Interaktiv Raqamli Darslik</div>
+        <h1 class="hero-title">18-§. Quyosh sistemasining tuzilishi</h1>
+        <p class="hero-subtitle">
+          Quyosh sistemasining fazoviy miqyosi va massalar taqsimoti, Ptolemeyning epitsikllari hamda Kopernikning sirtmoqsimon harakat siri,
+          shuningdek, sayyoralarning ikki fizik guruhi va Titsius–Bode qoidasini jonli laboratoriyalarda tadqiq eting.
+        </p>
+      </div>
+      <div class="score-pill" aria-live="polite">
+        <div class="score-icon">★</div>
+        <div>
+          <div class="score-label">O‘zlashtirish natijasi</div>
+          <div class="score-value" id="globalScore">0 / 9 ball</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 3 TA BO‘LIM MENYUSI -->
+    <nav class="nav-tabs" role="tablist" aria-label="Mavzu bo‘limlari">
+      <button class="tab-btn active" role="tab" aria-selected="true" data-tab="sec1">
+        <span class="tab-num">1</span>
+        <span class="tab-text-wrap">
+          <span class="tab-sub">1-reja bandi</span>
+          <span class="tab-title">Umumiy tarkibi va miqyosi</span>
+        </span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="sec2">
+        <span class="tab-num">2</span>
+        <span class="tab-text-wrap">
+          <span class="tab-sub">2-reja bandi</span>
+          <span class="tab-title">Geosentrik va Geliosentrik sistemalar</span>
+        </span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="sec3">
+        <span class="tab-num">3</span>
+        <span class="tab-text-wrap">
+          <span class="tab-sub">3-reja bandi</span>
+          <span class="tab-title">Sayyoralar qonuniyatlari va ikki guruhi</span>
+        </span>
+      </button>
+    </nav>
+
+    <!-- ========================================================================
+         BO‘LIM 1: QUYOSH SISTEMASINING UMUMIY TARKIBI VA MIQYOSI
+         ======================================================================== -->
+    <section id="sec1" class="section-panel active" role="tabpanel">
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">1. Quyosh sistemasining umumiy tarkibi va miqyosi</h2>
+          <span class="card-tag">Nazariy asoslar</span>
+        </div>
+        <p class="theory-lead">
+          Quyosh sistemasi markaziy yulduz — <span class="hl-gold">Quyosh</span> va uning tortishish maydonida aylanuvchi 8 ta katta sayyora, 5 ta tan olingan karlik sayyora (<em>Pluton, Serera, Erida, Makemake, Haumea</em>), yuzlab tabiiy yo‘ldoshlar, asteroidlar, kometalar hamda sayyoralararo chang-gaz muhitidan tashkil topgan.
+        </p>
+        <div class="theory-grid">
+          <div class="theory-box">
+            <h4><span class="hl-gold">☀</span> Massalar taqsimoti (99,86% vs 0,14%)</h4>
+            <p>
+              Butun sistema massasining <span class="hl-gold">99,86%</span> qismi yolg‘iz Quyoshga tegishli. Qolgan atigi <span class="hl-sky">0,14%</span> massaning esa ~71% qismi Yupiterda, ~21% qismi Saturnda va faqat ~8% qismi qolgan 6 sayyora hamda kichik jismlarda jamlangan.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-sky">📏</span> Astronomik birlik (1 a.b.)</h4>
+            <p>
+              Quyosh sistemasidagi masofalarni o‘lchash uchun Yerning Quyoshdan o‘rtacha masofasi — <span class="hl-sky">1 a.b. ≈ 149,6 mln km</span> qabul qilingan. Yorug‘lik bu masofani <strong>8 daqiqa 19 soniyada</strong> bosib o‘tadi.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-purple">🌌</span> Asosiy fazoviy hududlar</h4>
+            <p>
+              • Ichki sayyoralar: <span class="hl-orange">0,39 – 1,52 a.b.</span><br />
+              • Asosiy asteroidlar belbog‘i: <span class="hl-emerald">2,2 – 3,2 a.b.</span><br />
+              • Gigant sayyoralar: <span class="hl-purple">5,2 – 30,1 a.b.</span><br />
+              • Koyper belbog‘i: <span class="hl-sky">30 – 50 a.b.</span>
+            </p>
+          </div>
+        </div>
+        <div class="formula-strip">
+          <span class="formula-pill">1 a.b. = 1,496 × 10⁸ km</span>
+          <span class="formula-pill">M_Quyosh = 1,989 × 10³⁰ kg (99,86%)</span>
+          <span class="formula-pill">Kepler 3-qonuni: ω ∝ a^(-3/2)</span>
+        </div>
+      </article>
+
+      <!-- Simulyatsiya №1 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №1: «Quyosh sistemasi miqyosi va Massalar taqsimoti laboratoriyasi»</h2>
+          <span class="card-tag">Interaktiv Xarita (Sayyorani bosing)</span>
+        </div>
+
+        <div class="sim-wrapper">
+          <canvas id="sim1Canvas" class="sim-canvas"></canvas>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Tanlangan sayyora / Guruhi</div>
+            <div class="tele-val" id="s1PlanetName">Yer • <span class="badge-pill badge-sky">Yer guruhi</span></div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Quyoshdan masofasi</div>
+            <div class="tele-val" id="s1PlanetDist">1,00 a.b. (149,6 mln km)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Siderik davr / Radius / Yo‘ldosh</div>
+            <div class="tele-val" id="s1PlanetSpecs">365,3 kun • 6 371 km • 1 ta</div>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-top">
+              <span>Masshtab rejimi</span>
+              <span class="control-readout" id="s1ScaleModeText">Sxematik ko‘rinish</span>
+            </div>
+            <div class="btn-row" style="margin-top: 0;">
+              <button class="sim-btn active-mode" id="s1BtnSchematic">Sxematik ko‘rinish</button>
+              <button class="sim-btn" id="s1BtnTrueScale">Haqiqiy Astronomik Masshtab (Zoom)</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Haqiqiy Masshtab Zoom (1 a.b. — 45 a.b.)</span>
+              <span class="control-readout" id="s1ZoomReadout">35,0 a.b.</span>
+            </div>
+            <input type="range" id="s1ZoomSlider" min="1.2" max="45" step="0.2" value="35" />
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Orbital harakat tezligi</span>
+              <span class="control-readout" id="s1SpeedReadout">1.0x</span>
+            </div>
+            <input type="range" id="s1SpeedSlider" min="0.1" max="4.0" step="0.1" value="1.0" />
+          </div>
+        </div>
+
+        <div class="btn-row" id="s1PlanetButtons">
+          <button class="sim-btn btn-primary" id="s1BtnToggle">⏸ Pauza / Davom etish</button>
+        </div>
+      </article>
+
+      <!-- Testlar (Bo‘lim 1) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">1-bo‘lim bo‘yicha o‘z-o‘zini tekshirish testlari</h2>
+          <span class="card-tag">3 ta savol</span>
+        </div>
+        <div class="quiz-list" id="quizContainer1"></div>
+      </article>
+    </section>
+
+    <!-- ========================================================================
+         BO‘LIM 2: GEOSENTRIK VA GELIOSENTRIK SISTEMALAR
+         ======================================================================== -->
+    <section id="sec2" class="section-panel" role="tabpanel">
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">2. Olam tuzilishi haqidagi ta’limotlar: Geosentrik va Geliosentrik sistemalar</h2>
+          <span class="card-tag">Nazariy asoslar</span>
+        </div>
+        <p class="theory-lead">
+          Qadimdan astronomiyaning eng muhim muammosi sayyoralarning osmon sferasida goh g‘arbdan sharqqa (to‘g‘ri), goh to‘xtab ortga — sharqdan g‘arbga qaytib <span class="hl-crimson">sirtmoqsimon (retrograd)</span> harakatlanishini tushuntirish bo‘lgan.
+        </p>
+        <div class="theory-grid">
+          <div class="theory-box">
+            <h4><span class="hl-purple">🌐</span> Ptolemeyning geosentrik sistemasi (II asr)</h4>
+            <p>
+              Markazda qo‘zg‘almas <strong>Yer</strong> turadi. Sirtmoqsimon harakatni tushuntirish uchun Ptolemey murakkab <span class="hl-purple">deferent</span> (katta aylana) va uning ustida aylanuvchi <span class="hl-gold">epitsikl</span> (kichik aylana) larni kiritgan.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-gold">☀</span> Kopernikning geliosentrik sistemasi (1543-yil)</h4>
+            <p>
+              Markazda <strong>Quyosh</strong> turadi; Yer esa oddiy sayyora sifatida o‘z o‘qi va Quyosh atrofida aylanadi. Bu tizim olam tuzilishini sodda va tabiiy qonunlar bilan izohladi.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-crimson">↻</span> Sirtmoqsimon harakatning asl siri</h4>
+            <p>
+              Ichki orbitadagi tezroq <span class="hl-sky">Yer (v ≈ 29,8 km/s)</span> tashqi orbitadagi sekinroq <span class="hl-orange">Marsni (v ≈ 24,1 km/s)</span> quvib o‘tayotganda, uzoq yulduzlar fonida Mars go‘yo orqaga qaytib sirtmoq chizayotgandek ko‘rinadi.
+            </p>
+          </div>
+        </div>
+        <div class="formula-strip">
+          <span class="formula-pill">v_Yer ≈ 29,8 km/s > v_Mars ≈ 24,1 km/s</span>
+          <span class="formula-pill">Mars sinodik davri: S = 780 sutka (2,14 yil)</span>
+          <span class="formula-pill">Kopernik asari: 1543-yil</span>
+        </div>
+      </article>
+
+      <!-- Simulyatsiya №2 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №2: «Ptolemey epitsikllari vs Kopernik sirtmoqsimon harakati»</h2>
+          <span class="card-tag">Sinxron Taqqoslash</span>
+        </div>
+
+        <div class="sim-wrapper">
+          <canvas id="sim2Canvas" class="sim-canvas"></canvas>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Marsning joriy ko‘rinma harakati</div>
+            <div class="tele-val" id="s2MotionType"><span class="badge-pill badge-sky">To‘g‘ri harakat (G‘arbdan sharqqa →)</span></div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Yer — Mars burchak farqi (Elongatsiya)</div>
+            <div class="tele-val" id="s2AngleDiff">45.0°</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Sirtmoqlar soni (O‘tgan davr)</div>
+            <div class="tele-val" id="s2LoopCount">0 ta sirtmoq • 0.00 Yer yili</div>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-top">
+              <span>Simulyatsiya tezligi</span>
+              <span class="control-readout" id="s2SpeedReadout">1.0x</span>
+            </div>
+            <input type="range" id="s2SpeedSlider" min="0.2" max="3.5" step="0.1" value="1.0" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="sim-btn btn-gold" id="s2BtnOvertake">↻ Quvib o‘tish (Sirtmoq) lahzasiga o‘tish</button>
+          <button class="sim-btn active-mode" id="s2BtnCircles">◎ Epitsikl va deferent chiziqlarini ko‘rsatish</button>
+          <button class="sim-btn" id="s2BtnClear">⌫ Trayektoriya izini tozalash</button>
+          <button class="sim-btn btn-primary" id="s2BtnToggle">⏸ O‘ynatish / Pauza</button>
+        </div>
+      </article>
+
+      <!-- Testlar (Bo‘lim 2) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">2-bo‘lim bo‘yicha o‘z-o‘zini tekshirish testlari</h2>
+          <span class="card-tag">3 ta savol</span>
+        </div>
+        <div class="quiz-list" id="quizContainer2"></div>
+      </article>
+    </section>
+
+    <!-- ========================================================================
+         BO‘LIM 3: SAYYORALARNING ASOSIY QONUNIYATLARI VA IKKI GURUHGA BO‘LINISHI
+         ======================================================================== -->
+    <section id="sec3" class="section-panel" role="tabpanel">
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">3. Sayyoralarning asosiy qonuniyatlari va ikki guruhga bo‘linishi</h2>
+          <span class="card-tag">Nazariy asoslar</span>
+        </div>
+        <p class="theory-lead">
+          Barcha 8 ta sayyora Quyosh atrofida <strong>bir yo‘nalishda</strong> (shimoliy qutbdan qaralganda soat strelkasiga qarshi) va <strong>deyarli bir tekislikda</strong> (ekliptikaga og‘ishi kichik) aylanadi. Ularning Quyoshdan uzoqligi <span class="hl-gold">Titsius–Bode empirik qoidasi</span>ga bo‘ysunadi hamda Asosiy asteroidlar belbog‘i bilan ikki fizik guruhga ajratiladi.
+        </p>
+
+        <div class="table-wrap">
+          <table class="astro-table">
+            <thead>
+              <tr>
+                <th>Ko‘rsatkichlar</th>
+                <th>Yer guruhi sayyoralari</th>
+                <th>Gigant sayyoralar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tarkibi (Sayyoralar)</strong></td>
+                <td><span class="hl-sky">Merkuriy, Venera, Yer, Mars</span></td>
+                <td><span class="hl-purple">Yupiter, Saturn, Uran, Neptun</span></td>
+              </tr>
+              <tr>
+                <td><strong>O‘lchami va Massasi</strong></td>
+                <td>Kichik (Yer radiusi 6 371 km)</td>
+                <td>Ulkan (Yupiter Yerdan 11x katta, 318x og‘ir)</td>
+              </tr>
+              <tr>
+                <td><strong>O‘rtacha zichligi</strong></td>
+                <td>Yuqori (<span class="hl-orange">3,93 – 5,51 g/sm³</span>), tosh-temir tarkibli</td>
+                <td>Past (<span class="hl-emerald">0,69 – 1,64 g/sm³</span>), Saturn suvdan yengil!</td>
+              </tr>
+              <tr>
+                <td><strong>O‘z o‘qi atrofida aylanishi</strong></td>
+                <td>Sekin (24 soatdan 243 sutkagacha)</td>
+                <td>Juda tez (9 soat 55 daq dan 17 soatgacha)</td>
+              </tr>
+              <tr>
+                <td><strong>Yo‘ldoshlar va Halqalar</strong></td>
+                <td>Kam (0–2 ta), halqalari yo‘q</td>
+                <td>Ko‘p (16 tadan 146 tagacha), barchasida halqa bor</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="formula-strip">
+          <span class="formula-pill">Titsius–Bode qoidasi: a_n = 0,4 + 0,3 · 2^n (n = -∞, 0, 1, 2, …)</span>
+          <span class="formula-pill">n = 3 → a_3 = 2,8 a.b. (Serera va Asteroidlar belbog‘i)</span>
+          <span class="formula-pill">ρ_Saturn = 0,687 g/sm³ &lt; ρ_suv = 1,00 g/sm³</span>
+        </div>
+      </article>
+
+      <!-- Simulyatsiya №3 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №3: «Sayyoralar guruhlari laboratoriyasi va Titsius–Bode qoidasi»</h2>
+          <span class="card-tag">Fizik Tajriba va Grafik</span>
+        </div>
+
+        <div class="sim-wrapper">
+          <canvas id="sim3Canvas" class="sim-canvas"></canvas>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Tanlangan sayyora / Ichki tuzilishi</div>
+            <div class="tele-val" id="s3SelectedInfo">Saturn • Zichligi: 0,69 g/sm³ (Suvdan yengil!)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Titsius–Bode hisobi (n indeksi)</div>
+            <div class="tele-val" id="s3BodeFormulaVal">n = 3: a_3 = 0,4 + 0,3 · 2³ = 2,80 a.b. (Serera)</div>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-top">
+              <span>Guruh filtri va Zichlik tajribasi</span>
+              <span class="control-readout" id="s3ModeStatus">Ichki tuzilish rejimi</span>
+            </div>
+            <div class="btn-row" style="margin-top: 0;">
+              <button class="sim-btn active-mode" data-group="all" id="s3GrpAll">Barchasi (8)</button>
+              <button class="sim-btn" data-group="terrestrial" id="s3GrpTerr">Yer guruhi (4)</button>
+              <button class="sim-btn" data-group="giant" id="s3GrpGiant">Gigantlar (4)</button>
+              <button class="sim-btn btn-emerald" id="s3BtnBuoyancy">💧 Suvda suzish (Zichlik) tajribasi</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Titsius–Bode qoidasi kalkulyatori (n indeksi)</span>
+              <span class="control-readout" id="s3BodeNReadout">n = 3 (Serera / Belbog‘)</span>
+            </div>
+            <input type="range" id="s3BodeSlider" min="-1" max="7" step="1" value="3" />
+          </div>
+        </div>
+
+        <div class="btn-row" id="s3PlanetButtons"></div>
+      </article>
+
+      <!-- Testlar (Bo‘lim 3) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">3-bo‘lim bo‘yicha o‘z-o‘zini tekshirish testlari</h2>
+          <span class="card-tag">3 ta savol</span>
+        </div>
+        <div class="quiz-list" id="quizContainer3"></div>
+      </article>
+    </section>
+
+    <footer class="footer-note">
+      11-sinf Astronomiya • «18-§. Quyosh sistemasining tuzilishi» interaktiv o‘quv majmuasi (100% oflayn HTML5 Canvas 2D)
+    </footer>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       UMUMIY MA’LUMOTLAR BAZASI (8 TA SAYYORA VA ASTRONOMIK PARAMETRLAR)
+       ========================================================================== */
+    const PLANETS = [
+      {
+        id: 'mercury',
+        name: 'Merkuriy',
+        group: 'terrestrial',
+        groupLabel: 'Yer guruhi',
+        au: 0.387,
+        km: '57,9 mln km',
+        periodText: '88,0 sutka',
+        periodYears: 0.2408,
+        radiusKm: 2440,
+        moons: 0,
+        density: 5.43,
+        rotHours: 1407.6,
+        spinDir: 1,
+        massPctOfPlanets: 0.012,
+        color: '#94a3b8',
+        color2: '#475569',
+        schematicOrder: 1,
+        baseRadiusPx: 4.5,
+        layers: [
+          { r: 1.0, color: '#94a3b8', label: 'Silikat po‘stloq' },
+          { r: 0.86, color: '#b45309', label: 'Yupqa mantiya' },
+          { r: 0.72, color: '#f97316', label: 'Ulkan temir yadro (75%)' }
+        ],
+        desc: 'Quyoshga eng yaqin va eng kichik sayyora; ulkan temir yadroga ega.'
+      },
+      {
+        id: 'venus',
+        name: 'Venera',
+        group: 'terrestrial',
+        groupLabel: 'Yer guruhi',
+        au: 0.723,
+        km: '108,2 mln km',
+        periodText: '224,7 sutka',
+        periodYears: 0.6152,
+        radiusKm: 6052,
+        moons: 0,
+        density: 5.24,
+        rotHours: 5832.5,
+        spinDir: -1, // Teskari aylanish
+        massPctOfPlanets: 0.182,
+        color: '#fbbf24',
+        color2: '#d97706',
+        schematicOrder: 2,
+        baseRadiusPx: 6.4,
+        layers: [
+          { r: 1.0, color: '#fde047', label: 'Zich CO₂ bulutlari' },
+          { r: 0.92, color: '#d97706', label: 'Bazalt po‘stloq va mantiya' },
+          { r: 0.52, color: '#ef4444', label: 'Temir-nikel yadro' }
+        ],
+        desc: 'O‘lchami Yerga yaqin, o‘z o‘qi atrofida teskari yo‘nalishda juda sekin aylanadi.'
+      },
+      {
+        id: 'earth',
+        name: 'Yer',
+        group: 'terrestrial',
+        groupLabel: 'Yer guruhi',
+        au: 1.000,
+        km: '149,6 mln km',
+        periodText: '365,26 sutka',
+        periodYears: 1.0,
+        radiusKm: 6371,
+        moons: 1,
+        density: 5.51,
+        rotHours: 23.93,
+        spinDir: 1,
+        massPctOfPlanets: 0.224,
+        color: '#38bdf8',
+        color2: '#0284c7',
+        schematicOrder: 3,
+        baseRadiusPx: 6.8,
+        layers: [
+          { r: 1.0, color: '#38bdf8', label: 'Gidrosfera va po‘stloq' },
+          { r: 0.90, color: '#ea580c', label: 'Silikat mantiya' },
+          { r: 0.54, color: '#facc15', label: 'Suyuq tashqi yadro' },
+          { r: 0.22, color: '#fef08a', label: 'Qattiq ichki yadro' }
+        ],
+        desc: 'Quyosh sistemasidagi eng zich sayyora (5,51 g/sm³), yuzasi suyuq suv bilan qoplangan.'
+      },
+      {
+        id: 'mars',
+        name: 'Mars',
+        group: 'terrestrial',
+        groupLabel: 'Yer guruhi',
+        au: 1.524,
+        km: '227,9 mln km',
+        periodText: '687,0 sutka (1,88 yil)',
+        periodYears: 1.8808,
+        radiusKm: 3390,
+        moons: 2,
+        density: 3.93,
+        rotHours: 24.62,
+        spinDir: 1,
+        massPctOfPlanets: 0.024,
+        color: '#f97316',
+        color2: '#c2410c',
+        schematicOrder: 4,
+        baseRadiusPx: 5.2,
+        layers: [
+          { r: 1.0, color: '#f97316', label: 'Temir oksidli po‘stloq' },
+          { r: 0.88, color: '#9a3412', label: 'Silikat mantiya' },
+          { r: 0.48, color: '#fbbf24', label: 'Temir-sulfid yadro' }
+        ],
+        desc: '«Qizil sayyora», 2 ta kichik yo‘ldoshi (Fobos va Deymos) mavjud.'
+      },
+      {
+        id: 'jupiter',
+        name: 'Yupiter',
+        group: 'giant',
+        groupLabel: 'Gigant sayyora',
+        au: 5.203,
+        km: '778,5 mln km',
+        periodText: '11,86 yil',
+        periodYears: 11.862,
+        radiusKm: 69911,
+        moons: 95,
+        density: 1.33,
+        rotHours: 9.93,
+        spinDir: 1,
+        massPctOfPlanets: 71.1,
+        color: '#f59e0b',
+        color2: '#b45309',
+        schematicOrder: 5,
+        baseRadiusPx: 14.0,
+        layers: [
+          { r: 1.0, color: '#fbbf24', label: 'Molekulyar vodorod-geliy' },
+          { r: 0.78, color: '#38bdf8', label: 'Suyuq metall vodorod' },
+          { r: 0.24, color: '#e2e8f0', label: 'Tosh-muz yadro' }
+        ],
+        desc: 'Eng ulkan sayyora: barcha sayyoralar umumiy massasining 71% dan ortig‘i Yupiterda!'
+      },
+      {
+        id: 'saturn',
+        name: 'Saturn',
+        group: 'giant',
+        groupLabel: 'Gigant sayyora',
+        au: 9.537,
+        km: '1 433,5 mln km',
+        periodText: '29,46 yil',
+        periodYears: 29.457,
+        radiusKm: 58232,
+        moons: 146,
+        density: 0.69,
+        rotHours: 10.7,
+        spinDir: 1,
+        massPctOfPlanets: 21.3,
+        color: '#fde047',
+        color2: '#ca8a04',
+        schematicOrder: 6,
+        baseRadiusPx: 11.8,
+        hasRings: true,
+        layers: [
+          { r: 1.0, color: '#fde047', label: 'Vodorod-geliy atmosferasi' },
+          { r: 0.62, color: '#38bdf8', label: 'Suyuq metall vodorod' },
+          { r: 0.28, color: '#cbd5e1', label: 'Tosh-muz yadro' }
+        ],
+        desc: 'O‘rtacha zichligi 0,69 g/sm³ — suvdan ham yengil! Muhtasham muz halqalariga ega.'
+      },
+      {
+        id: 'uranus',
+        name: 'Uran',
+        group: 'giant',
+        groupLabel: 'Gigant sayyora',
+        au: 19.19,
+        km: '2 872,5 mln km',
+        periodText: '84,01 yil',
+        periodYears: 84.011,
+        radiusKm: 25362,
+        moons: 28,
+        density: 1.27,
+        rotHours: 17.24,
+        spinDir: -1,
+        massPctOfPlanets: 3.25,
+        color: '#22d3ee',
+        color2: '#0891b2',
+        schematicOrder: 7,
+        baseRadiusPx: 8.8,
+        hasRings: true,
+        layers: [
+          { r: 1.0, color: '#67e8f9', label: 'H₂, He va metan gazi' },
+          { r: 0.80, color: '#2563eb', label: 'Suv-ammiak-metan muz mantiyasi' },
+          { r: 0.26, color: '#94a3b8', label: 'Silikat-temir yadro' }
+        ],
+        desc: '«Muz giganti», aylanish o‘qi orbita tekisligiga 98° og‘gan (yonboshlab aylanadi).'
+      },
+      {
+        id: 'neptune',
+        name: 'Neptun',
+        group: 'giant',
+        groupLabel: 'Gigant sayyora',
+        au: 30.07,
+        km: '4 495,1 mln km',
+        periodText: '164,8 yil',
+        periodYears: 164.79,
+        radiusKm: 24622,
+        moons: 16,
+        density: 1.64,
+        rotHours: 16.11,
+        spinDir: 1,
+        massPctOfPlanets: 3.84,
+        color: '#818cf8',
+        color2: '#4338ca',
+        schematicOrder: 8,
+        baseRadiusPx: 8.5,
+        layers: [
+          { r: 1.0, color: '#818cf8', label: 'Metanli moviy atmosfera' },
+          { r: 0.80, color: '#1d4ed8', label: 'Issiq muz mantiyasi' },
+          { r: 0.28, color: '#cbd5e1', label: 'Tosh-temir yadro' }
+        ],
+        desc: 'Quyoshdan eng uzoq katta sayyora; atmosferasida 2 100 km/soat gacha shamollar esadi.'
+      }
+    ];
+
+    const appState = {
+      activeTab: 'sec1',
+      score: 0,
+      answered: new Set()
+    };
+
+    // Retina/HD tiniqlik uchun Canvas o‘lchamlarini moslashtirish
+    function setupHighDPICanvas(canvas, desktopAspect = 2.1, mobileAspect = 0.82) {
+      const parent = canvas.parentElement;
+      if (!parent) return null;
+      const cssWidth = Math.max(280, parent.clientWidth);
+      const isMobile = cssWidth < 700;
+      const cssHeight = Math.round(cssWidth / (isMobile ? mobileAspect : desktopAspect));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+
+      if (canvas.width !== Math.round(cssWidth * dpr) || canvas.height !== Math.round(cssHeight * dpr)) {
+        canvas.width = Math.round(cssWidth * dpr);
+        canvas.height = Math.round(cssHeight * dpr);
+        canvas.style.height = cssHeight + 'px';
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, w: cssWidth, h: cssHeight, isMobile };
+    }
+
+    // Tablar o‘rtasida almashish
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.section-panel');
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        appState.activeTab = target;
+        tabBtns.forEach((b) => {
+          const active = b.dataset.tab === target;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach((p) => p.classList.toggle('active', p.id === target));
+      });
+    });
+
+    /* ==========================================================================
+       SIMULYATSIYA №1: QUYOSH SISTEMASI MIQYOSI VA MASSALAR TAQSIMOTI
+       ========================================================================== */
+    const sim1 = {
+      canvas: document.getElementById('sim1Canvas'),
+      zoomSlider: document.getElementById('s1ZoomSlider'),
+      speedSlider: document.getElementById('s1SpeedSlider'),
+      zoomReadout: document.getElementById('s1ZoomReadout'),
+      speedReadout: document.getElementById('s1SpeedReadout'),
+      scaleModeText: document.getElementById('s1ScaleModeText'),
+      selectedId: 'earth',
+      trueScale: false,
+      zoomMaxAU: 35.0,
+      speed: 1.0,
+      playing: true,
+      angles: PLANETS.map((_, i) => i * 0.85),
+      planetScreenPos: [],
+      asteroids: [],
+      kuiper: []
+    };
+
+    // Asosiy asteroidlar belbog‘i (2.2 - 3.2 a.b.) va Koyper belbog‘i (30.5 - 44 a.b.) zarralari
+    for (let i = 0; i < 220; i++) {
+      const au = 2.2 + ((i * 73) % 100) / 100;
+      sim1.asteroids.push({
+        au,
+        angle: (i * 2.39996) % (Math.PI * 2),
+        size: (i % 3 === 0) ? 1.5 : 1.0,
+        alpha: 0.35 + ((i % 5) * 0.1)
+      });
+    }
+    for (let i = 0; i < 240; i++) {
+      const au = 30.8 + ((i * 61) % 100) / 100 * 13.5;
+      sim1.kuiper.push({
+        au,
+        angle: (i * 1.73205) % (Math.PI * 2),
+        size: (i % 4 === 0) ? 1.6 : 1.0,
+        alpha: 0.28 + ((i % 4) * 0.08)
+      });
+    }
+
+    function updateSim1Telemetry() {
+      const p = PLANETS.find((item) => item.id === sim1.selectedId) || PLANETS[2];
+      const badgeCls = p.group === 'terrestrial' ? 'badge-sky' : 'badge-purple';
+      document.getElementById('s1PlanetName').innerHTML = `${p.name} • <span class="badge-pill ${badgeCls}">${p.groupLabel}</span>`;
+      document.getElementById('s1PlanetDist').textContent = `${p.au.toFixed(3).replace('.', ',')} a.b. (${p.km})`;
+      document.getElementById('s1PlanetSpecs').textContent = `${p.periodText} • R = ${p.radiusKm.toLocaleString('ru-RU')} km • ${p.moons} ta yo‘ldosh`;
+
+      document.querySelectorAll('#s1PlanetButtons .planet-focus-btn').forEach((btn) => {
+        btn.classList.toggle('active-mode', btn.dataset.pid === sim1.selectedId);
+      });
+    }
+
+    function getOrbitRadiusPx(au, schematicIdx, maxR) {
+      if (!sim1.trueScale) {
+        // Sxematik ko‘rinish: 8 ta sayyora va 2 ta belbog‘ chiroyli joylashadi
+        const step = maxR / 9.8;
+        if (schematicIdx <= 3) return (schematicIdx + 1.15) * step;
+        return (schematicIdx + 1.85) * step; // Asteroidlar belbog‘i uchun bo‘shliq
+      } else {
+        // Haqiqiy astronomik masshtab (a.b. ga to‘g‘ri proporsional)
+        return (au / sim1.zoomMaxAU) * maxR;
+      }
+    }
+
+    function drawSim1() {
+      const setup = setupHighDPICanvas(sim1.canvas, 2.2, 0.78);
+      if (!setup) return;
+      const { ctx, w, h, isMobile } = setup;
+      ctx.clearRect(0, 0, w, h);
+
+      const mapBox = isMobile
+        ? { x: 0, y: 0, w: w, h: h * 0.64 }
+        : { x: 0, y: 0, w: w * 0.67, h: h };
+      const massBox = isMobile
+        ? { x: 0, y: h * 0.64, w: w, h: h * 0.36 }
+        : { x: w * 0.67, y: 0, w: w * 0.33, h: h };
+
+      // Ajratuvchi chiziq
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (isMobile) {
+        ctx.moveTo(12, massBox.y);
+        ctx.lineTo(w - 12, massBox.y);
+      } else {
+        ctx.moveTo(massBox.x, 12);
+        ctx.lineTo(massBox.x, h - 12);
+      }
+      ctx.stroke();
+
+      /* --- PANEL A: INTERAKTIV ORBITA XARITASI --- */
+      const cx = mapBox.x + mapBox.w * 0.5;
+      const cy = mapBox.y + mapBox.h * 0.52;
+      const maxOrbitR = Math.min(mapBox.w, mapBox.h) * 0.43;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(mapBox.x, mapBox.y, mapBox.w, mapBox.h);
+      ctx.clip();
+
+      // Sarlavha
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText(
+        sim1.trueScale
+          ? `A) Haqiqiy Astronomik Masshtab (Ko‘rish radiusi: ${sim1.zoomMaxAU.toFixed(1)} a.b.)`
+          : 'A) Quyosh sistemasi orbita xaritasi (Sxematik masshtab)',
+        mapBox.x + 14,
+        mapBox.y + 22
+      );
+
+      // Asosiy asteroidlar belbog‘i (Mars va Yupiter orasida: 2.2 - 3.2 a.b.)
+      const step = maxOrbitR / 9.8;
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.65)';
+      sim1.asteroids.forEach((ast) => {
+        const rPx = !sim1.trueScale
+          ? (4.15 + (ast.au - 2.2) * 0.72) * step
+          : (ast.au / sim1.zoomMaxAU) * maxOrbitR;
+        if (rPx > 6 && rPx < Math.max(mapBox.w, mapBox.h)) {
+          const ax = cx + rPx * Math.cos(ast.angle);
+          const ay = cy + rPx * Math.sin(ast.angle);
+          ctx.globalAlpha = ast.alpha;
+          ctx.fillRect(ax, ay, ast.size, ast.size);
+        }
+      });
+
+      // Koyper belbog‘i (30.8 - 44 a.b.)
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.55)';
+      sim1.kuiper.forEach((kp) => {
+        const rPx = !sim1.trueScale
+          ? (9.1 + ((kp.au - 30.8) / 13.5) * 0.65) * step
+          : (kp.au / sim1.zoomMaxAU) * maxOrbitR;
+        if (rPx > 8 && rPx < Math.max(mapBox.w, mapBox.h)) {
+          const kx = cx + rPx * Math.cos(kp.angle);
+          const ky = cy + rPx * Math.sin(kp.angle);
+          ctx.globalAlpha = kp.alpha;
+          ctx.fillRect(kx, ky, kp.size, kp.size);
+        }
+      });
+      ctx.globalAlpha = 1;
+
+      // Quyosh
+      const sunR = sim1.trueScale ? Math.max(5, Math.min(18, 22 / sim1.zoomMaxAU)) : 12;
+      const sGrad = ctx.createRadialGradient(cx, cy, sunR * 0.2, cx, cy, sunR * 2.4);
+      sGrad.addColorStop(0, '#ffffff');
+      sGrad.addColorStop(0.35, '#fbbf24');
+      sGrad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = sGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 8 ta sayyora orbitalari va jismlari
+      sim1.planetScreenPos = [];
+      PLANETS.forEach((p, idx) => {
+        const rPx = getOrbitRadiusPx(p.au, idx, maxOrbitR);
+        const isSelected = p.id === sim1.selectedId;
+
+        if (rPx > 4 && rPx < Math.max(mapBox.w, mapBox.h) * 1.15) {
+          // Orbita aylanasi
+          ctx.strokeStyle = isSelected
+            ? p.color
+            : p.group === 'terrestrial'
+            ? 'rgba(56, 189, 248, 0.24)'
+            : 'rgba(168, 85, 247, 0.24)';
+          ctx.lineWidth = isSelected ? 2.0 : 1.0;
+          ctx.beginPath();
+          ctx.arc(cx, cy, rPx, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // Sayyora nuqtasi
+          const px = cx + rPx * Math.cos(sim1.angles[idx]);
+          const py = cy + rPx * Math.sin(sim1.angles[idx]);
+          const drawR = isSelected ? p.baseRadiusPx + 2.2 : p.baseRadiusPx;
+
+          sim1.planetScreenPos.push({ id: p.id, x: px, y: py, hitR: Math.max(16, drawR + 9) });
+
+          if (isSelected) {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(px, py, drawR + 4.5, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // Saturn halqasi
+          if (p.hasRings) {
+            ctx.strokeStyle = 'rgba(253, 224, 71, 0.75)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(px, py, drawR * 1.95, drawR * 0.65, -0.35, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(px, py, drawR, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Sayyora nomi (agar orbitalar bir-biriga juda yopishib qolmagan bo‘lsa)
+          if (rPx > 16) {
+            ctx.fillStyle = isSelected ? '#ffffff' : '#cbd5e1';
+            ctx.font = isSelected ? '700 11.5px sans-serif' : '600 10.5px sans-serif';
+            ctx.fillText(p.name, px + drawR + 5, py + 3);
+          }
+        }
+      });
+
+      // Pastki eslatma
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('● Yashil halqa: Asosiy asteroidlar belbog‘i (2,2–3,2 a.b.)  •  Moviy: Koyper belbog‘i (30–50 a.b.)', mapBox.x + 14, mapBox.y + mapBox.h - 10);
+      ctx.restore();
+
+      /* --- PANEL B: MASSALAR TAQSIMOTI DIAGRAMMASI --- */
+      const mx = massBox.x + 16;
+      const mw = massBox.w - 32;
+      let my = massBox.y + 22;
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('B) Quyosh sistemasi massalar nisbati', mx, my);
+
+      // 1-bar: Quyosh (99,86%) vs Qolgan barcha jismlar (0,14%)
+      my += 20;
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 11.5px sans-serif';
+      ctx.fillText('1. Butun sistema massasi (100%):', mx, my);
+
+      my += 8;
+      const barH = 24;
+      // Quyosh qismi (vizual ko‘rinishi uchun 92% eni, yorlig‘i 99,86%)
+      const sunBarW = mw * 0.91;
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.roundRect(mx, my, sunBarW, barH, [6, 0, 0, 6]);
+      ctx.fill();
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.roundRect(mx + sunBarW + 2, my, mw - sunBarW - 2, barH, [0, 6, 6, 0]);
+      ctx.fill();
+
+      ctx.fillStyle = '#0b0f19';
+      ctx.font = '800 11.5px sans-serif';
+      ctx.fillText('Quyosh: 99,86%', mx + 10, my + 16);
+
+      my += barH + 15;
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '700 11.5px sans-serif';
+      ctx.fillText('▲ Qolgan barcha sayyoralar va jismlar: 0,14%', mx, my);
+
+      // 2-bar: O‘sha 0,14% sayyoralar massasining ichki taqsimoti!
+      my += 22;
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 11.5px sans-serif';
+      ctx.fillText('2. Sayyoralar massasi (0,14%) tarkibi:', mx, my);
+
+      my += 9;
+      const segments = [
+        { label: 'Yupiter (71,1%)', pct: 0.711, color: '#f59e0b', pid: 'jupiter' },
+        { label: 'Saturn (21,3%)', pct: 0.213, color: '#fde047', pid: 'saturn' },
+        { label: 'Neptun+Uran (7,1%)', pct: 0.071, color: '#818cf8', pid: 'neptune' },
+        { label: 'Yer guruhi (0,5%)', pct: 0.005, color: '#38bdf8', pid: 'earth' }
+      ];
+
+      let curX = mx;
+      segments.forEach((seg, sIdx) => {
+        const segW = Math.max(8, mw * seg.pct);
+        ctx.fillStyle = seg.color;
+        ctx.fillRect(curX, my, segW - 1.5, barH);
+        curX += segW;
+      });
+
+      // Afsona ro‘yxati
+      my += barH + 16;
+      const selectedPlanet = PLANETS.find((p) => p.id === sim1.selectedId) || PLANETS[2];
+      segments.forEach((seg) => {
+        ctx.fillStyle = seg.color;
+        ctx.fillRect(mx, my - 9, 10, 10);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '600 11px sans-serif';
+        ctx.fillText(seg.label, mx + 16, my);
+        my += 17;
+      });
+
+      // Tanlangan sayyoraning sayyoralar massasidagi ulushi
+      if (my < massBox.y + massBox.h - 10) {
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.14)';
+        ctx.fillRect(mx, my - 4, mw, 24);
+        ctx.fillStyle = '#7dd3fc';
+        ctx.font = '700 11px sans-serif';
+        ctx.fillText(
+          `Tanlangan: ${selectedPlanet.name} = sayyoralar massasining ${selectedPlanet.massPctOfPlanets}% i`,
+          mx + 8,
+          my + 12
+        );
+      }
+    }
+
+    // Sayyora tugmalarini yaratish va Canvas bosish hodisasi
+    const s1BtnsWrap = document.getElementById('s1PlanetButtons');
+    PLANETS.forEach((p) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sim-btn planet-focus-btn' + (p.id === sim1.selectedId ? ' active-mode' : '');
+      btn.dataset.pid = p.id;
+      btn.textContent = p.name;
+      btn.addEventListener('click', () => {
+        sim1.selectedId = p.id;
+        if (sim1.trueScale) {
+          sim1.zoomMaxAU = Math.min(45, Math.max(1.2, p.au * 1.35));
+          sim1.zoomSlider.value = sim1.zoomMaxAU.toFixed(1);
+          sim1.zoomReadout.textContent = `${sim1.zoomMaxAU.toFixed(1)} a.b.`;
+        }
+        updateSim1Telemetry();
+      });
+      s1BtnsWrap.appendChild(btn);
+    });
+
+    sim1.canvas.addEventListener('click', (e) => {
+      const rect = sim1.canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      let closest = null;
+      let minDist = Infinity;
+
+      sim1.planetScreenPos.forEach((pos) => {
+        const d = Math.hypot(clickX - pos.x, clickY - pos.y);
+        if (d <= pos.hitR && d < minDist) {
+          minDist = d;
+          closest = pos.id;
+        }
+      });
+
+      if (closest) {
+        sim1.selectedId = closest;
+        updateSim1Telemetry();
+      }
+    });
+
+    document.getElementById('s1BtnSchematic').addEventListener('click', (e) => {
+      sim1.trueScale = false;
+      sim1.scaleModeText.textContent = 'Sxematik ko‘rinish';
+      e.target.classList.add('active-mode');
+      document.getElementById('s1BtnTrueScale').classList.remove('active-mode');
+    });
+
+    document.getElementById('s1BtnTrueScale').addEventListener('click', (e) => {
+      sim1.trueScale = true;
+      sim1.scaleModeText.textContent = 'Haqiqiy Masshtab (Zoom)';
+      e.target.classList.add('active-mode');
+      document.getElementById('s1BtnSchematic').classList.remove('active-mode');
+    });
+
+    sim1.zoomSlider.addEventListener('input', (e) => {
+      sim1.zoomMaxAU = parseFloat(e.target.value);
+      sim1.zoomReadout.textContent = `${sim1.zoomMaxAU.toFixed(1)} a.b.`;
+      if (!sim1.trueScale) {
+        sim1.trueScale = true;
+        sim1.scaleModeText.textContent = 'Haqiqiy Masshtab (Zoom)';
+        document.getElementById('s1BtnTrueScale').classList.add('active-mode');
+        document.getElementById('s1BtnSchematic').classList.remove('active-mode');
+      }
+    });
+
+    sim1.speedSlider.addEventListener('input', (e) => {
+      sim1.speed = parseFloat(e.target.value);
+      sim1.speedReadout.textContent = `${sim1.speed.toFixed(1)}x`;
+    });
+
+    document.getElementById('s1BtnToggle').addEventListener('click', () => {
+      sim1.playing = !sim1.playing;
+    });
+
+    /* ==========================================================================
+       SIMULYATSIYA №2: PTOLEMEY EPITSIKLLARI VS KOPERNIK SIRTMOQSIMON HARAKATI
+       ========================================================================== */
+    const sim2 = {
+      canvas: document.getElementById('sim2Canvas'),
+      speedSlider: document.getElementById('s2SpeedSlider'),
+      speedReadout: document.getElementById('s2SpeedReadout'),
+      motionTypeEl: document.getElementById('s2MotionType'),
+      angleDiffEl: document.getElementById('s2AngleDiff'),
+      loopCountEl: document.getElementById('s2LoopCount'),
+      earthAngle: 0.4,
+      marsAngle: 0.9,
+      prevAppLon: null,
+      wasRetrograde: false,
+      loopCount: 0,
+      elapsedEarthYears: 0,
+      speed: 1.0,
+      playing: true,
+      showEpicycles: true,
+      ptolemyTrail: [],
+      copernicusSkyTrail: []
+    };
+
+    function unwrapAngleDelta(curr, prev) {
+      let d = curr - prev;
+      while (d > Math.PI) d -= Math.PI * 2;
+      while (d < -Math.PI) d += Math.PI * 2;
+      return d;
+    }
+
+    function stepSim2Physics(dt) {
+      // Yer burchak tezligi = 1.15 rad/s, Mars = 1.15 / 1.8808 rad/s (haqiqiy davrlar nisbati!)
+      const wEarth = 1.05 * sim2.speed;
+      const wMars = wEarth / 1.8808;
+
+      sim2.earthAngle += wEarth * dt;
+      sim2.marsAngle += wMars * dt;
+      sim2.elapsedEarthYears += (wEarth * dt) / (Math.PI * 2);
+
+      // Ko‘rinma geotsentrik uzunlik (Yerdan Marsga qaralgandagi burchak)
+      const rE = 1.0;
+      const rM = 1.524;
+      const ex = rE * Math.cos(sim2.earthAngle);
+      const ey = rE * Math.sin(sim2.earthAngle);
+      const mx = rM * Math.cos(sim2.marsAngle);
+      const my = rM * Math.sin(sim2.marsAngle);
+
+      const appLon = Math.atan2(my - ey, mx - ex);
+      let isRetro = false;
+
+      if (sim2.prevAppLon !== null) {
+        const dLon = unwrapAngleDelta(appLon, sim2.prevAppLon);
+        isRetro = dLon < 0;
+        if (isRetro && !sim2.wasRetrograde) {
+          sim2.loopCount += 1;
+        }
+        sim2.wasRetrograde = isRetro;
+      }
+      sim2.prevAppLon = appLon;
+
+      // Ptolemey izi (geotsentrik vektor)
+      sim2.ptolemyTrail.push({
+        dx: mx - ex,
+        dy: my - ey,
+        retro: isRetro
+      });
+      if (sim2.ptolemyTrail.length > 420) sim2.ptolemyTrail.shift();
+
+      // Kopernik osmon sferasidagi ko‘rinma proyeksiya izi
+      sim2.copernicusSkyTrail.push({
+        lon: appLon,
+        retro: isRetro
+      });
+      if (sim2.copernicusSkyTrail.length > 340) sim2.copernicusSkyTrail.shift();
+
+      // Telemetriya yangilash
+      let diffDeg = (((sim2.marsAngle - sim2.earthAngle) * 180) / Math.PI) % 360;
+      if (diffDeg < 0) diffDeg += 360;
+      if (diffDeg > 180) diffDeg = 360 - diffDeg;
+
+      sim2.angleDiffEl.textContent = `${diffDeg.toFixed(1)}° ${diffDeg < 15 ? '(Qarama-qarshi turish!)' : ''}`;
+      sim2.loopCountEl.textContent = `${sim2.loopCount} ta sirtmoq • ${sim2.elapsedEarthYears.toFixed(2)} Yer yili`;
+
+      if (isRetro) {
+        sim2.motionTypeEl.innerHTML = `<span class="badge-pill badge-crimson">↺ Sirtmoqsimon (Orqaga) harakat!</span>`;
+      } else {
+        sim2.motionTypeEl.innerHTML = `<span class="badge-pill badge-sky">→ To‘g‘ri harakat (G‘arbdan sharqqa)</span>`;
+      }
+    }
+
+    function drawSim2() {
+      const setup = setupHighDPICanvas(sim2.canvas, 2.2, 0.78);
+      if (!setup) return;
+      const { ctx, w, h, isMobile } = setup;
+      ctx.clearRect(0, 0, w, h);
+
+      const leftBox = isMobile
+        ? { x: 0, y: 0, w: w, h: h * 0.5 }
+        : { x: 0, y: 0, w: w * 0.48, h: h };
+      const rightBox = isMobile
+        ? { x: 0, y: h * 0.5, w: w, h: h * 0.5 }
+        : { x: w * 0.48, y: 0, w: w * 0.52, h: h };
+
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (isMobile) {
+        ctx.moveTo(12, rightBox.y);
+        ctx.lineTo(w - 12, rightBox.y);
+      } else {
+        ctx.moveTo(rightBox.x, 12);
+        ctx.lineTo(rightBox.x, h - 12);
+      }
+      ctx.stroke();
+
+      /* --- CHAP EKRAN: PTOLEMEY GEOSENTRIK MODELI (DEFERENT + EPITSIKL) --- */
+      const lcx = leftBox.x + leftBox.w * 0.5;
+      const lcy = leftBox.y + leftBox.h * 0.53;
+      const scaleL = Math.min(leftBox.w, leftBox.h) * 0.165;
+      const rDeferent = 1.524 * scaleL;
+      const rEpicycle = 1.0 * scaleL;
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('A) Ptolemey Geosentrik modeli (Deferent + Epitsikl)', leftBox.x + 14, leftBox.y + 22);
+
+      // Deferent aylanasi (Yer markazida)
+      if (sim2.showEpicycles) {
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.35)';
+        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.arc(lcx, lcy, rDeferent, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Epitsikl markazi (deferent bo‘ylab Mars burchagida aylanadi)
+      const defX = lcx + rDeferent * Math.cos(sim2.marsAngle);
+      const defY = lcy - rDeferent * Math.sin(sim2.marsAngle);
+
+      if (sim2.showEpicycles) {
+        // Deferent radius vektori
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.45)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(lcx, lcy);
+        ctx.lineTo(defX, defY);
+        ctx.stroke();
+
+        // Epitsikl aylanasi
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.arc(defX, defY, rEpicycle, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.fillStyle = '#c084fc';
+        ctx.beginPath();
+        ctx.arc(defX, defY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Epitroxoid sirtmoq izi
+      for (let i = 1; i < sim2.ptolemyTrail.length; i++) {
+        const p0 = sim2.ptolemyTrail[i - 1];
+        const p1 = sim2.ptolemyTrail[i];
+        const alpha = i / sim2.ptolemyTrail.length;
+        ctx.strokeStyle = p1.retro
+          ? `rgba(239, 68, 68, ${alpha * 0.95})`
+          : `rgba(56, 189, 248, ${alpha * 0.65})`;
+        ctx.lineWidth = p1.retro ? 2.6 : 1.5;
+        ctx.beginPath();
+        ctx.moveTo(lcx + p0.dx * scaleL, lcy - p0.dy * scaleL);
+        ctx.lineTo(lcx + p1.dx * scaleL, lcy - p1.dy * scaleL);
+        ctx.stroke();
+      }
+
+      // Qo‘zg‘almas Yer (markazda)
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(lcx, lcy, 8.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e0f2fe';
+      ctx.font = '700 11px sans-serif';
+      ctx.fillText('Yer (Markaz)', lcx - 28, lcy + 20);
+
+      // Mars (epitsikl ustida)
+      const pMarsX = defX - rEpicycle * Math.cos(sim2.earthAngle);
+      const pMarsY = defY + rEpicycle * Math.sin(sim2.earthAngle);
+
+      if (sim2.showEpicycles) {
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.55)';
+        ctx.beginPath();
+        ctx.moveTo(defX, defY);
+        ctx.lineTo(pMarsX, pMarsY);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.arc(pMarsX, pMarsY, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fed7aa';
+      ctx.fillText('Mars', pMarsX + 8, pMarsY + 4);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('Qizil sirtmoqlar: Marsning Yerga yaqinlashib orqaga qaytish nuqtalari', leftBox.x + 14, leftBox.y + leftBox.h - 10);
+
+      /* --- O‘NG EKRAN: KOPERNIK GELIOSENTRIK MODELI VA KO‘RISH NURI --- */
+      const rcx = rightBox.x + rightBox.w * 0.5;
+      const rcy = rightBox.y + rightBox.h * 0.54;
+      const skyRingR = Math.min(rightBox.w, rightBox.h) * 0.42;
+      const rMarsOrb = skyRingR * 0.58;
+      const rEarthOrb = rMarsOrb / 1.524;
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('B) Kopernik Geliosentrik modeli va Yulduzlar fonidagi proyeksiya', rightBox.x + 14, rightBox.y + 22);
+
+      // Tashqi Uzoq Yulduzlar (Zodiak) halqasi
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(rcx, rcy, skyRingR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Zodiak yulduz belgilari (12 ta bo‘linma)
+      for (let k = 0; k < 12; k++) {
+        const a = (k * Math.PI) / 6;
+        const sx = rcx + (skyRingR + 8) * Math.cos(a);
+        const sy = rcy - (skyRingR + 8) * Math.sin(a);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Mars va Yer orbitalari
+      ctx.strokeStyle = 'rgba(249, 115, 22, 0.28)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(rcx, rcy, rMarsOrb, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.32)';
+      ctx.beginPath();
+      ctx.arc(rcx, rcy, rEarthOrb, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Quyosh (markazda)
+      const sGrad = ctx.createRadialGradient(rcx, rcy, 3, rcx, rcy, 20);
+      sGrad.addColorStop(0, '#ffffff');
+      sGrad.addColorStop(0.4, '#fbbf24');
+      sGrad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = sGrad;
+      ctx.beginPath();
+      ctx.arc(rcx, rcy, 20, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(rcx, rcy, 9.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Yer va Mars koordinatalari
+      const cEarthX = rcx + rEarthOrb * Math.cos(sim2.earthAngle);
+      const cEarthY = rcy - rEarthOrb * Math.sin(sim2.earthAngle);
+      const cMarsX = rcx + rMarsOrb * Math.cos(sim2.marsAngle);
+      const cMarsY = rcy - rMarsOrb * Math.sin(sim2.marsAngle);
+
+      // Yerdan Mars orqali tashqi Yulduzlar halqasiga o‘tkazilgan ko‘rish nuri (ray-circle intersection)
+      const dx = cMarsX - cEarthX;
+      const dy = cMarsY - cEarthY;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len;
+      const uy = dy / len;
+
+      // (cEarthX + t*ux - rcx)^2 + (cEarthY + t*uy - rcy)^2 = skyRingR^2
+      const ox = cEarthX - rcx;
+      const oy = cEarthY - rcy;
+      const bCoef = 2 * (ox * ux + oy * uy);
+      const cCoef = ox * ox + oy * oy - skyRingR * skyRingR;
+      const disc = Math.max(0, bCoef * bCoef - 4 * cCoef);
+      const tHit = (-bCoef + Math.sqrt(disc)) / 2;
+
+      const projX = cEarthX + tHit * ux;
+      const projY = cEarthY + tHit * uy;
+
+      // Ko‘rinma sirtmoq izi (tashqi halqa bo‘ylab S-shaklli lenta)
+      for (let i = 1; i < sim2.copernicusSkyTrail.length; i++) {
+        const pt0 = sim2.copernicusSkyTrail[i - 1];
+        const pt1 = sim2.copernicusSkyTrail[i];
+        const ageNorm = i / sim2.copernicusSkyTrail.length;
+        // Retrograd paytda biroz ichkariga siljitib, haqiqiy S-sirtmoq ko‘rinishini beramiz
+        const rOff0 = skyRingR - 5 + (pt0.retro ? -6 : 0) + (1 - ageNorm) * 4;
+        const rOff1 = skyRingR - 5 + (pt1.retro ? -6 : 0) + (1 - ageNorm) * 4;
+
+        ctx.strokeStyle = pt1.retro
+          ? `rgba(239, 68, 68, ${ageNorm * 0.95})`
+          : `rgba(56, 189, 248, ${ageNorm * 0.7})`;
+        ctx.lineWidth = pt1.retro ? 2.8 : 1.6;
+        ctx.beginPath();
+        ctx.moveTo(rcx + rOff0 * Math.cos(pt0.lon), rcy - rOff0 * Math.sin(pt0.lon));
+        ctx.lineTo(rcx + rOff1 * Math.cos(pt1.lon), rcy - rOff1 * Math.sin(pt1.lon));
+        ctx.stroke();
+      }
+
+      // Jonli ko‘rish nuri (Yer -> Mars -> Yulduzlar foni)
+      ctx.strokeStyle = sim2.wasRetrograde ? 'rgba(239, 68, 68, 0.75)' : 'rgba(251, 191, 36, 0.55)';
+      ctx.setLineDash([4, 3]);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cEarthX, cEarthY);
+      ctx.lineTo(projX, projY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Yulduzlar fonidagi ko‘rinma proyeksiya nuqtasi
+      ctx.fillStyle = sim2.wasRetrograde ? '#ef4444' : '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(projX, projY, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.3;
+      ctx.stroke();
+
+      // Yer va Mars sharlari
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(cEarthX, cEarthY, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.arc(cMarsX, cMarsY, 5.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('● Moviy: To‘g‘ri harakat  •  ● Qizil: Yer Marsni quvib o‘tgandagi sirtmoq', rightBox.x + 14, rightBox.y + rightBox.h - 10);
+    }
+
+    document.getElementById('s2BtnOvertake').addEventListener('click', () => {
+      // Yerni Marsning orqasidan 24° masofaga qo‘yamiz -> darhol quvib o‘tish va sirtmoq boshlanadi!
+      sim2.marsAngle = 1.25;
+      sim2.earthAngle = 1.25 - (24 * Math.PI) / 180;
+      sim2.prevAppLon = null;
+      sim2.wasRetrograde = false;
+      sim2.ptolemyTrail = [];
+      sim2.copernicusSkyTrail = [];
+      sim2.playing = true;
+    });
+
+    document.getElementById('s2BtnCircles').addEventListener('click', (e) => {
+      sim2.showEpicycles = !sim2.showEpicycles;
+      e.target.classList.toggle('active-mode', sim2.showEpicycles);
+    });
+
+    document.getElementById('s2BtnClear').addEventListener('click', () => {
+      sim2.ptolemyTrail = [];
+      sim2.copernicusSkyTrail = [];
+      sim2.loopCount = 0;
+      sim2.elapsedEarthYears = 0;
+    });
+
+    sim2.speedSlider.addEventListener('input', (e) => {
+      sim2.speed = parseFloat(e.target.value);
+      sim2.speedReadout.textContent = `${sim2.speed.toFixed(1)}x`;
+    });
+
+    document.getElementById('s2BtnToggle').addEventListener('click', () => {
+      sim2.playing = !sim2.playing;
+    });
+
+    /* ==========================================================================
+       SIMULYATSIYA №3: SAYYORALAR GURUHLARI LABORATORIYASI VA TITSIUS–BODE QOIDASI
+       ========================================================================== */
+    const sim3 = {
+      canvas: document.getElementById('sim3Canvas'),
+      bodeSlider: document.getElementById('s3BodeSlider'),
+      bodeNReadout: document.getElementById('s3BodeNReadout'),
+      selectedInfoEl: document.getElementById('s3SelectedInfo'),
+      bodeFormulaEl: document.getElementById('s3BodeFormulaVal'),
+      modeStatusEl: document.getElementById('s3ModeStatus'),
+      selectedPlanetId: 'saturn',
+      groupFilter: 'all', // 'all', 'terrestrial', 'giant'
+      buoyancyActive: false,
+      bodeN: 3, // -1 (n = -∞), 0, 1, 2, 3, 4, 5, 6, 7
+      spinPhase: 0,
+      wavePhase: 0,
+      // Har bir sayyora uchun virtual suv havzasidagi vertikal y (0 = tepada, 1 = suv tubida)
+      buoyancyY: PLANETS.map(() => 0.15),
+      planetHitBoxes: [],
+      bodeEntries: [
+        { n: -1, nLabel: '-∞', name: 'Merkuriy', bodeAU: 0.40, realAU: 0.39, formula: 'a_{-∞} = 0,4 + 0 = 0,40 a.b.' },
+        { n: 0,  nLabel: '0',  name: 'Venera',   bodeAU: 0.70, realAU: 0.72, formula: 'a_0 = 0,4 + 0,3 · 2⁰ = 0,70 a.b.' },
+        { n: 1,  nLabel: '1',  name: 'Yer',      bodeAU: 1.00, realAU: 1.00, formula: 'a_1 = 0,4 + 0,3 · 2¹ = 1,00 a.b.' },
+        { n: 2,  nLabel: '2',  name: 'Mars',     bodeAU: 1.60, realAU: 1.52, formula: 'a_2 = 0,4 + 0,3 · 2² = 1,60 a.b.' },
+        { n: 3,  nLabel: '3',  name: 'Serera (Belbog‘)', bodeAU: 2.80, realAU: 2.77, formula: 'a_3 = 0,4 + 0,3 · 2³ = 2,80 a.b. (Serera)' },
+        { n: 4,  nLabel: '4',  name: 'Yupiter',  bodeAU: 5.20, realAU: 5.20, formula: 'a_4 = 0,4 + 0,3 · 2⁴ = 5,20 a.b.' },
+        { n: 5,  nLabel: '5',  name: 'Saturn',   bodeAU: 10.0, realAU: 9.58, formula: 'a_5 = 0,4 + 0,3 · 2⁵ = 10,00 a.b.' },
+        { n: 6,  nLabel: '6',  name: 'Uran',     bodeAU: 19.6, realAU: 19.22, formula: 'a_6 = 0,4 + 0,3 · 2⁶ = 19,60 a.b.' },
+        { n: 7,  nLabel: '7',  name: 'Neptun',   bodeAU: 38.8, realAU: 30.07, formula: 'a_7 = 0,4 + 0,3 · 2⁷ = 38,80 a.b. (Chetlanish)' }
+      ]
+    };
+
+    function updateSim3Telemetry() {
+      const p = PLANETS.find((item) => item.id === sim3.selectedPlanetId) || PLANETS[5];
+      const floatNote = p.density < 1.0 ? ' (Suvdan yengil — suzadi!)' : ' (Suvdan og‘ir — cho‘kadi)';
+      sim3.selectedInfoEl.textContent = `${p.name} (${p.groupLabel}) • Zichligi: ${p.density.toFixed(2).replace('.', ',')} g/sm³${floatNote}`;
+
+      const entry = sim3.bodeEntries.find((e) => e.n === sim3.bodeN) || sim3.bodeEntries[4];
+      sim3.bodeNReadout.textContent = `n = ${entry.nLabel} (${entry.name})`;
+      sim3.bodeFormulaEl.textContent = `${entry.formula} | Haqiqiy: ${entry.realAU.toFixed(2).replace('.', ',')} a.b.`;
+
+      document.querySelectorAll('#s3PlanetButtons .s3-pbtn').forEach((btn) => {
+        btn.classList.toggle('active-mode', btn.dataset.pid === sim3.selectedPlanetId);
+      });
+    }
+
+    function stepSim3Physics(dt) {
+      sim3.spinPhase += dt * 1.4;
+      sim3.wavePhase += dt * 3.2;
+
+      PLANETS.forEach((p, idx) => {
+        // Suv zichligi = 1.00 g/sm³. Saturn (0.69) suv yuzida (y = 0.24) suzib qoladi!
+        const targetY = sim3.buoyancyActive
+          ? p.density < 1.0
+            ? 0.24 + Math.sin(sim3.wavePhase + idx) * 0.025
+            : Math.min(0.84, 0.42 + (p.density - 1.0) * 0.095)
+          : 0.5;
+
+        sim3.buoyancyY[idx] += (targetY - sim3.buoyancyY[idx]) * Math.min(1, dt * 4.5);
+      });
+    }
+
+    function drawSim3() {
+      const setup = setupHighDPICanvas(sim3.canvas, 1.85, 0.68);
+      if (!setup) return;
+      const { ctx, w, h, isMobile } = setup;
+      ctx.clearRect(0, 0, w, h);
+
+      const topBox = { x: 0, y: 0, w: w, h: h * 0.54 };
+      const botBox = { x: 0, y: h * 0.54, w: w, h: h * 0.46 };
+
+      // Gorizontal ajratuvchi chiziq
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(12, botBox.y);
+      ctx.lineTo(w - 12, botBox.y);
+      ctx.stroke();
+
+      /* --- YUQORI PANEL: O‘LCHAM, ZICHLIK (SUV HAVZASI) VA ICHKI TUZILISH KESIMI --- */
+      const leftPlanetsW = isMobile ? topBox.w : topBox.w * 0.66;
+      const rightCutawayBox = isMobile
+        ? null
+        : { x: leftPlanetsW, y: topBox.y + 8, w: topBox.w - leftPlanetsW - 10, h: topBox.h - 16 };
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText(
+        sim3.buoyancyActive
+          ? 'A) Virtual suv havzasi (ρ_suv = 1,00 g/sm³): Qaysi sayyora suvda cho‘kmaydi?'
+          : 'A) Sayyoralarning nisbiy o‘lchami, aylanishi va ichki qatlamlari',
+        topBox.x + 14,
+        topBox.y + 22
+      );
+
+      // Agar «Suvda suzish tajribasi» yoqilgan bo‘lsa — suv havzasini chizamiz!
+      const waterTopY = topBox.y + topBox.h * 0.30;
+      const waterBotY = topBox.y + topBox.h - 14;
+      if (sim3.buoyancyActive) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(14, waterTopY);
+        for (let wx = 14; wx <= leftPlanetsW - 10; wx += 10) {
+          const wy = waterTopY + Math.sin(wx * 0.045 + sim3.wavePhase) * 3;
+          ctx.lineTo(wx, wy);
+        }
+        ctx.lineTo(leftPlanetsW - 10, waterBotY);
+        ctx.lineTo(14, waterBotY);
+        ctx.closePath();
+
+        const waterGrad = ctx.createLinearGradient(0, waterTopY, 0, waterBotY);
+        waterGrad.addColorStop(0, 'rgba(56, 189, 248, 0.28)');
+        waterGrad.addColorStop(1, 'rgba(3, 105, 161, 0.45)');
+        ctx.fillStyle = waterGrad;
+        ctx.fill();
+
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        ctx.fillStyle = '#7dd3fc';
+        ctx.font = '600 10.5px sans-serif';
+        ctx.fillText('Suv sathi (ρ = 1,00 g/sm³)', 20, waterTopY - 6);
+        ctx.restore();
+      }
+
+      // Filtrlangan sayyoralar ro‘yxati
+      const visiblePlanets = PLANETS.filter(
+        (p) => sim3.groupFilter === 'all' || p.group === sim3.groupFilter
+      );
+
+      sim3.planetHitBoxes = [];
+      const colStep = (leftPlanetsW - 30) / visiblePlanets.length;
+
+      visiblePlanets.forEach((p, idx) => {
+        const globalIdx = PLANETS.findIndex((item) => item.id === p.id);
+        const px = 15 + colStep * (idx + 0.5);
+        const normY = sim3.buoyancyY[globalIdx];
+        const py = sim3.buoyancyActive
+          ? waterTopY + normY * (waterBotY - waterTopY - 12) - 8
+          : topBox.y + topBox.h * 0.54;
+
+        // Haqiqiy diametr nisbatiga mos radius (Yupiter eng katta, Merkuriy kichik lekin aniq ko‘rinadi)
+        const rPx = Math.max(7, Math.min(34, (p.radiusKm / 69911) * 33));
+        const isSel = p.id === sim3.selectedPlanetId;
+
+        sim3.planetHitBoxes.push({ id: p.id, x: px, y: py, r: Math.max(18, rPx + 8) });
+
+        // Tanlangan sayyora halqasi
+        if (isSel) {
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 1.8;
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.arc(px, py, rPx + 6, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // Sayyora shari
+        const pGrad = ctx.createRadialGradient(px - rPx * 0.3, py - rPx * 0.3, rPx * 0.1, px, py, rPx);
+        pGrad.addColorStop(0, p.color);
+        pGrad.addColorStop(1, p.color2);
+        ctx.fillStyle = pGrad;
+        ctx.beginPath();
+        ctx.arc(px, py, rPx, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Aylanish meridian chizig‘i (spin vizuali)
+        const spinRate = Math.min(4.5, 45 / p.rotHours) * p.spinDir;
+        const merAngle = (sim3.spinPhase * spinRate) % (Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(px, py, Math.abs(Math.cos(merAngle)) * rPx, rPx, 0, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Saturn va Uran halqalari
+        if (p.hasRings) {
+          ctx.strokeStyle = p.id === 'saturn' ? 'rgba(253, 224, 71, 0.85)' : 'rgba(103, 232, 249, 0.55)';
+          ctx.lineWidth = p.id === 'saturn' ? 3 : 1.5;
+          ctx.beginPath();
+          ctx.ellipse(px, py, rPx * 1.85, rPx * 0.42, p.id === 'uranus' ? 1.45 : -0.25, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Sayyora nomi va zichligi
+        ctx.fillStyle = isSel ? '#fbbf24' : '#e2e8f0';
+        ctx.font = isSel ? '700 11px sans-serif' : '600 10.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.name, px, py + rPx + 14);
+
+        ctx.fillStyle = p.density < 1.0 ? '#34d399' : '#94a3b8';
+        ctx.font = '600 9.5px sans-serif';
+        ctx.fillText(`${p.density.toFixed(2)} g/sm³`, px, py + rPx + 26);
+        ctx.textAlign = 'left';
+      });
+
+      // O‘ng tarafdagi Ichki Qatlamlar Kesimi kartochkasi (Desktopda)
+      if (rightCutawayBox) {
+        const selP = PLANETS.find((p) => p.id === sim3.selectedPlanetId) || PLANETS[5];
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(rightCutawayBox.x, rightCutawayBox.y, rightCutawayBox.w, rightCutawayBox.h, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '700 12px sans-serif';
+        ctx.fillText(`Ichki tuzilishi: ${selP.name}`, rightCutawayBox.x + 12, rightCutawayBox.y + 20);
+
+        const cutX = rightCutawayBox.x + 62;
+        const cutY = rightCutawayBox.y + rightCutawayBox.h * 0.56;
+        const cutR = Math.min(46, rightCutawayBox.h * 0.28);
+
+        // Konsentrik ichki qatlamlarni chizish
+        selP.layers.forEach((layer) => {
+          ctx.fillStyle = layer.color;
+          ctx.beginPath();
+          ctx.arc(cutX, cutY, cutR * layer.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Qatlam nomlari
+        let ly = rightCutawayBox.y + 42;
+        const lx = cutX + cutR + 14;
+        selP.layers.forEach((layer) => {
+          ctx.fillStyle = layer.color;
+          ctx.fillRect(lx, ly - 8, 9, 9);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '600 10.5px sans-serif';
+          ctx.fillText(layer.label, lx + 14, ly);
+          ly += 17;
+        });
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '600 10px sans-serif';
+        ctx.fillText(`Aylanish davri: ${selP.rotHours} soat`, rightCutawayBox.x + 12, rightCutawayBox.y + rightCutawayBox.h - 10);
+      }
+
+      /* --- PASTKI PANEL: TITSIUS–BODE QOIDASI GRAFIGI --- */
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('B) Titsius–Bode empirik qoidasi: Nazariy (a_n) vs Haqiqiy masofalar (a.b.)', botBox.x + 14, botBox.y + 22);
+
+      const chartLeft = botBox.x + 42;
+      const chartRight = botBox.x + botBox.w - 18;
+      const chartTop = botBox.y + 42;
+      const chartBottom = botBox.y + botBox.h - 32;
+      const chartW = chartRight - chartLeft;
+      const chartH = chartBottom - chartTop;
+
+      // Gorizontal o‘q chizig‘i
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(chartLeft, chartBottom);
+      ctx.lineTo(chartRight, chartBottom);
+      ctx.stroke();
+
+      // Kvadrat ildiz masshtabi (0.4 a.b. dan 39 a.b. gacha hamma ustunlar aniq ko‘rinishi uchun)
+      const mapValToH = (au) => (Math.sqrt(au) / Math.sqrt(40)) * chartH;
+
+      const entries = sim3.bodeEntries;
+      const slotW = chartW / entries.length;
+
+      entries.forEach((ent, i) => {
+        const sx = chartLeft + i * slotW;
+        const centerX = sx + slotW * 0.5;
+        const isActiveN = ent.n === sim3.bodeN;
+        const isCeres = ent.n === 3;
+
+        if (isActiveN) {
+          ctx.fillStyle = 'rgba(251, 191, 36, 0.14)';
+          ctx.fillRect(sx + 2, chartTop - 6, slotW - 4, chartH + 26);
+        }
+
+        const barW = Math.max(6, Math.min(15, slotW * 0.28));
+        const hBode = mapValToH(ent.bodeAU);
+        const hReal = mapValToH(ent.realAU);
+
+        // Nazariy ustun (Oltin / Yashil)
+        ctx.fillStyle = isCeres ? '#10b981' : '#fbbf24';
+        ctx.fillRect(centerX - barW - 1.5, chartBottom - hBode, barW, hBode);
+
+        // Haqiqiy ustun (Moviy)
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillRect(centerX + 1.5, chartBottom - hReal, barW, hReal);
+
+        // Ustun tepasidagi qiymat
+        ctx.fillStyle = isActiveN ? '#ffffff' : '#94a3b8';
+        ctx.font = isActiveN ? '700 10px sans-serif' : '600 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(ent.bodeAU.toFixed(1), centerX, chartBottom - Math.max(hBode, hReal) - 5);
+
+        // Pastki yorliq (n va sayyora nomi)
+        ctx.fillStyle = isCeres ? '#6ee7b7' : isActiveN ? '#fbbf24' : '#cbd5e1';
+        ctx.font = '700 9.5px sans-serif';
+        ctx.fillText(isMobile ? `n=${ent.nLabel}` : ent.name.split(' ')[0], centerX, chartBottom + 13);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '600 8.5px sans-serif';
+        ctx.fillText(`(n=${ent.nLabel})`, centerX, chartBottom + 24);
+        ctx.textAlign = 'left';
+      });
+
+      // Grafik afsonasi (yuqori chap burchakda)
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillRect(chartLeft + 6, chartTop, 9, 9);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 10px sans-serif';
+      ctx.fillText('Formula (a_n)', chartLeft + 19, chartTop + 8);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(chartLeft + 96, chartTop, 9, 9);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText('Haqiqiy masofa', chartLeft + 109, chartTop + 8);
+    }
+
+    // 3-bo‘lim sayyora tugmalarini yaratish
+    const s3BtnsWrap = document.getElementById('s3PlanetButtons');
+    PLANETS.forEach((p) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sim-btn s3-pbtn' + (p.id === sim3.selectedPlanetId ? ' active-mode' : '');
+      btn.dataset.pid = p.id;
+      btn.textContent = p.name;
+      btn.addEventListener('click', () => {
+        sim3.selectedPlanetId = p.id;
+        updateSim3Telemetry();
+      });
+      s3BtnsWrap.appendChild(btn);
+    });
+
+    sim3.canvas.addEventListener('click', (e) => {
+      const rect = sim3.canvas.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      for (const hb of sim3.planetHitBoxes) {
+        if (Math.hypot(cx - hb.x, cy - hb.y) <= hb.r) {
+          sim3.selectedPlanetId = hb.id;
+          updateSim3Telemetry();
+          break;
+        }
+      }
+    });
+
+    ['s3GrpAll', 's3GrpTerr', 's3GrpGiant'].forEach((btnId) => {
+      document.getElementById(btnId).addEventListener('click', (e) => {
+        sim3.groupFilter = e.target.dataset.group;
+        ['s3GrpAll', 's3GrpTerr', 's3GrpGiant'].forEach((id) =>
+          document.getElementById(id).classList.toggle('active-mode', id === btnId)
+        );
+      });
+    });
+
+    document.getElementById('s3BtnBuoyancy').addEventListener('click', (e) => {
+      sim3.buoyancyActive = !sim3.buoyancyActive;
+      e.target.classList.toggle('active-mode', sim3.buoyancyActive);
+      sim3.modeStatusEl.textContent = sim3.buoyancyActive
+        ? 'Suvda suzish tajribasi faol!'
+        : 'Ichki tuzilish rejimi';
+    });
+
+    sim3.bodeSlider.addEventListener('input', (e) => {
+      sim3.bodeN = parseInt(e.target.value, 10);
+      updateSim3Telemetry();
+    });
+
+    /* ==========================================================================
+       ASOSIY ANIMATSIYA SIKLI (REQUESTANIMATIONFRAME)
+       ========================================================================== */
+    let prevTime = 0;
+
+    function animate(timestamp) {
+      if (!prevTime) prevTime = timestamp;
+      const dt = Math.min(0.05, (timestamp - prevTime) / 1000);
+      prevTime = timestamp;
+
+      // 1-simulyatsiya harakati (Kepler burchak tezligi: ω ∝ a^(-3/2))
+      if (sim1.playing) {
+        PLANETS.forEach((p, idx) => {
+          const omega = (1.15 / p.periodYears) * sim1.speed;
+          sim1.angles[idx] = (sim1.angles[idx] + omega * dt) % (Math.PI * 2);
+        });
+        sim1.asteroids.forEach((ast) => {
+          const omega = (1.15 / Math.pow(ast.au, 1.5)) * sim1.speed;
+          ast.angle = (ast.angle + omega * dt) % (Math.PI * 2);
+        });
+        sim1.kuiper.forEach((kp) => {
+          const omega = (1.15 / Math.pow(kp.au, 1.5)) * sim1.speed;
+          kp.angle = (kp.angle + omega * dt) % (Math.PI * 2);
+        });
+      }
+
+      // 2-simulyatsiya harakati
+      if (sim2.playing) {
+        stepSim2Physics(dt);
+      }
+
+      // 3-simulyatsiya harakati
+      stepSim3Physics(dt);
+
+      if (appState.activeTab === 'sec1') drawSim1();
+      else if (appState.activeTab === 'sec2') drawSim2();
+      else if (appState.activeTab === 'sec3') drawSim3();
+
+      requestAnimationFrame(animate);
+    }
+
+    /* ==========================================================================
+       9 TA INTERAKTIV TEST SAVOLLARI (HAR BIR BO‘LIM UCHUN 3 TADAN)
+       ========================================================================== */
+    const quizBank = {
+      quizContainer1: [
+        {
+          id: 'q1_1',
+          question: '1. Quyosh sistemasining umumiy massasining necha foizi markaziy yulduz — Quyosh hissasiga to‘g‘ri keladi?',
+          options: [
+            '99,86% qismi Quyoshga, atigi 0,14% qismi barcha sayyoralar va kichik jismlarga',
+            '75,0% qismi Quyoshga, 25,0% qismi gigant sayyoralarga',
+            '50,0% qismi Quyoshga, 50,0% qismi Yupiter va Saturnga',
+            '90,0% qismi Quyoshga, 10,0% qismi Koyper belbog‘iga'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Quyosh sistemasining 99,86% massasi Quyoshda mujassamlashgan bo‘lib, qolgan 0,14% massaning asosiy qismi (71% dan ortig‘i) Yupiter hissasiga to‘g‘ri keladi.'
+        },
+        {
+          id: 'q1_2',
+          question: '2. Asosiy asteroidlar belbog‘i qaysi ikki sayyora orbitalari orasida joylashgan?',
+          options: [
+            'Mars va Yupiter orbitalari orasida (2,2 – 3,2 a.b.)',
+            'Yer va Mars orbitalari orasida (1,0 – 1,5 a.b.)',
+            'Saturn va Uran orbitalari orasida (9,5 – 19,2 a.b.)',
+            'Neptun orbitasidan tashqarida (30 – 50 a.b.)'
+          ],
+          correctIndex: 0,
+          explanation: 'Barakalla! Asosiy asteroidlar belbog‘i Mars (1,52 a.b.) va Yupiter (5,20 a.b.) orbitalari orasida joylashgan bo‘lib, Yer guruhi sayyoralarini Gigant sayyoralardan ajratib turadi.'
+        },
+        {
+          id: 'q1_3',
+          question: '3. Astronomik birlik (1 a.b.) nimaga teng va u nima uchun qo‘llaniladi?',
+          options: [
+            'Yerning Quyoshdan o‘rtacha masofasiga (≈ 149,6 mln km) teng; Quyosh sistemasi ichidagi masofalarni o‘lchash uchun',
+            'Yorug‘likning 1 yilda bosib o‘tadigan masofasiga teng; galaktikalararo masofalar uchun',
+            'Oyning Yerdan o‘rtacha masofasiga (384 400 km) teng',
+            'Quyosh diametriga (1,39 mln km) teng'
+          ],
+          correctIndex: 0,
+          explanation: 'A’lo! 1 astronomik birlik (1 a.b.) = 149,6 mln km — Yerning Quyoshdan o‘rtacha masofasi bo‘lib, Quyosh sistemasidagi orbital masofalarni qulay ifodalash imkonini beradi.'
+        }
+      ],
+      quizContainer2: [
+        {
+          id: 'q2_1',
+          question: '1. Klavdiy Ptolemeyning geosentrik olam sistemasida sayyoralarning sirtmoqsimon harakati qanday tushuntirilgan?',
+          options: [
+            'Sayyoralar deferent deb ataluvchi katta aylana bo‘ylab harakatlanuvchi kichik aylana — epitsiklda aylanadi deb',
+            'Yerning o‘zi Quyosh atrofida ellips bo‘ylab aylanadi deb',
+            'Yulduzlar osmon sferasida tebranma harakat qiladi deb',
+            'Quyosh Yer atrofida sirtmoq chizib aylanadi deb'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Ptolemey geosentrik tizimni saqlab qolish uchun sayyoralarning murakkab yo‘lini deferent va epitsikllar kombinatsiyasi orqali modellashtirgan.'
+        },
+        {
+          id: 'q2_2',
+          question: '2. Kopernikning geliosentrik sistemasiga ko‘ra, tashqi sayyoralarning (masalan, Marsning) osmon sferasidagi sirtmoqsimon harakatining asl sababi nima?',
+          options: [
+            'Ichki orbitadagi tezroq Yer tashqi orbitadagi sekinroq Marsni quvib o‘tishi (qarama-qarshi turish)',
+            'Marsning Quyosh atrofida vaqti-vaqti bilan orqaga qarab aylanishi',
+            'Yerning o‘z o‘qi atrofida aylanish yo‘nalishini o‘zgartirishi',
+            'Oy tortishish kuchining Mars orbitasini bukishi'
+          ],
+          correctIndex: 0,
+          explanation: 'Barakalla! Yer orbitada 29,8 km/s tezlik bilan harakatlanib, 24,1 km/s tezlikdagi Marsni quvib o‘tayotgan paytda ko‘rish nuri yulduzlar fonida orqaga og‘adi va sirtmoq hosil qiladi.'
+        },
+        {
+          id: 'q2_3',
+          question: '3. Quyoshni olam markaziga qo‘ygan geliosentrik olam sistemasi haqidagi mashhur asar Nikolay Kopernik tomonidan nechanchi yilda nashr etilgan?',
+          options: [
+            '1543-yilda',
+            '1687-yilda',
+            '1079-yilda',
+            '1957-yilda'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Nikolay Kopernikning «Osmon sferalarining aylanishi haqida» nomli olamshumul asari 1543-yilda nashr etilgan.'
+        }
+      ],
+      quizContainer3: [
+        {
+          id: 'q3_1',
+          question: '1. Quyidagi sayyoralardan qaysi birining o‘rtacha zichligi suvnikidan (1,00 g/sm³) ham kichik bo‘lib, ulkan suv havzasida suzib qolgan bo‘lardi?',
+          options: [
+            'Saturn (o‘rtacha zichligi ≈ 0,69 g/sm³)',
+            'Yer (o‘rtacha zichligi ≈ 5,51 g/sm³)',
+            'Merkuriy (o‘rtacha zichligi ≈ 5,43 g/sm³)',
+            'Neptun (o‘rtacha zichligi ≈ 1,64 g/sm³)'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Saturn asosan yengil vodorod va geliydan tashkil topgani sababli o‘rtacha zichligi 0,69 g/sm³ ga teng — bu suv zichligidan kichikdir.'
+        },
+        {
+          id: 'q3_2',
+          question: '2. Titsius–Bode empirik qoidasiga (a_n = 0,4 + 0,3 · 2^n) ko‘ra n = 3 bo‘lganda olingan 2,8 a.b. masofada qaysi obyekt joylashgan?',
+          options: [
+            'Serera karlik sayyorasi va Asosiy asteroidlar belbog‘i',
+            'Uran sayyorasi',
+            'Saturn halqalari',
+            'Pluton va Koyper belbog‘i'
+          ],
+          correctIndex: 0,
+          explanation: 'A’lo! n = 3 da formula a_3 = 0,4 + 0,3 · 8 = 2,8 a.b. ni beradi; aynan shu masofada 1801-yilda Serera va keyinchalik Asosiy asteroidlar belbog‘i kashf etilgan.'
+        },
+        {
+          id: 'q3_3',
+          question: '3. Yer guruhi sayyoralari Gigant sayyoralardan qaysi xususiyatlari bilan tubdan farq qiladi?',
+          options: [
+            'O‘lchami kichik, zichligi yuqori (3,9–5,5 g/sm³), sirti qattiq tosh-temir tarkibli va halqalari yo‘q',
+            'O‘lchami ulkan, zichligi past va o‘nlab yo‘ldoshlarga ega',
+            'Asosan vodorod va geliydan tashkil topgan va halqalar tizimi bilan o‘ralgan',
+            'Quyosh atrofida teskari yo‘nalishda (soat strelkasi bo‘ylab) aylanadi'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Merkuriy, Venera, Yer va Mars qattiq sirtga, yuqori zichlikka va kichik o‘lchamga ega bo‘lib, birorta ham halqaga ega emas.'
+        }
+      ]
+    };
+
+    function renderQuizzes() {
+      const scoreEl = document.getElementById('globalScore');
+      Object.entries(quizBank).forEach(([containerId, list]) => {
+        const box = document.getElementById(containerId);
+        if (!box) return;
+
+        list.forEach((item) => {
+          const card = document.createElement('div');
+          card.className = 'quiz-item';
+
+          const qText = document.createElement('div');
+          qText.className = 'quiz-q';
+          qText.textContent = item.question;
+          card.appendChild(qText);
+
+          const opts = document.createElement('div');
+          opts.className = 'quiz-options';
+
+          const fb = document.createElement('div');
+          fb.className = 'quiz-feedback';
+
+          item.options.forEach((optLabel, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'quiz-opt';
+            btn.textContent = optLabel;
+
+            btn.addEventListener('click', () => {
+              opts.querySelectorAll('.quiz-opt').forEach((b, bIdx) => {
+                b.disabled = true;
+                if (bIdx === item.correctIndex) b.classList.add('correct');
+              });
+              const ok = idx === item.correctIndex;
+              if (!ok) btn.classList.add('wrong');
+
+              if (!appState.answered.has(item.id)) {
+                appState.answered.add(item.id);
+                if (ok) {
+                  appState.score += 1;
+                  scoreEl.textContent = `${appState.score} / 9 ball`;
+                }
+              }
+
+              fb.className = `quiz-feedback show ${ok ? 'fb-ok' : 'fb-err'}`;
+              fb.textContent = `${ok ? '✓ To‘g‘ri javob! ' : '✕ Noto‘g‘ri. '}${item.explanation}`;
+            });
+
+            opts.appendChild(btn);
+          });
+
+          card.appendChild(opts);
+          card.appendChild(fb);
+          box.appendChild(card);
+        });
+      });
+    }
+
+    // Dasturni ishga tushirish
+    window.addEventListener('load', () => {
+      renderQuizzes();
+      updateSim1Telemetry();
+      updateSim3Telemetry();
+      requestAnimationFrame(animate);
+    });
+  </script>
+</body>
+</html>
+```
