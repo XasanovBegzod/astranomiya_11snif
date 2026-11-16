@@ -1,0 +1,2636 @@
+```html
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>14-§. Kalendarlar — 11-sinf Astronomiya | Interaktiv Darslik</title>
+  <style>
+    /* ==========================================================================
+       1. ASOSIY O'ZGARUVCHILAR VA KOSMIK DARK-MODE DIZAYN TIZIMI
+       ========================================================================== */
+    :root {
+      --bg-deep: #0b0f19;
+      --bg-card: rgba(17, 24, 39, 0.82);
+      --bg-card-solid: #111827;
+      --bg-elevated: rgba(30, 41, 59, 0.72);
+      --border-subtle: rgba(148, 163, 184, 0.18);
+      --border-glow: rgba(56, 189, 248, 0.45);
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --sun-gold: #fbbf24;
+      --sun-glow: rgba(251, 191, 36, 0.25);
+      --earth-blue: #38bdf8;
+      --earth-glow: rgba(56, 189, 248, 0.25);
+      --moon-silver: #e2e8f0;
+      --error-red: #ef4444;
+      --error-bg: rgba(239, 68, 68, 0.14);
+      --valid-green: #10b981;
+      --valid-bg: rgba(16, 185, 129, 0.14);
+      --purple-accent: #a855f7;
+
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Yulduzli kosmik fon canvas */
+    #starfieldCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Asosiy konteyner */
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 64px;
+    }
+
+    /* ==========================================================================
+       2. SARLAVHA VA NAVIGATSIYA TABLARI
+       ========================================================================== */
+    .hero-header {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 0.85));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sun-gold);
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.32);
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #ffffff, #38bdf8, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+      max-width: 680px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mini-stat {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      text-align: center;
+      min-width: 105px;
+    }
+
+    .mini-stat-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--earth-blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mini-stat-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Tab menyusi */
+    .tabs-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 8px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.94rem;
+      font-weight: 700;
+      padding: 13px 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .tab-btn.active {
+      color: #0b0f19;
+      background: linear-gradient(135deg, #38bdf8, #fbbf24);
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+    }
+
+    .tab-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .tab-btn.active .tab-num {
+      background: rgba(11, 15, 25, 0.2);
+      color: #0b0f19;
+    }
+
+    /* Bo'lim panellari */
+    .tab-section {
+      display: none;
+      animation: fadeSlideIn 0.35s ease;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       3. KARTOCHKALAR, NAZARIY QISM VA FORMULALAR
+       ========================================================================== */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--earth-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .theory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .formula-box {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .formula-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-glow);
+    }
+
+    .formula-box.sun-accent { border-left: 4px solid var(--sun-gold); }
+    .formula-box.earth-accent { border-left: 4px solid var(--earth-blue); }
+    .formula-box.moon-accent { border-left: 4px solid var(--moon-silver); }
+    .formula-box.green-accent { border-left: 4px solid var(--valid-green); }
+    .formula-box.red-accent { border-left: 4px solid var(--error-red); }
+
+    .formula-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .formula-math {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--sun-gold);
+      background: rgba(251, 191, 36, 0.08);
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin: 4px 0 8px;
+    }
+
+    .formula-desc {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .alert-banner {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fecaca;
+      font-size: 0.92rem;
+    }
+
+    .alert-banner strong {
+      color: #fca5a5;
+    }
+
+    /* ==========================================================================
+       4. CANVAS SIMULYATSIYA KONTEYNERI VA BOSHQARUV ELEMENTLARI
+       ========================================================================== */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      background: radial-gradient(circle at center, #111827 0%, #070a12 100%);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    canvas.sim-canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    canvas.sim-canvas-tall {
+      height: 460px;
+    }
+
+    canvas.sim-canvas-flow {
+      height: 360px;
+    }
+
+    /* Jonli ko'rsatkichlar paneli (Telemetry) */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tele-item {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+
+    .tele-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tele-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-main);
+    }
+
+    /* 4 yillik kabisa yig'indisi bar */
+    .leap-acc-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .leap-acc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 10px;
+    }
+
+    .leap-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .leap-step {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+      font-size: 0.8rem;
+      transition: all 0.25s ease;
+    }
+
+    .leap-step.filled {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: var(--error-red);
+      color: #fecaca;
+      font-weight: 700;
+    }
+
+    .leap-step.complete {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--valid-green);
+      color: #a7f3d0;
+      font-weight: 800;
+    }
+
+    /* Boshqaruv tugmalari va slayderlar */
+    .controls-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sim-btn {
+      appearance: none;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(30, 41, 59, 0.85);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sim-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--earth-blue);
+      transform: translateY(-1px);
+    }
+
+    .sim-btn:active {
+      transform: translateY(0);
+    }
+
+    .sim-btn.primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+
+    .sim-btn.primary:hover {
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    }
+
+    .sim-btn.gold {
+      background: rgba(251, 191, 36, 0.16);
+      border-color: rgba(251, 191, 36, 0.5);
+      color: #fde68a;
+    }
+
+    .sim-btn.gold:hover {
+      background: rgba(251, 191, 36, 0.28);
+    }
+
+    .sim-btn.danger {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.55);
+      color: #fecaca;
+    }
+
+    .sim-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .sim-btn.success {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(16, 185, 129, 0.55);
+      color: #a7f3d0;
+    }
+
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 230px;
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .slider-wrap label {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #334155;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--earth-blue);
+      cursor: pointer;
+      border: 2px solid #0b0f19;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+    }
+
+    input[type="number"] {
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      width: 120px;
+      outline: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--sun-gold);
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
+    }
+
+    /* Taqqoslash kartochkalari (3B laboratoriya) */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .compare-card {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .compare-card.is-leap {
+      border-color: var(--valid-green);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .compare-card.is-common {
+      border-color: rgba(148, 163, 184, 0.35);
+    }
+
+    /* ==========================================================================
+       5. TEST SAVOLLARI BLOKI
+       ========================================================================== */
+    .quiz-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .quiz-item {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .quiz-q {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .quiz-opt {
+      appearance: none;
+      text-align: left;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      border-color: var(--earth-blue);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .quiz-opt:disabled {
+      cursor: default;
+    }
+
+    .quiz-opt.correct {
+      background: var(--valid-bg);
+      border-color: var(--valid-green);
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .quiz-opt.wrong {
+      background: var(--error-bg);
+      border-color: var(--error-red);
+      color: #fecaca;
+    }
+
+    .quiz-explanation {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      background: rgba(15, 23, 42, 0.95);
+      border-left: 4px solid var(--earth-blue);
+      color: #cbd5e1;
+    }
+
+    .quiz-explanation.show {
+      display: block;
+      animation: fadeSlideIn 0.25s ease;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.84rem;
+      margin-top: 28px;
+    }
+
+    /* ==========================================================================
+       6. RESPONSIVE MOSLASHUVCHANLIK
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .tabs-nav {
+        grid-template-columns: 1fr;
+        position: static;
+      }
+
+      .hero-header {
+        padding: 18px;
+      }
+
+      .glass-card {
+        padding: 16px;
+      }
+
+      canvas.sim-canvas {
+        height: 360px;
+      }
+
+      canvas.sim-canvas-tall {
+        height: 420px;
+      }
+
+      .leap-steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Kosmik yulduzli fon -->
+  <canvas id="starfieldCanvas"></canvas>
+
+  <div class="app-wrapper">
+    <!-- Bosh sarlavha -->
+    <header class="hero-header">
+      <div>
+        <div class="badge-pill">11-sinf Astronomiya • Interaktiv raqamli darslik</div>
+        <h1 class="hero-title">14-§. Kalendarlar</h1>
+        <p class="hero-subtitle">
+          Vaqtni o‘lchashning astronomik asoslari, Qamariy, Shamsiy va Oy-Quyosh taqvimlari hamda Yulian va Grigorian kalendar islohotlarining jonli simulyatsiyalari.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="mini-stat">
+          <div class="mini-stat-val" style="color: var(--sun-gold);">365,2422</div>
+          <div class="mini-stat-lbl">Tropik yil (sutka)</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-val" style="color: var(--moon-silver);">29,5306</div>
+          <div class="mini-stat-lbl">Sinodik oy (sutka)</div>
+        </div>
+        <div class="mini-stat">
+          <div class="mini-stat-val" style="color: var(--valid-green);">24 soat</div>
+          <div class="mini-stat-lbl">Quyosh sutkasi</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Asosiy 3 ta bo'lim menyusi -->
+    <nav class="tabs-nav" role="tablist" aria-label="Darslik bo‘limlari">
+      <button class="tab-btn active" data-tab="sec1" role="tab" aria-selected="true">
+        <span class="tab-num">1</span> Astronomik asoslar
+      </button>
+      <button class="tab-btn" data-tab="sec2" role="tab" aria-selected="false">
+        <span class="tab-num">2</span> Kalendar turlari
+      </button>
+      <button class="tab-btn" data-tab="sec3" role="tab" aria-selected="false">
+        <span class="tab-num">3</span> Yulian va Grigorian
+      </button>
+    </nav>
+
+    <!-- ========================================================================
+         BO'LIM 1: KALENDAR TUSHUNCHASI VA UNING ASTRONOMIK ASOSLARI
+         ======================================================================== -->
+    <section id="sec1" class="tab-section active" role="tabpanel">
+      <!-- 1.1 Nazariy qism -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">1. Kalendar tushunchasi va uning astronomik asoslari</h2>
+          <span class="card-tag">Nazariya va Formulalar</span>
+        </div>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">
+          <strong>Kalendar</strong> (lotincha <em>calendarium</em> — qarz daftari; Rimda har oyning birinchi kuni <em>kalendae</em> deb atalgan) — tabiatning davriy astronomik hodisalariga asoslangan uzoq vaqt oraliqlarini hisoblash tizimi. Har qanday kalendar uchta asosiy astronomik vaqt birligiga tayanadi:
+        </p>
+
+        <div class="theory-grid">
+          <div class="formula-box earth-accent">
+            <div class="formula-title">1. Quyosh sutkasi</div>
+            <div class="formula-math">1 sutka = 24 soat = 86 400 s</div>
+            <p class="formula-desc">
+              Yerning o‘z o‘qi atrofida Quyoshga nisbatan bir marta to‘liq aylanish davri. Kun va tunning almashinishini belgilaydi.
+            </p>
+          </div>
+
+          <div class="formula-box moon-accent">
+            <div class="formula-title">2. Sinodik oy</div>
+            <div class="formula-math">T<sub>sin</sub> = 29,53059 sutka</div>
+            <p class="formula-desc">
+              Oyning bir xil ikkita ketma-ket fazasi (masalan, ikkita Yangi oy) orasida o‘tgan vaqt: <strong>29 sutka 12 soat 44 daqiqa 3 soniya</strong>.
+            </p>
+          </div>
+
+          <div class="formula-box sun-accent">
+            <div class="formula-title">3. Tropik yil</div>
+            <div class="formula-math">T<sub>trop</sub> = 365,2422 sutka</div>
+            <p class="formula-desc">
+              Quyosh markazining bahorgi tengkunlik nuqtasidan ketma-ket ikki marta o‘tish davri: <strong>365 sutka 5 soat 48 daqiqa 46 soniya</strong>. Yil fasllari almashinuvini belgilaydi.
+            </p>
+          </div>
+        </div>
+
+        <div class="alert-banner">
+          <strong>Kalendar tuzishning bosh astronomik muammosi:</strong> Bu uchta tabiiy birlik o‘zaro karrali (butun son nisbatda) emas!
+          <br />
+          • <code>1 tropik yil = 365,2422 sutka</code> (butun sutka emas, har yili <strong>0,2422 sutka</strong> ortib qoladi);
+          <br />
+          • <code>1 tropik yil = 12,3683 sinodik oy</code> (butun oylar soni emas!). Shu sababli turli xalqlar turlicha kalendar tizimlarini ishlab chiqqan.
+        </div>
+      </article>
+
+      <!-- 1.2 Simulyatsiya №1 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №1: «Kosmik soat mexanizmi»</h2>
+          <span class="card-tag">Interaktiv 2D Orbita va Fazalar</span>
+        </div>
+
+        <!-- Jonli ko'rsatkichlar -->
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">O‘tgan vaqt (Sutka)</div>
+            <div class="tele-value" id="sim1Days" style="color: var(--earth-blue);">0.00 sutka</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Tropik yillar soni</div>
+            <div class="tele-value" id="sim1Years" style="color: var(--sun-gold);">0.000 yil</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Sinodik oylar soni</div>
+            <div class="tele-value" id="sim1Months" style="color: var(--moon-silver);">0.00 oy</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Joriy Oy fazasi</div>
+            <div class="tele-value" id="sim1Phase" style="color: #fde68a;">Yangi oy (0%)</div>
+          </div>
+        </div>
+
+        <!-- 4 yillik kabisa qoldig'i indikatori -->
+        <div class="leap-acc-box">
+          <div class="leap-acc-header">
+            <span><strong>0,2422 sutkalik</strong> yillik qoldiqning 4 yilda to‘planishi (Kabisa yili mexanizmi):</span>
+            <span id="sim1ResidualText" style="color: var(--error-red); font-weight: 700;">Yig‘ilgan qoldiq: 0.0000 sutka</span>
+          </div>
+          <div class="leap-steps" id="sim1LeapSteps">
+            <div class="leap-step" data-step="1">1-yil: +0.2422 sutka</div>
+            <div class="leap-step" data-step="2">2-yil: +0.4844 sutka</div>
+            <div class="leap-step" data-step="3">3-yil: +0.7266 sutka</div>
+            <div class="leap-step" data-step="4">4-yil: +0.9688 ≈ 1 sutka!</div>
+          </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+          <canvas id="canvasSim1" class="sim-canvas"></canvas>
+        </div>
+
+        <!-- Boshqaruv paneli -->
+        <div class="controls-panel">
+          <div class="btn-group">
+            <button id="sim1PlayBtn" class="sim-btn primary">⏸ Pauza</button>
+            <button id="sim1ResetBtn" class="sim-btn">↺ Qayta boshlash</button>
+          </div>
+
+          <div class="slider-wrap">
+            <label for="sim1Speed">Tezlik: <span id="sim1SpeedVal">12</span> kun/sek</label>
+            <input type="range" id="sim1Speed" min="1" max="60" value="12" />
+          </div>
+
+          <div class="btn-group">
+            <button id="sim1AddDay" class="sim-btn">+1 Sutka</button>
+            <button id="sim1AddMonth" class="sim-btn">+1 Sinodik oy (29.53)</button>
+            <button id="sim1AddYear" class="sim-btn gold">+1 Tropik yil (365.24)</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.3 Test savollari (Bo'lim 1) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Bilimingizni tekshiring (1-bo‘lim)</h2>
+          <span class="card-tag" id="quizScore1">Natija: 0 / 3</span>
+        </div>
+        <div class="quiz-list" id="quizContainer1"></div>
+      </article>
+    </section>
+
+    <!-- ========================================================================
+         BO'LIM 2: KALENDARLARNING ASOSIY TURLARI
+         ======================================================================== -->
+    <section id="sec2" class="tab-section" role="tabpanel">
+      <!-- 2.1 Nazariy qism -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">2. Kalendarlarning asosiy turlari</h2>
+          <span class="card-tag">Qamariy • Shamsiy • Oy-Quyosh</span>
+        </div>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">
+          Qaysi astronomik davrga (Oy fazalariga yoki Quyoshning yillik harakatiga) asoslanishiga ko‘ra insoniyat tarixidagi barcha kalendarlar <strong>uchta asosiy turga</strong> bo‘linadi:
+        </p>
+
+        <div class="theory-grid">
+          <div class="formula-box moon-accent">
+            <div class="formula-title">1. Qamariy (Oy) kalendari</div>
+            <div class="formula-math">12 × 29,5306 = 354,37 sutka</div>
+            <p class="formula-desc">
+              Faqat Oy fazalari almashinuviga asoslanadi (oddiy yil <strong>354</strong>, kabisa yil <strong>355 sutka</strong>). Tropik yildan <strong>10,87 sutka</strong> qisqa bo‘lgani uchun oylar 33 yil ichida barcha fasllar bo‘ylab aylanib chiqadi (masalan, Hijriy-qamariy taqvim).
+            </p>
+          </div>
+
+          <div class="formula-box sun-accent">
+            <div class="formula-title">2. Shamsiy (Quyosh) kalendari</div>
+            <div class="formula-math">1 yil = 365 yoki 366 sutka</div>
+            <p class="formula-desc">
+              Yerning Quyosh atrofida aylanish davriga (tropik yilga) asoslanadi. Oy fazalari hisobga olinmaydi, lekin yil fasllari doimo bir xil sanalarga to‘g‘ri keladi (Grigorian, Jaloliy taqvimlari).
+            </p>
+          </div>
+
+          <div class="formula-box green-accent">
+            <div class="formula-title">3. Oy-Quyosh kalendari (Meton sikli)</div>
+            <div class="formula-math">19 tropik yil = 235 sinodik oy</div>
+            <p class="formula-desc">
+              Ham Oy fazalarini, ham fasllarni muvofiqlashtiradi. Mil. avv. 432-yilda yunon astronomi <strong>Meton</strong> aniqlagan siklga ko‘ra, 19 yil ichida <strong>7 marta</strong> qo‘shimcha <strong>13-kabisa oyi</strong> kiritiladi (3, 6, 8, 11, 14, 17, 19-yillarda).
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.2 Simulyatsiya №2 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №2: «Kalendarlar poygasi va Fasllar siljishi»</h2>
+          <span class="card-tag">33 yillik va Meton sikli dinamikasi</span>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Joriy kuzatuv yili</div>
+            <div class="tele-value" id="sim2YearVal" style="color: var(--sun-gold);">1-yil</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Qamariy taqvim siljishi</div>
+            <div class="tele-value" id="sim2LunarDrift" style="color: var(--moon-silver);">0.0 sutka (Bahor)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Shamsiy (21-mart)</div>
+            <div class="tele-value" style="color: var(--valid-green);">0.0 sutka (Doim Bahor)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Oy-Quyosh holati</div>
+            <div class="tele-value" id="sim2LuniState" style="color: var(--earth-blue);">Oddiy yil (12 oy)</div>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="canvasSim2" class="sim-canvas sim-canvas-tall"></canvas>
+        </div>
+
+        <div class="controls-panel">
+          <div class="slider-wrap" style="max-width: 420px;">
+            <label for="sim2YearSlider">Yil (1–33): <strong id="sim2SliderLbl" style="color: var(--sun-gold);">1</strong></label>
+            <input type="range" id="sim2YearSlider" min="1" max="33" step="0.05" value="1" />
+          </div>
+
+          <div class="btn-group">
+            <button id="sim2Add1" class="sim-btn">+1 yil</button>
+            <button id="sim2Add19" class="sim-btn gold">+19 yil (Meton sikli)</button>
+            <button id="sim2AutoBtn" class="sim-btn primary">▶ Avto-animatsiya</button>
+            <button id="sim2ResetBtn" class="sim-btn">↺ 1-yilga qaytish</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.3 Test savollari (Bo'lim 2) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Bilimingizni tekshiring (2-bo‘lim)</h2>
+          <span class="card-tag" id="quizScore2">Natija: 0 / 3</span>
+        </div>
+        <div class="quiz-list" id="quizContainer2"></div>
+      </article>
+    </section>
+
+    <!-- ========================================================================
+         BO'LIM 3: YULIAN VA GRIGORIAN KALENDARLARI
+         ======================================================================== -->
+    <section id="sec3" class="tab-section" role="tabpanel">
+      <!-- 3.1 Nazariy qism -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">3. Yulian va Grigorian kalendarlari</h2>
+          <span class="card-tag">Tarixiy Islohotlar va Kabisa Qoidasi</span>
+        </div>
+
+        <div class="theory-grid">
+          <div class="formula-box red-accent">
+            <div class="formula-title">Yulian kalendari (Eski uslub)</div>
+            <div class="formula-math">T<sub>Yul</sub> = 365,25 sutka</div>
+            <p class="formula-desc">
+              Mil. avv. 46-yilda <strong>Yuliy Sezar</strong> (astronom Sozigen loyihasi asosida) joriy etgan. Har 4-yil kabisa (366 kun). Tropik yildan <strong>11 daqiqa 14 soniya</strong> uzun bo‘lgani uchun har <strong>128 yilda 1 sutka</strong> ortiqcha kun yig‘iladi.
+            </p>
+          </div>
+
+          <div class="formula-box green-accent">
+            <div class="formula-title">Grigorian kalendari (Yangi uslub)</div>
+            <div class="formula-math">T<sub>Grig</sub> = 365,2425 sutka</div>
+            <p class="formula-desc">
+              <strong>1582-yilda Papa Grigoriy XIII</strong> islohoti: 1582-yil 4-oktyabr (payshanba) dan keyingi kun <strong>15-oktyabr (juma)</strong> deb e’lon qilindi (yig‘ilgan 10 kunlik xato o‘chirildi). 400 yilda 97 kabisa yili bor; 1 sutka xatolik <strong>~3300 yilda</strong> yig‘iladi.
+            </p>
+          </div>
+
+          <div class="formula-box earth-accent">
+            <div class="formula-title">Grigorian kabisa yili qoidasi</div>
+            <div class="formula-math">(Y % 4 == 0) ∧ (Y % 100 != 0 ∨ Y % 400 == 0)</div>
+            <p class="formula-desc">
+              4 ga qoldiqsiz bo‘linadigan har bir yil kabisa; <strong>istisno:</strong> ikkita nol bilan tugaydigan asr yillari (1700, 1800, 1900, 2100) faqat <strong>400 ga ham</strong> bo‘linsagina (1600, 2000) kabisa hisoblanadi.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3.2A Simulyatsiya №3A: Tarixiy xatoliklar va 1582-yil islohoti -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №3A: Tarixiy xatoliklar va 1582-yil islohoti</h2>
+          <span class="card-tag">Mil. avv. 46 — 2100-yil</span>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Tanlangan tarixiy yil</div>
+            <div class="tele-value" id="sim3aYearLabel" style="color: var(--sun-gold);">1582-yil</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Yulian taqvimi og‘ishi</div>
+            <div class="tele-value" id="sim3aDriftLabel" style="color: var(--error-red);">+10 sutka (11-mart)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Grigorian islohoti holati</div>
+            <div class="tele-value" id="sim3aReformStatus" style="color: var(--earth-blue);">Islohot kutilmoqda</div>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="canvasSim3A" class="sim-canvas sim-canvas-tall"></canvas>
+        </div>
+
+        <div class="controls-panel">
+          <div class="slider-wrap" style="max-width: 380px;">
+            <label for="sim3aSlider">Yil: <strong id="sim3aSliderVal" style="color: var(--sun-gold);">1582</strong></label>
+            <input type="range" id="sim3aSlider" min="-46" max="2100" step="1" value="1582" />
+          </div>
+
+          <div class="btn-group">
+            <button class="sim-btn preset-year-3a" data-year="-46">Mil. avv. 46</button>
+            <button class="sim-btn preset-year-3a" data-year="325">325 (Nikeya)</button>
+            <button class="sim-btn preset-year-3a" data-year="1582">1582-yil</button>
+            <button class="sim-btn preset-year-3a" data-year="2026">2026-yil</button>
+            <button class="sim-btn preset-year-3a" data-year="2100">2100-yil</button>
+            <button id="sim3aApplyReformBtn" class="sim-btn danger">⚡ 1582-yil Islohotini qo‘llash</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3.2B Simulyatsiya №3B: Interaktiv Kabisa yili laboratoriyasi -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №3B: Interaktiv «Kabisa yili laboratoriyasi»</h2>
+          <span class="card-tag">Mantiqiy Blok-Sxema va Taqqoslash</span>
+        </div>
+
+        <div class="controls-panel" style="margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <label for="leapYearInput" style="font-weight: 700; color: var(--text-main);">Yilni kiriting:</label>
+            <input type="number" id="leapYearInput" min="1" max="9999" value="2026" />
+            <button id="checkLeapBtn" class="sim-btn primary">Tekshirish</button>
+          </div>
+
+          <div class="btn-group">
+            <button class="sim-btn preset-leap" data-leap="1700">1700</button>
+            <button class="sim-btn preset-leap" data-leap="1900">1900</button>
+            <button class="sim-btn preset-leap" data-leap="2000">2000</button>
+            <button class="sim-btn preset-leap" data-leap="2024">2024</button>
+            <button class="sim-btn preset-leap" data-leap="2026">2026</button>
+            <button class="sim-btn preset-leap" data-leap="2100">2100</button>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="canvasSim3B" class="sim-canvas sim-canvas-flow"></canvas>
+        </div>
+
+        <div class="compare-grid" id="leapCompareCards">
+          <!-- JS orqali to'ldiriladi -->
+        </div>
+      </article>
+
+      <!-- 3.3 Test savollari (Bo'lim 3) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Bilimingizni tekshiring (3-bo‘lim)</h2>
+          <span class="card-tag" id="quizScore3">Natija: 0 / 3</span>
+        </div>
+        <div class="quiz-list" id="quizContainer3"></div>
+      </article>
+    </section>
+
+    <footer class="footer-note">
+      11-sinf Astronomiya • «14-§. Kalendarlar» mavzusi uchun interaktiv simulyatsiyalar majmuasi • 100% oflayn HTML5 Canvas ilovasi
+    </footer>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       0. UMUMIY YORDAMCHI FUNKSIYALAR VA RETINA CANVAS SOZLAMALARI
+       ========================================================================== */
+    const TROPICAL_YEAR = 365.2422;
+    const SYNODIC_MONTH = 29.53059;
+    const LUNAR_YEAR = 12 * SYNODIC_MONTH; // 354.36708 sutka
+
+    /**
+     * Canvas o'lchamini devicePixelRatio ga moslab HD/Retina sifatida sozlaydi
+     */
+    function setupHiDPICanvas(canvas) {
+      if (!canvas) return { ctx: null, width: 0, height: 0 };
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      const targetW = Math.max(1, Math.round(rect.width * dpr));
+      const targetH = Math.max(1, Math.round(rect.height * dpr));
+
+      if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
+      }
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, width: rect.width, height: rect.height };
+    }
+
+    /**
+     * Yumaloq burchakli to'rtburchak chizish yordamchisi
+     */
+    function roundRectPath(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + w, y, x + w, y + h, radius);
+      ctx.arcTo(x + w, y + h, x, y + h, radius);
+      ctx.arcTo(x, y + h, x, y, radius);
+      ctx.arcTo(x, y, x + w, y, radius);
+      ctx.closePath();
+    }
+
+    /* ==========================================================================
+       1. KOSMIK YULDUZLI FON ANIMATSIYASI
+       ========================================================================== */
+    (function initStarfield() {
+      const canvas = document.getElementById("starfieldCanvas");
+      let stars = [];
+      let w = 0, h = 0;
+
+      function resizeStars() {
+        const res = setupHiDPICanvas(canvas);
+        w = res.width;
+        h = res.height;
+        const count = Math.min(160, Math.floor((w * h) / 9000));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.4 + 0.3,
+          alpha: Math.random() * 0.7 + 0.2,
+          speed: Math.random() * 0.015 + 0.004,
+          phase: Math.random() * Math.PI * 2
+        }));
+      }
+
+      resizeStars();
+      window.addEventListener("resize", resizeStars);
+
+      function drawStars(time) {
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, w, h);
+        for (const s of stars) {
+          const twinkle = 0.55 + 0.45 * Math.sin(time * s.speed + s.phase);
+          ctx.fillStyle = `rgba(226, 232, 240, ${s.alpha * twinkle})`;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        requestAnimationFrame(drawStars);
+      }
+      requestAnimationFrame(drawStars);
+    })();
+
+    /* ==========================================================================
+       2. TABLAR (BO'LIMLAR) O'RTASIDA ALMASHISH
+       ========================================================================== */
+    let activeTab = "sec1";
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabSections = document.querySelectorAll(".tab-section");
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-tab");
+        if (target === activeTab) return;
+        activeTab = target;
+
+        tabButtons.forEach((b) => {
+          const isMatch = b.getAttribute("data-tab") === target;
+          b.classList.toggle("active", isMatch);
+          b.setAttribute("aria-selected", isMatch ? "true" : "false");
+        });
+
+        tabSections.forEach((sec) => {
+          sec.classList.toggle("active", sec.id === target);
+        });
+
+        // Yangi ochilgan tabdagi Canvaslarni darhol qayta chizish
+        renderAllActiveSimulations();
+      });
+    });
+
+    /* ==========================================================================
+       3. SIMULYATSIYA №1: «KOSMIK SOAT MEXANIZMI»
+       ========================================================================== */
+    const sim1State = {
+      totalDays: 0,
+      speed: 12, // kun/sekund
+      paused: false,
+      lastTimestamp: null,
+      leapCycleCount: 0, // +1 Tropik yil bosilganda 1..4 sikl ko'rsatkichi
+      highlightFlash: 0
+    };
+
+    const sim1DaysEl = document.getElementById("sim1Days");
+    const sim1YearsEl = document.getElementById("sim1Years");
+    const sim1MonthsEl = document.getElementById("sim1Months");
+    const sim1PhaseEl = document.getElementById("sim1Phase");
+    const sim1ResidualText = document.getElementById("sim1ResidualText");
+    const sim1LeapSteps = document.querySelectorAll("#sim1LeapSteps .leap-step");
+
+    function getMoonPhaseInfo(totalDays) {
+      const phaseFrac = ((totalDays % SYNODIC_MONTH) + SYNODIC_MONTH) % SYNODIC_MONTH / SYNODIC_MONTH; // 0..1
+      // Yoritilganlik foizi: 0 -> 0%, 0.5 -> 100%, 1 -> 0%
+      const illumPct = Math.round(((1 - Math.cos(phaseFrac * 2 * Math.PI)) / 2) * 100);
+      let name = "Yangi oy";
+      if (phaseFrac < 0.03 || phaseFrac > 0.97) name = "Yangi oy";
+      else if (phaseFrac < 0.22) name = "O‘sayotgan o‘roq";
+      else if (phaseFrac < 0.28) name = "Birinchi chorak";
+      else if (phaseFrac < 0.47) name = "O‘sayotgan qavariq";
+      else if (phaseFrac < 0.53) name = "To‘lin oy";
+      else if (phaseFrac < 0.72) name = "Kichrayayotgan qavariq";
+      else if (phaseFrac < 0.78) name = "Oxirgi chorak";
+      else name = "Kichrayayotgan o‘roq";
+
+      return { phaseFrac, illumPct, name };
+    }
+
+    function updateSim1Telemetry() {
+      const d = sim1State.totalDays;
+      const years = d / TROPICAL_YEAR;
+      const months = d / SYNODIC_MONTH;
+      const moonInfo = getMoonPhaseInfo(d);
+
+      sim1DaysEl.textContent = `${d.toFixed(2)} sutka`;
+      sim1YearsEl.textContent = `${years.toFixed(3)} yil`;
+      sim1MonthsEl.textContent = `${months.toFixed(2)} oy`;
+      sim1PhaseEl.textContent = `${moonInfo.name} (${moonInfo.illumPct}%)`;
+
+      // 4 yillik qoldiq siklini hisoblash
+      const wholeTropicalYears = Math.floor(years + 1e-6);
+      const cyclePos = wholeTropicalYears % 4;
+      const activeSteps = cyclePos === 0 && wholeTropicalYears > 0 ? 4 : cyclePos;
+      const accumulatedDays = activeSteps * 0.2422;
+
+      sim1ResidualText.textContent =
+        activeSteps === 4
+          ? `4 yil to‘ldi: ${accumulatedDays.toFixed(4)} sutka ≈ 1 kabisa sutkasi (29-fevral)!`
+          : `Yig‘ilgan qoldiq (${activeSteps}-yil): +${accumulatedDays.toFixed(4)} sutka`;
+      sim1ResidualText.style.color = activeSteps === 4 ? "var(--valid-green)" : "var(--error-red)";
+
+      sim1LeapSteps.forEach((el) => {
+        const step = Number(el.getAttribute("data-step"));
+        el.classList.remove("filled", "complete");
+        if (step <= activeSteps) {
+          el.classList.add(activeSteps === 4 ? "complete" : "filled");
+        }
+      });
+    }
+
+    function drawSim1() {
+      const canvas = document.getElementById("canvasSim1");
+      const { ctx, width: w, height: h } = setupHiDPICanvas(canvas);
+      if (!ctx || w === 0) return;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const isMobile = w < 640;
+      const cx = isMobile ? w * 0.42 : w * 0.38;
+      const cy = h * 0.52;
+      const orbitR = Math.min(w * (isMobile ? 0.31 : 0.27), h * 0.36);
+
+      // 1. Bahorgi tengkunlik boshlang'ich yo'nalishi (0 rad = o'ng tomon)
+      ctx.save();
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + orbitR + 28, cy);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "600 11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("0° Bahorgi tengkunlik", cx + orbitR + 8, cy - 6);
+
+      // 2. 0.2422 sutkalik qoldiq (Qizil burchak sektori)
+      const wholeYears = Math.floor(sim1State.totalDays / TROPICAL_YEAR + 1e-6);
+      const cyclePos = wholeYears % 4;
+      const activeSteps = cyclePos === 0 && wholeYears > 0 ? 4 : cyclePos;
+      // Vizual aniq ko'rinishi uchun burchakni kattalashtirilgan holda (har bir yil uchun 7.5°) ko'rsatamiz
+      const visualSectorAngle = (activeSteps > 0 ? activeSteps : 1) * (7.5 * Math.PI / 180);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, orbitR, -visualSectorAngle, 0, false);
+      ctx.closePath();
+      ctx.fillStyle = activeSteps === 4 ? "rgba(16, 185, 129, 0.24)" : "rgba(239, 68, 68, 0.26)";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, orbitR, -visualSectorAngle, 0, false);
+      ctx.strokeStyle = activeSteps === 4 ? "#10b981" : "#ef4444";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.restore();
+
+      // Qizil sektor izohi
+      const labelStep = activeSteps > 0 ? activeSteps : 1;
+      const deficitDays = (labelStep * 0.2422).toFixed(4);
+      ctx.fillStyle = activeSteps === 4 ? "#6ee7b7" : "#fca5a5";
+      ctx.font = "700 11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(
+        activeSteps === 4
+          ? `4 yil qoldig‘i: ${deficitDays} sutka ≈ 1 kabisa kuni!`
+          : `Qoldiq sektor (${labelStep}-yil): ${deficitDays} sutka (5s 48d)`,
+        cx + orbitR * 0.55,
+        cy - orbitR * 0.45
+      );
+
+      // 3. Yer orbitasi
+      ctx.beginPath();
+      ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.28)";
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      // 4. Markazda Quyosh
+      const sunR = Math.max(20, orbitR * 0.17);
+      const sunGrad = ctx.createRadialGradient(cx, cy, sunR * 0.2, cx, cy, sunR * 2.4);
+      sunGrad.addColorStop(0, "rgba(254, 240, 138, 0.95)");
+      sunGrad.addColorStop(0.35, "rgba(251, 191, 36, 0.5)");
+      sunGrad.addColorStop(1, "rgba(251, 191, 36, 0)");
+      ctx.fillStyle = sunGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#fde68a";
+      ctx.font = "700 12px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Quyosh", cx, cy + sunR + 16);
+
+      // 5. Yer pozitsiyasi (soat miliga qarshi)
+      const earthAngle = -(sim1State.totalDays / TROPICAL_YEAR) * Math.PI * 2;
+      const ex = cx + Math.cos(earthAngle) * orbitR;
+      const ey = cy + Math.sin(earthAngle) * orbitR;
+      const earthR = Math.max(10, orbitR * 0.085);
+
+      // Yerning Quyoshga qaragan kunduzgi va tungi tomoni
+      ctx.save();
+      ctx.translate(ex, ey);
+      ctx.rotate(earthAngle + Math.PI); // Quyoshga qaragan yo'nalish = 0 rad
+      ctx.beginPath();
+      ctx.arc(0, 0, earthR, 0, Math.PI * 2);
+      ctx.fillStyle = "#0f172a";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, 0, earthR, -Math.PI / 2, Math.PI / 2);
+      ctx.fillStyle = "#38bdf8";
+      ctx.fill();
+      ctx.strokeStyle = "#7dd3fc";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, earthR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // 6. Oy orbitasi va Oy (Sinodik oy bo'yicha Quyosh-Yer chizig'iga nisbatan)
+      const moonOrbitR = Math.max(24, orbitR * 0.24);
+      ctx.beginPath();
+      ctx.arc(ex, ey, moonOrbitR, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(226, 232, 240, 0.24)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      const moonInfo = getMoonPhaseInfo(sim1State.totalDays);
+      // Yangi oyda (phaseFrac = 0) Oy Yer va Quyosh orasida bo'ladi: earthAngle + Math.PI
+      const moonAngle = earthAngle + Math.PI - moonInfo.phaseFrac * Math.PI * 2;
+      const mx = ex + Math.cos(moonAngle) * moonOrbitR;
+      const my = ey + Math.sin(moonAngle) * moonOrbitR;
+      const moonR = Math.max(4.5, earthR * 0.42);
+
+      ctx.fillStyle = "#e2e8f0";
+      ctx.beginPath();
+      ctx.arc(mx, my, moonR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 7. O'ng tomondagi katta «Oy fazasi va Vaqt birliklari» informatsion paneli
+      const panelW = isMobile ? Math.min(165, w * 0.42) : 230;
+      const panelH = h - 36;
+      const panelX = w - panelW - 16;
+      const panelY = 18;
+
+      roundRectPath(ctx, panelX, panelY, panelW, panelH, 14);
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.24)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      const discX = panelX + panelW / 2;
+      const discY = panelY + (isMobile ? 64 : 82);
+      const discR = isMobile ? 28 : 40;
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "700 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("OY FAZASI KO‘RINISHI", discX, panelY + 22);
+
+      // Oy diski chizish (astronomik faza algoritmi)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(discX, discY, discR, 0, Math.PI * 2);
+      ctx.fillStyle = "#1e293b";
+      ctx.fill();
+
+      const p = moonInfo.phaseFrac; // 0..1
+      ctx.fillStyle = "#f8fafc";
+      ctx.beginPath();
+      if (p <= 0.5) {
+        // O'sayotgan oy: o'ng yarim doira yorug', terminator ellipsi
+        ctx.arc(discX, discY, discR, -Math.PI / 2, Math.PI / 2, false);
+        const rx = Math.cos(p * 2 * Math.PI) * discR;
+        ctx.ellipse(discX, discY, Math.abs(rx), discR, 0, Math.PI / 2, -Math.PI / 2, rx < 0);
+      } else {
+        // Kichrayayotgan oy: chap yarim doira yorug'
+        ctx.arc(discX, discY, discR, Math.PI / 2, -Math.PI / 2, false);
+        const rx = Math.cos(p * 2 * Math.PI) * discR;
+        ctx.ellipse(discX, discY, Math.abs(rx), discR, 0, -Math.PI / 2, Math.PI / 2, rx > 0);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(226, 232, 240, 0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(discX, discY, discR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "700 13px sans-serif";
+      ctx.fillText(moonInfo.name, discX, discY + discR + 20);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "600 11px sans-serif";
+      ctx.fillText(`Yoritilganlik: ${moonInfo.illumPct}%`, discX, discY + discR + 37);
+
+      // Pastki astronomik eslatmalar
+      if (!isMobile) {
+        const textStartY = discY + discR + 68;
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#38bdf8";
+        ctx.font = "700 11px sans-serif";
+        ctx.fillText("• 1 Sutka = 24 soat", panelX + 16, textStartY);
+
+        ctx.fillStyle = "#e2e8f0";
+        ctx.fillText("• 1 Sinodik oy = 29.5306 sutka", panelX + 16, textStartY + 24);
+
+        ctx.fillStyle = "#fbbf24";
+        ctx.fillText("• 1 Tropik yil = 365.2422 sutka", panelX + 16, textStartY + 48);
+
+        ctx.fillStyle = "#fca5a5";
+        ctx.font = "600 11px sans-serif";
+        ctx.fillText("• Yillik qoldiq = +0.2422 sutka", panelX + 16, textStartY + 76);
+        ctx.fillText("  (5 soat 48 daq 46 soniya)", panelX + 16, textStartY + 93);
+      }
+    }
+
+    // Sim1 boshqaruv elementlari
+    const sim1PlayBtn = document.getElementById("sim1PlayBtn");
+    const sim1ResetBtn = document.getElementById("sim1ResetBtn");
+    const sim1SpeedInput = document.getElementById("sim1Speed");
+    const sim1SpeedVal = document.getElementById("sim1SpeedVal");
+
+    sim1PlayBtn.addEventListener("click", () => {
+      sim1State.paused = !sim1State.paused;
+      sim1PlayBtn.textContent = sim1State.paused ? "▶ Davom etish" : "⏸ Pauza";
+    });
+
+    sim1ResetBtn.addEventListener("click", () => {
+      sim1State.totalDays = 0;
+      updateSim1Telemetry();
+      drawSim1();
+    });
+
+    sim1SpeedInput.addEventListener("input", (e) => {
+      sim1State.speed = Number(e.target.value);
+      sim1SpeedVal.textContent = sim1State.speed;
+    });
+
+    document.getElementById("sim1AddDay").addEventListener("click", () => {
+      sim1State.totalDays += 1;
+      updateSim1Telemetry();
+      drawSim1();
+    });
+
+    document.getElementById("sim1AddMonth").addEventListener("click", () => {
+      sim1State.totalDays += SYNODIC_MONTH;
+      updateSim1Telemetry();
+      drawSim1();
+    });
+
+    document.getElementById("sim1AddYear").addEventListener("click", () => {
+      sim1State.totalDays += TROPICAL_YEAR;
+      updateSim1Telemetry();
+      drawSim1();
+    });
+
+    /* ==========================================================================
+       4. SIMULYATSIYA №2: «KALENDARLAR POYGASI VA FASLLAR SILJISHI»
+       ========================================================================== */
+    const sim2State = {
+      year: 1, // 1 .. 33
+      autoPlay: false
+    };
+
+    // Meton siklida 13-kabisa oyi qo'shiladigan yillar (19 yillik siklda 7 marta)
+    const METON_LEAP_YEARS = new Set([3, 6, 8, 11, 14, 17, 19]);
+
+    function isMetonLeapYear(yearInt) {
+      const mod19 = ((yearInt - 1) % 19) + 1;
+      return METON_LEAP_YEARS.has(mod19);
+    }
+
+    /**
+     * Berilgan yil (1..33) uchun Oy-Quyosh taqvimining fasllarga nisbatan siljishini (sutkalarda) hisoblaydi
+     */
+    function getLunisolarShift(yearFloat) {
+      const fullYears = Math.floor(yearFloat);
+      const frac = yearFloat - fullYears;
+      let shift = 0;
+      for (let y = 1; y < fullYears; y++) {
+        shift += 10.8751;
+        if (isMetonLeapYear(y)) {
+          shift -= SYNODIC_MONTH;
+        }
+      }
+      // Joriy yil ichidagi uzluksiz o'zgarish
+      if (fullYears >= 1) {
+        shift += frac * 10.8751;
+        if (isMetonLeapYear(fullYears) && frac > 0.85) {
+          shift -= SYNODIC_MONTH * ((frac - 0.85) / 0.15);
+        }
+      }
+      return Math.max(0, shift);
+    }
+
+    function getSeasonNameByDayOffset(dayOffset) {
+      const d = ((dayOffset % 365.2422) + 365.2422) % 365.2422;
+      if (d < 92.8) return "Bahor";
+      if (d < 186.4) return "Yoz";
+      if (d < 276.2) return "Kuz";
+      return "Qish";
+    }
+
+    function updateSim2UI() {
+      const y = sim2State.year;
+      const yInt = Math.floor(y);
+      const lunarTotalShift = (y - 1) * 10.8751;
+      // Qamariy oy orqaga (Bahor -> Qish -> Kuz -> Yoz) siljiydi
+      const seasonDay = (365.2422 - (lunarTotalShift % 365.2422)) % 365.2422;
+      const seasonName = getSeasonNameByDayOffset(seasonDay);
+
+      document.getElementById("sim2YearVal").textContent = `${y.toFixed(1)}-yil`;
+      document.getElementById("sim2SliderLbl").textContent = y.toFixed(1);
+      document.getElementById("sim2YearSlider").value = y;
+      document.getElementById("sim2LunarDrift").textContent =
+        `-${lunarTotalShift.toFixed(1)} sutka (${seasonName})`;
+
+      const isLeapM = isMetonLeapYear(yInt);
+      const luniEl = document.getElementById("sim2LuniState");
+      if (isLeapM) {
+        luniEl.textContent = `13-kabisa oyi (+29.53 sutka)!`;
+        luniEl.style.color = "var(--valid-green)";
+      } else {
+        luniEl.textContent = `Oddiy yil (12 oy • Meton ${((yInt - 1) % 19) + 1}/19)`;
+        luniEl.style.color = "var(--earth-blue)";
+      }
+    }
+
+    function drawSim2() {
+      const canvas = document.getElementById("canvasSim2");
+      const { ctx, width: w, height: h } = setupHiDPICanvas(canvas);
+      if (!ctx || w === 0) return;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const padL = w < 600 ? 14 : 28;
+      const padR = w < 600 ? 14 : 28;
+      const trackW = w - padL - padR;
+
+      // 1. Yuqori qism: 3 ta parallel taqvim shkalasi va 4 fasl foni
+      const seasons = [
+        { name: "BAHOR", color: "rgba(16, 185, 129, 0.22)", border: "#10b981" },
+        { name: "YOZ", color: "rgba(251, 191, 36, 0.20)", border: "#fbbf24" },
+        { name: "KUZ", color: "rgba(249, 115, 22, 0.20)", border: "#f97316" },
+        { name: "QISH", color: "rgba(56, 189, 248, 0.20)", border: "#38bdf8" }
+      ];
+
+      const topY = 26;
+      const trackH = 38;
+      const gapY = 16;
+
+      // Fasllar sarlavhasi
+      seasons.forEach((s, idx) => {
+        const sx = padL + (trackW / 4) * idx;
+        const sw = trackW / 4;
+        ctx.fillStyle = s.border;
+        ctx.font = "700 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(s.name, sx + sw / 2, topY - 8);
+      });
+
+      const tracks = [
+        {
+          title: "1. Qamariy kalendar (Ramazon / Muharram oyi)",
+          color: "#e2e8f0",
+          // Qamariy yil 10.875 sutka qisqa -> fasllar bo'ylab chapga (Bahor->Qish->Kuz->Yoz) siljiydi
+          normPos: (1 - (((sim2State.year - 1) * 10.8751) % 365.2422) / 365.2422) % 1
+        },
+        {
+          title: "2. Shamsiy kalendar (21-mart — Bahorgi tengkunlik)",
+          color: "#fbbf24",
+          normPos: 0.02 // Doim Bahor boshida qo'zg'almas
+        },
+        {
+          title: "3. Oy-Quyosh kalendari (Meton sikli: 19 yil = 235 oy)",
+          color: "#38bdf8",
+          normPos: ((getLunisolarShift(sim2State.year) / 365.2422) + 0.02) % 1
+        }
+      ];
+
+      tracks.forEach((tr, tIdx) => {
+        const ty = topY + tIdx * (trackH + gapY);
+
+        // 4 fasl segmentlari
+        seasons.forEach((s, sIdx) => {
+          const sx = padL + (trackW / 4) * sIdx;
+          const sw = trackW / 4;
+          ctx.fillStyle = s.color;
+          ctx.fillRect(sx, ty, sw, trackH);
+          ctx.strokeStyle = "rgba(148, 163, 184, 0.18)";
+          ctx.strokeRect(sx, ty, sw, trackH);
+        });
+
+        // Trek nomi
+        ctx.fillStyle = "#f1f5f9";
+        ctx.font = "600 11px sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText(tr.title, padL + 8, ty + 14);
+
+        // Harakatlanuvchi marker
+        const mx = padL + tr.normPos * trackW;
+        ctx.fillStyle = tr.color;
+        ctx.beginPath();
+        ctx.arc(mx, ty + 26, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#0b0f19";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // 2. Pastki qism: Dinamik siljish grafigi (1-yildan 33-yilgacha arra tishli to'lqin)
+      const chartTop = topY + 3 * (trackH + gapY) + 26;
+      const chartH = h - chartTop - 34;
+      const chartW = trackW;
+
+      roundRectPath(ctx, padL, chartTop - 16, chartW, chartH + 42, 12);
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.2)";
+      ctx.stroke();
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "700 12px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(
+        "Oy-Quyosh taqvimining arra-tishli tuzatish grafigi (Yashil nuqtalar = 13-kabisa oyi qo‘shilgan yillar)",
+        padL + 12,
+        chartTop + 2
+      );
+
+      const plotX = padL + 38;
+      const plotY = chartTop + 18;
+      const plotW = chartW - 54;
+      const plotH = chartH - 22;
+
+      // Koordinata o'qlari
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(plotX, plotY);
+      ctx.lineTo(plotX, plotY + plotH);
+      ctx.lineTo(plotX + plotW, plotY + plotH);
+      ctx.stroke();
+
+      // Y o'qi belgilari (0 va 30 sutka)
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText("35 kun", plotX - 5, plotY + 8);
+      ctx.fillText("0 kun", plotX - 5, plotY + plotH);
+
+      // 30 kunlik chegara chizig'i
+      const y30 = plotY + plotH * (1 - 29.53 / 38);
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(16, 185, 129, 0.45)";
+      ctx.beginPath();
+      ctx.moveTo(plotX, y30);
+      ctx.lineTo(plotX + plotW, y30);
+      ctx.stroke();
+      ctx.restore();
+
+      // 19-yil (Meton sikli) vertikal belgisi
+      const x19 = plotX + ((19 - 1) / 32) * plotW;
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(251, 191, 36, 0.55)";
+      ctx.beginPath();
+      ctx.moveTo(x19, plotY);
+      ctx.lineTo(x19, plotY + plotH);
+      ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = "#fbbf24";
+      ctx.textAlign = "center";
+      ctx.fillText("19-yil (Meton sikli)", x19, plotY + plotH + 14);
+      ctx.fillText("1-yil", plotX, plotY + plotH + 14);
+      ctx.fillText("33-yil", plotX + plotW, plotY + plotH + 14);
+
+      // Arra tishli grafik chizish
+      ctx.beginPath();
+      for (let yr = 1; yr <= 33; yr += 0.25) {
+        const px = plotX + ((yr - 1) / 32) * plotW;
+        const shiftVal = getLunisolarShift(yr);
+        const py = plotY + plotH * (1 - Math.min(38, shiftVal) / 38);
+        if (yr === 1) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      // Kabisa oyi qo'shilgan yillarni yashil nuqtalar bilan belgilash
+      for (let yr = 1; yr <= 33; yr++) {
+        if (isMetonLeapYear(yr)) {
+          const px = plotX + ((yr - 1) / 32) * plotW;
+          const shiftBefore = getLunisolarShift(yr);
+          const py = plotY + plotH * (1 - Math.min(38, shiftBefore) / 38);
+          ctx.fillStyle = "#10b981";
+          ctx.beginPath();
+          ctx.arc(px, py, 4.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Joriy yil kursori
+      const curX = plotX + ((sim2State.year - 1) / 32) * plotW;
+      const curShift = getLunisolarShift(sim2State.year);
+      const curY = plotY + plotH * (1 - Math.min(38, curShift) / 38);
+
+      ctx.strokeStyle = "#fbbf24";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(curX, plotY);
+      ctx.lineTo(curX, plotY + plotH);
+      ctx.stroke();
+
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(curX, curY, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Sim2 boshqaruv elementlari
+    const sim2YearSlider = document.getElementById("sim2YearSlider");
+    const sim2AutoBtn = document.getElementById("sim2AutoBtn");
+
+    sim2YearSlider.addEventListener("input", (e) => {
+      sim2State.year = Number(e.target.value);
+      updateSim2UI();
+      drawSim2();
+    });
+
+    document.getElementById("sim2Add1").addEventListener("click", () => {
+      sim2State.year = Math.min(33, Math.floor(sim2State.year) + 1);
+      updateSim2UI();
+      drawSim2();
+    });
+
+    document.getElementById("sim2Add19").addEventListener("click", () => {
+      const next = Math.floor(sim2State.year) + 19;
+      sim2State.year = next > 33 ? 19 : next;
+      updateSim2UI();
+      drawSim2();
+    });
+
+    sim2AutoBtn.addEventListener("click", () => {
+      sim2State.autoPlay = !sim2State.autoPlay;
+      sim2AutoBtn.textContent = sim2State.autoPlay ? "⏸ To‘xtatish" : "▶ Avto-animatsiya";
+    });
+
+    document.getElementById("sim2ResetBtn").addEventListener("click", () => {
+      sim2State.autoPlay = false;
+      sim2AutoBtn.textContent = "▶ Avto-animatsiya";
+      sim2State.year = 1;
+      updateSim2UI();
+      drawSim2();
+    });
+
+    /* ==========================================================================
+       5. SIMULYATSIYA №3A: TARIXIY XATOLIKLAR VA 1582-YIL ISLOHOTI
+       ========================================================================== */
+    const sim3aState = {
+      year: 1582,
+      reformApplied: false,
+      flyingPages: [] // 5-oktyabrdan 14-oktyabrgacha uchib ketuvchi varaqlar animatsiyasi
+    };
+
+    function getJulianDriftDays(year) {
+      // 325-yil Nikeya soborida Yulian 21-mart astronomik tengkunlikka moslangan (0 kun)
+      // Har 128 yilda 1 sutka ortiqcha yig'iladi
+      return (year - 325) / 128;
+    }
+
+    function updateSim3aUI() {
+      const y = sim3aState.year;
+      const yearText = y < 0 ? `Mil. avv. ${Math.abs(y)}-yil` : `${y}-yil`;
+      document.getElementById("sim3aYearLabel").textContent = yearText;
+      document.getElementById("sim3aSliderVal").textContent = y < 0 ? `-${Math.abs(y)}` : `${y}`;
+      document.getElementById("sim3aSlider").value = y;
+
+      const drift = getJulianDriftDays(y);
+      const roundedDrift = Math.round(drift);
+      const driftEl = document.getElementById("sim3aDriftLabel");
+      const statusEl = document.getElementById("sim3aReformStatus");
+
+      const realSpringDay = 21 - roundedDrift;
+      const springDateStr =
+        realSpringDay >= 1
+          ? `${realSpringDay}-mart`
+          : `${31 + realSpringDay}-fevral`;
+
+      driftEl.textContent = `${drift >= 0 ? "+" : ""}${drift.toFixed(1)} sutka (Bahor: ${springDateStr})`;
+
+      if (sim3aState.reformApplied && y >= 1582) {
+        statusEl.textContent = "Grigorian (Yangi uslub) faol! (21-mart tiklandi)";
+        statusEl.style.color = "var(--valid-green)";
+      } else if (y < 1582) {
+        statusEl.textContent = "Grigorian islohotidan oldingi davr";
+        statusEl.style.color = "var(--text-muted)";
+      } else {
+        statusEl.textContent = "Yulian (Eski uslub) — 10+ kun orqada!";
+        statusEl.style.color = "var(--error-red)";
+      }
+    }
+
+    function trigger1582ReformAnimation() {
+      sim3aState.year = 1582;
+      sim3aState.reformApplied = true;
+      updateSim3aUI();
+
+      // 5-oktyabrdan 14-oktyabrgacha 10 ta varaqni uchirib chiqarish
+      sim3aState.flyingPages = [];
+      for (let i = 0; i < 10; i++) {
+        sim3aState.flyingPages.push({
+          day: 5 + i,
+          progress: -i * 0.08, // ketma-ket uchib chiqishi uchun
+          vx: (Math.random() - 0.3) * 3.5,
+          vy: -2.5 - Math.random() * 2.5,
+          rotSpeed: (Math.random() - 0.5) * 0.14
+        });
+      }
+      drawSim3A();
+    }
+
+    function drawSim3A() {
+      const canvas = document.getElementById("canvasSim3A");
+      const { ctx, width: w, height: h } = setupHiDPICanvas(canvas);
+      if (!ctx || w === 0) return;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const isMobile = w < 680;
+      const leftW = isMobile ? w : w * 0.45;
+      const orbitCx = leftW * 0.5;
+      const orbitCy = isMobile ? h * 0.28 : h * 0.52;
+      const orbitR = Math.min(leftW * 0.34, isMobile ? h * 0.18 : h * 0.32);
+
+      // 1. Chap panel: Quyosh-Yer orbitasida Haqiqiy Bahor vs Yulian 21-mart
+      ctx.beginPath();
+      ctx.arc(orbitCx, orbitCy, orbitR, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Quyosh
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(orbitCx, orbitCy, Math.max(14, orbitR * 0.18), 0, Math.PI * 2);
+      ctx.fill();
+
+      // Haqiqiy astronomik Bahorgi tengkunlik nuqtasi (0 rad)
+      const trueX = orbitCx + orbitR;
+      const trueY = orbitCy;
+      ctx.fillStyle = "#10b981";
+      ctx.beginPath();
+      ctx.arc(trueX, trueY, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.font = "700 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Haqiqiy Bahor", trueX, trueY - 14);
+
+      // Yulian 21-mart nuqtasi (og'ish burchagi vizual ravishda kuchaytirilgan)
+      const driftDays = getJulianDriftDays(sim3aState.year);
+      const effectiveDrift = sim3aState.reformApplied && sim3aState.year >= 1582
+        ? (sim3aState.year - 1582) / 3300
+        : driftDays;
+
+      const lagAngle = effectiveDrift * (3.2 * Math.PI / 180); // 1 kun = 3.2° vizual
+      const julX = orbitCx + Math.cos(lagAngle) * orbitR;
+      const julY = orbitCy + Math.sin(lagAngle) * orbitR;
+
+      // Og'ish sektori
+      if (Math.abs(effectiveDrift) > 0.1) {
+        ctx.beginPath();
+        ctx.moveTo(orbitCx, orbitCy);
+        ctx.arc(orbitCx, orbitCy, orbitR, 0, lagAngle, lagAngle < 0);
+        ctx.closePath();
+        ctx.fillStyle = sim3aState.reformApplied && sim3aState.year >= 1582
+          ? "rgba(16, 185, 129, 0.2)"
+          : "rgba(239, 68, 68, 0.25)";
+        ctx.fill();
+      }
+
+      ctx.fillStyle = sim3aState.reformApplied && sim3aState.year >= 1582 ? "#38bdf8" : "#ef4444";
+      ctx.beginPath();
+      ctx.arc(julX, julY, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText(
+        sim3aState.reformApplied && sim3aState.year >= 1582 ? "Grigorian 21-mart" : "Yulian 21-mart",
+        julX,
+        julY + 20
+      );
+
+      // 2. O'ng panel: Tarixiy xatolik grafigi va Oktyabr 1582 taqvim varaqlari
+      const rightX = isMobile ? 16 : leftW + 10;
+      const rightY = isMobile ? h * 0.52 : 20;
+      const rightW = isMobile ? w - 32 : w - leftW - 28;
+      const rightH = isMobile ? h * 0.44 : h - 40;
+
+      roundRectPath(ctx, rightX, rightY, rightW, rightH, 14);
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.22)";
+      ctx.stroke();
+
+      // Grafik o'qlari
+      const gx = rightX + 42;
+      const gy = rightY + 34;
+      const gw = rightW - 60;
+      const gh = rightH * 0.52;
+
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "700 12px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("Yulian kalendarida yig‘ilgan xatolik grafigi (sutkalarda)", rightX + 16, rightY + 20);
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx, gy + gh);
+      ctx.lineTo(gx + gw, gy + gh);
+      ctx.stroke();
+
+      // 0 kun chizig'i (325-yil darajasi)
+      const mapYearToX = (yr) => gx + ((yr - (-46)) / (2100 - (-46))) * gw;
+      const mapDriftToY = (dr) => gy + gh * (1 - (dr - (-4)) / 20);
+
+      const yZero = mapDriftToY(0);
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(16, 185, 129, 0.45)";
+      ctx.beginPath();
+      ctx.moveTo(gx, yZero);
+      ctx.lineTo(gx + gw, yZero);
+      ctx.stroke();
+      ctx.restore();
+
+      // Yulian xatolik to'g'ri chizig'i
+      ctx.beginPath();
+      ctx.moveTo(mapYearToX(-46), mapDriftToY(getJulianDriftDays(-46)));
+      ctx.lineTo(mapYearToX(2100), mapDriftToY(getJulianDriftDays(2100)));
+      ctx.strokeStyle = "#ef4444";
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      // Grigorian tuzatilgan chiziq (1582 dan keyin 0 ga tushadi)
+      if (sim3aState.reformApplied) {
+        ctx.beginPath();
+        ctx.moveTo(mapYearToX(1582), mapDriftToY(10));
+        ctx.lineTo(mapYearToX(1582), mapDriftToY(0));
+        ctx.lineTo(mapYearToX(2100), mapDriftToY((2100 - 1582) / 3300));
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+      }
+
+      // Tanlangan yil nuqtasi
+      const curPx = mapYearToX(sim3aState.year);
+      const curPy = mapDriftToY(effectiveDrift);
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(curPx, curPy, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pastki qism: 1582-yil Oktyabr taqvim varaqlari ko'rgazmasi
+      const calY = gy + gh + 24;
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "600 11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("1582-yil Oktyabr taqvimi (4-oktyabrdan keyin 15-oktyabr kelishi):", rightX + 16, calY);
+
+      const sampleDays = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+      const boxW = Math.min(34, (rightW - 36) / sampleDays.length - 3);
+      const boxH = 32;
+
+      sampleDays.forEach((dayNum, idx) => {
+        const bx = rightX + 16 + idx * (boxW + 3);
+        const by = calY + 10;
+        const isSkipped = dayNum >= 5 && dayNum <= 14;
+
+        if (isSkipped && sim3aState.reformApplied) {
+          // O'chirilgan kunlar o'rni bo'sh qoladi
+          ctx.strokeStyle = "rgba(239, 68, 68, 0.25)";
+          ctx.setLineDash([2, 2]);
+          ctx.strokeRect(bx, by, boxW, boxH);
+          ctx.setLineDash([]);
+          return;
+        }
+
+        roundRectPath(ctx, bx, by, boxW, boxH, 5);
+        ctx.fillStyle = isSkipped
+          ? "rgba(239, 68, 68, 0.25)"
+          : dayNum === 4 || dayNum === 15
+          ? "rgba(16, 185, 129, 0.28)"
+          : "rgba(30, 41, 59, 0.9)";
+        ctx.fill();
+        ctx.strokeStyle = isSkipped ? "#ef4444" : dayNum === 4 || dayNum === 15 ? "#10b981" : "#475569";
+        ctx.stroke();
+
+        ctx.fillStyle = "#f8fafc";
+        ctx.font = "700 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(String(dayNum), bx + boxW / 2, by + 20);
+      });
+
+      // Uchib chiqayotgan 10 ta varaq animatsiyasi
+      sim3aState.flyingPages.forEach((fp) => {
+        if (fp.progress < 0 || fp.progress > 1.2) return;
+        const idx = fp.day - 3;
+        const startX = rightX + 16 + idx * (boxW + 3) + boxW / 2;
+        const startY = calY + 26;
+        const t = fp.progress * 45;
+        const px = startX + fp.vx * t;
+        const py = startY + fp.vy * t + 0.08 * t * t;
+        const alpha = Math.max(0, 1 - fp.progress);
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(fp.rotSpeed * t);
+        ctx.globalAlpha = alpha;
+        roundRectPath(ctx, -boxW / 2, -boxH / 2, boxW, boxH, 5);
+        ctx.fillStyle = "#ef4444";
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "700 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${fp.day}-okt`, 0, 4);
+        ctx.restore();
+      });
+    }
+
+    // Sim3A boshqaruv elementlari
+    const sim3aSlider = document.getElementById("sim3aSlider");
+    sim3aSlider.addEventListener("input", (e) => {
+      sim3aState.year = Number(e.target.value);
+      if (sim3aState.year < 1582) sim3aState.reformApplied = false;
+      updateSim3aUI();
+      drawSim3A();
+    });
+
+    document.querySelectorAll(".preset-year-3a").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        sim3aState.year = Number(btn.getAttribute("data-year"));
+        if (sim3aState.year < 1582) sim3aState.reformApplied = false;
+        updateSim3aUI();
+        drawSim3A();
+      });
+    });
+
+    document.getElementById("sim3aApplyReformBtn").addEventListener("click", trigger1582ReformAnimation);
+
+    /* ==========================================================================
+       6. SIMULYATSIYA №3B: INTERAKTIV «KABISA YILI LABORATORIYASI»
+       ========================================================================== */
+    let currentLabYear = 2026;
+
+    function evaluateLeapYear(year) {
+      const div4 = year % 4 === 0;
+      const div100 = year % 100 === 0;
+      const div400 = year % 400 === 0;
+
+      const isJulianLeap = div4;
+      const isGregorianLeap = div4 && (!div100 || div400);
+
+      return { year, div4, div100, div400, isJulianLeap, isGregorianLeap };
+    }
+
+    function updateLeapCompareCards(res) {
+      const container = document.getElementById("leapCompareCards");
+      container.innerHTML = `
+        <div class="compare-card ${res.isJulianLeap ? "is-leap" : "is-common"}">
+          <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">
+            Yulian kalendari (Eski uslub)
+          </div>
+          <div style="font-size: 1.2rem; font-weight: 800; margin: 6px 0; color: ${res.isJulianLeap ? "var(--valid-green)" : "var(--text-main)"};">
+            ${res.isJulianLeap ? "✅ Kabisa yili (366 sutka)" : "⬜ Oddiy yil (365 sutka)"}
+          </div>
+          <div style="font-size: 0.88rem; color: #cbd5e1;">
+            Fevral oyi: <strong>${res.isJulianLeap ? "29 kun" : "28 kun"}</strong> • Qoida: faqat 4 ga bo‘linishi (${res.year} ÷ 4 qoldiq ${res.year % 4}).
+          </div>
+        </div>
+
+        <div class="compare-card ${res.isGregorianLeap ? "is-leap" : "is-common"}">
+          <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">
+            Grigorian kalendari (Yangi uslub)
+          </div>
+          <div style="font-size: 1.2rem; font-weight: 800; margin: 6px 0; color: ${res.isGregorianLeap ? "var(--valid-green)" : "var(--error-red)"};">
+            ${res.isGregorianLeap ? "✅ Kabisa yili (366 sutka)" : "❌ Oddiy yil (365 sutka)"}
+          </div>
+          <div style="font-size: 0.88rem; color: #cbd5e1;">
+            Fevral oyi: <strong>${res.isGregorianLeap ? "29 kun" : "28 kun"}</strong> • ${
+              res.div100 && !res.div400
+                ? "Asr yili 400 ga bo‘linmagani uchun kabisa emas!"
+                : "Grigorian mezoniga to‘liq mos."
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function drawSim3B() {
+      const canvas = document.getElementById("canvasSim3B");
+      const { ctx, width: w, height: h } = setupHiDPICanvas(canvas);
+      if (!ctx || w === 0) return;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const res = evaluateLeapYear(currentLabYear);
+      const isSmall = w < 620;
+
+      // Tugun koordinatalari (Blok-sxema)
+      const startNode = { x: w * 0.5, y: 38, w: 170, h: 38, label: `Kiritilgan yil: ${res.year}` };
+      const d4Node = {
+        x: w * 0.5,
+        y: 112,
+        w: isSmall ? 185 : 220,
+        h: 44,
+        label: `${res.year} ÷ 4 qoldiqsizmi?`,
+        sub: `Qoldiq: ${res.year % 4}`
+      };
+
+      // Chap (YO'Q -> Oddiy yil) va O'ng (HA -> 100 ga tekshirish)
+      const common4Node = {
+        x: w * (isSmall ? 0.2 : 0.22),
+        y: 205,
+        w: isSmall ? 135 : 175,
+        h: 48,
+        label: "ODDIY YIL",
+        sub: "365 kun (28-fevral)"
+      };
+
+      const d100Node = {
+        x: w * (isSmall ? 0.72 : 0.68),
+        y: 205,
+        w: isSmall ? 175 : 215,
+        h: 44,
+        label: `${res.year} ÷ 100 qoldiqsizmi?`,
+        sub: `Asr yilimi? (Qoldiq: ${res.year % 100})`
+      };
+
+      // d100 dan -> YO'Q (Kabisa) va HA (d400)
+      const leap100Node = {
+        x: w * (isSmall ? 0.44 : 0.48),
+        y: 300,
+        w: isSmall ? 135 : 170,
+        h: 48,
+        label: "KABISA YILI",
+        sub: "366 kun (29-fevral)"
+      };
+
+      const d400Node = {
+        x: w * (isSmall ? 0.82 : 0.82),
+        y: 300,
+        w: isSmall ? 155 : 195,
+        h: 48,
+        label: `${res.year} ÷ 400 = 0 mi?`,
+        sub: res.div400 ? "HA → KABISA (366)" : "YO‘Q → ODDIY (365)"
+      };
+
+      function drawConnector(x1, y1, x2, y2, active, color, tagText) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = active ? color : "rgba(148, 163, 184, 0.25)";
+        ctx.lineWidth = active ? 3 : 1.5;
+        ctx.stroke();
+
+        if (tagText) {
+          const mx = (x1 + x2) / 2;
+          const my = (y1 + y2) / 2;
+          ctx.fillStyle = active ? color : "#64748b";
+          ctx.font = "700 11px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(tagText, mx + (x2 < x1 ? -16 : 16), my - 4);
+        }
+        ctx.restore();
+      }
+
+      // Yo'llarni chizish
+      drawConnector(startNode.x, startNode.y + startNode.h / 2, d4Node.x, d4Node.y - d4Node.h / 2, true, "#38bdf8", "");
+      drawConnector(
+        d4Node.x - d4Node.w * 0.25,
+        d4Node.y + d4Node.h / 2,
+        common4Node.x,
+        common4Node.y - common4Node.h / 2,
+        !res.div4,
+        "#ef4444",
+        "YO‘Q"
+      );
+      drawConnector(
+        d4Node.x + d4Node.w * 0.25,
+        d4Node.y + d4Node.h / 2,
+        d100Node.x,
+        d100Node.y - d100Node.h / 2,
+        res.div4,
+        "#10b981",
+        "HA"
+      );
+
+      drawConnector(
+        d100Node.x - d100Node.w * 0.25,
+        d100Node.y + d100Node.h / 2,
+        leap100Node.x,
+        leap100Node.y - leap100Node.h / 2,
+        res.div4 && !res.div100,
+        "#10b981",
+        "YO‘Q"
+      );
+
+      drawConnector(
+        d100Node.x + d100Node.w * 0.25,
+        d100Node.y + d100Node.h / 2,
+        d400Node.x,
+        d400Node.y - d400Node.h / 2,
+        res.div4 && res.div100,
+        "#fbbf24",
+        "HA"
+      );
+
+      function drawNodeBox(node, stateColor, isActive) {
+        ctx.save();
+        roundRectPath(ctx, node.x - node.w / 2, node.y - node.h / 2, node.w, node.h, 10);
+        ctx.fillStyle = isActive ? stateColor.bg : "rgba(15, 23, 42, 0.85)";
+        ctx.fill();
+        ctx.strokeStyle = isActive ? stateColor.border : "rgba(148, 163, 184, 0.25)";
+        ctx.lineWidth = isActive ? 2.2 : 1.2;
+        ctx.stroke();
+
+        ctx.fillStyle = isActive ? "#ffffff" : "#94a3b8";
+        ctx.font = "700 12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(node.label, node.x, node.sub ? node.y - 3 : node.y + 4);
+
+        if (node.sub) {
+          ctx.fillStyle = isActive ? stateColor.sub : "#64748b";
+          ctx.font = "600 10.5px sans-serif";
+          ctx.fillText(node.sub, node.x, node.y + 13);
+        }
+        ctx.restore();
+      }
+
+      drawNodeBox(startNode, { bg: "rgba(56, 189, 248, 0.22)", border: "#38bdf8", sub: "#bae6fd" }, true);
+      drawNodeBox(
+        d4Node,
+        res.div4
+          ? { bg: "rgba(16, 185, 129, 0.2)", border: "#10b981", sub: "#a7f3d0" }
+          : { bg: "rgba(239, 68, 68, 0.2)", border: "#ef4444", sub: "#fecaca" },
+        true
+      );
+      drawNodeBox(
+        common4Node,
+        { bg: "rgba(239, 68, 68, 0.24)", border: "#ef4444", sub: "#fecaca" },
+        !res.div4
+      );
+      drawNodeBox(
+        d100Node,
+        { bg: "rgba(251, 191, 36, 0.2)", border: "#fbbf24", sub: "#fde68a" },
+        res.div4
+      );
+      drawNodeBox(
+        leap100Node,
+        { bg: "rgba(16, 185, 129, 0.24)", border: "#10b981", sub: "#a7f3d0" },
+        res.div4 && !res.div100
+      );
+      drawNodeBox(
+        d400Node,
+        res.div400
+          ? { bg: "rgba(16, 185, 129, 0.26)", border: "#10b981", sub: "#a7f3d0" }
+          : { bg: "rgba(239, 68, 68, 0.26)", border: "#ef4444", sub: "#fecaca" },
+        res.div4 && res.div100
+      );
+    }
+
+    function runLeapYearLab(yearVal) {
+      const y = Math.max(1, Math.min(9999, Math.floor(Number(yearVal) || 2026)));
+      currentLabYear = y;
+      document.getElementById("leapYearInput").value = y;
+      const res = evaluateLeapYear(y);
+      updateLeapCompareCards(res);
+      drawSim3B();
+    }
+
+    document.getElementById("checkLeapBtn").addEventListener("click", () => {
+      runLeapYearLab(document.getElementById("leapYearInput").value);
+    });
+
+    document.getElementById("leapYearInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") runLeapYearLab(e.target.value);
+    });
+
+    document.querySelectorAll(".preset-leap").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        runLeapYearLab(btn.getAttribute("data-leap"));
+      });
+    });
+
+    /* ==========================================================================
+       7. INTERAKTIV TEST SAVOLLARI (HAR BIR BO'LIM UCHUN 3 TADAN = 9 TA SAVOL)
+       ========================================================================== */
+    const QUIZZES = {
+      1: [
+        {
+          q: "1. Tropik yilning aniq davomiyligi qanchaga teng?",
+          options: [
+            "365 sutka 6 soat 00 daqiqa",
+            "365 sutka 5 soat 48 daqiqa 46 soniya",
+            "354 sutka 8 soat 48 daqiqa",
+            "366 sutka 0 soat 12 daqiqa"
+          ],
+          correct: 1,
+          explanation:
+            "Tropik yil — Quyosh markazining bahorgi tengkunlik nuqtasidan ketma-ket ikki marta o‘tish davri bo‘lib, 365,2422 sutkaga (365 sutka 5 soat 48 daqiqa 46 soniya) teng."
+        },
+        {
+          q: "2. Ikkita ketma-ket bir xil Oy fazasi (masalan, ikkita To‘lin oy) orasidagi vaqt nima deb ataladi?",
+          options: ["Siderik oy", "Tropik oy", "Sinodik oy (29,5306 sutka)", "Drakonik oy"],
+          correct: 2,
+          explanation:
+            "Sinodik oy — Oy fazalarining to‘liq almashish davri bo‘lib, o‘rtacha 29,53059 sutkaga teng. Qamariy kalendarlar aynan sinodik oyga asoslanadi."
+        },
+        {
+          q: "3. Nima uchun mukammal va mutlaqo o‘zgarmas kalendar tuzish murakkab?",
+          options: [
+            "Yerning o‘z o‘qi atrofida aylanishi har yili 2 soatga tezlashadi",
+            "Sutka, sinodik oy va tropik yil o‘zaro karrali (butun son nisbatda) emas",
+            "Oy har doim bir xil tezlikda harakatlanmaydi",
+            "Quyosh atrofida 10 ta sayyora bor"
+          ],
+          correct: 1,
+          explanation:
+            "1 tropik yil = 365,2422 sutka = 12,3683 sinodik oy. Bu uch birlik o‘zaro butun son nisbatda bo‘lmagani uchun kasr qoldiqlarni kabisa kunlari yoki oylari orqali tuzatishga to‘g‘ri keladi."
+        }
+      ],
+      2: [
+        {
+          q: "1. Qamariy (Oy) kalendari yili tropik yildan taxminan necha sutkaga qisqa?",
+          options: ["1,25 sutkaga", "5,5 sutkaga", "10,87 sutkaga", "29,53 sutkaga"],
+          correct: 2,
+          explanation:
+            "12 sinodik oy = 12 × 29,5306 = 354,37 sutka. Tropik yil (365,24 sutka) dan ayirsak, 10,87 sutka farq chiqadi. Shu sababli qamariy oylar 33 yilda barcha fasllarni aylanib chiqadi."
+        },
+        {
+          q: "2. Meton sikliga ko‘ra, Oy-Quyosh kalendarida necha yil ichida necha marta 13-kabisa oyi qo‘shiladi?",
+          options: [
+            "19 yil ichida 7 marta (235 sinodik oy)",
+            "12 yil ichida 4 marta",
+            "33 yil ichida 11 marta",
+            "4 yil ichida 1 marta"
+          ],
+          correct: 0,
+          explanation:
+            "Mil. avv. 432-yilda yunon astronomi Meton 19 tropik yil deyarli aniq 235 sinodik oyga teng ekanini topgan. 19 × 12 = 228 oy bo‘lgani uchun 7 marta qo‘shimcha kabisa oyi kiritiladi."
+        },
+        {
+          q: "3. Qaysi kalendar turida 21-mart (Bahorgi tengkunlik) har doim bir xil faslga to‘g‘ri keladi?",
+          options: [
+            "Faqat Qamariy kalendarda",
+            "Shamsiy (Quyosh) kalendarida",
+            "Hech qaysi kalendarda",
+            "Faqat 354 kunlik kalendarda"
+          ],
+          correct: 1,
+          explanation:
+            "Shamsiy kalendar Yerning Quyosh atrofida aylanish davriga (tropik yilga) moslanganligi sababli fasllar va tengkunlik kunlari doim bir xil sanalarda saqlanadi."
+        }
+      ],
+      3: [
+        {
+          q: "1. Yulian kalendarida 1 sutkalik xatolik necha yilda yig‘iladi?",
+          options: ["Har 4 yilda", "Har 128 yilda", "Har 400 yilda", "Har 3300 yilda"],
+          correct: 1,
+          explanation:
+            "Yulian yilining o‘rtacha davomiyligi 365,25 sutka bo‘lib, tropik yildan (365,2422 sutka) 0,0078 sutka uzun. 1 / 0,0078 ≈ 128 yilda 1 ortiqcha sutka yig‘iladi."
+        },
+        {
+          q: "2. 1582-yilgi Grigorian islohotida taqvimdan necha kun tashlab yuborilgan?",
+          options: ["3 kun", "7 kun", "10 kun (4-oktyabrdan keyin 15-oktyabr)", "13 kun"],
+          correct: 2,
+          explanation:
+            "325-yilgi Nikeya soboridan 1582-yilgacha Yulian taqvimida 10 kunlik xato to‘plangan edi. Papa Grigoriy XIII farmoni bilan 1582-yil 4-oktyabrdan keyingi kun 15-oktyabr deb belgilandi."
+        },
+        {
+          q: "3. Quyidagi yillardan qaysi biri Grigorian kalendarida KABISA yili hisoblanadi?",
+          options: ["1700-yil", "1900-yil", "2000-yil", "2100-yil"],
+          correct: 2,
+          explanation:
+            "Asr yillari (oxiri 00 bilan tugaydigan yillar) faqat 400 ga qoldiqsiz bo‘linsagina kabisa bo‘ladi. 2000 ÷ 400 = 5 (kabisa); 1700, 1900 va 2100 esa 400 ga bo‘linmaydi (oddiy yillar)."
+        }
+      ]
+    };
+
+    const quizScores = { 1: 0, 2: 0, 3: 0 };
+
+    function renderQuiz(sectionNum) {
+      const container = document.getElementById(`quizContainer${sectionNum}`);
+      const scoreBadge = document.getElementById(`quizScore${sectionNum}`);
+      const questions = QUIZZES[sectionNum];
+
+      container.innerHTML = "";
+      questions.forEach((item, qIdx) => {
+        const qDiv = document.createElement("div");
+        qDiv.className = "quiz-item";
+
+        const qTitle = document.createElement("div");
+        qTitle.className = "quiz-q";
+        qTitle.textContent = item.q;
+        qDiv.appendChild(qTitle);
+
+        const optsGrid = document.createElement("div");
+        optsGrid.className = "quiz-options";
+
+        const expDiv = document.createElement("div");
+        expDiv.className = "quiz-explanation";
+        expDiv.textContent = `Izoh: ${item.explanation}`;
+
+        item.options.forEach((optText, oIdx) => {
+          const btn = document.createElement("button");
+          btn.className = "quiz-opt";
+          btn.textContent = optText;
+
+          btn.addEventListener("click", () => {
+            const allBtns = optsGrid.querySelectorAll(".quiz-opt");
+            allBtns.forEach((b) => (b.disabled = true));
+
+            if (oIdx === item.correct) {
+              btn.classList.add("correct");
+              quizScores[sectionNum] += 1;
+              scoreBadge.textContent = `Natija: ${quizScores[sectionNum]} / 3`;
+            } else {
+              btn.classList.add("wrong");
+              allBtns[item.correct].classList.add("correct");
+            }
+            expDiv.classList.add("show");
+          });
+
+          optsGrid.appendChild(btn);
+        });
+
+        qDiv.appendChild(optsGrid);
+        qDiv.appendChild(expDiv);
+        container.appendChild(qDiv);
+      });
+    }
+
+    /* ==========================================================================
+       8. ASOSIY ANIMATSIYA SIKLI VA O'LCHAM MOSLASHUVI
+       ========================================================================== */
+    function renderAllActiveSimulations() {
+      if (activeTab === "sec1") {
+        updateSim1Telemetry();
+        drawSim1();
+      } else if (activeTab === "sec2") {
+        updateSim2UI();
+        drawSim2();
+      } else if (activeTab === "sec3") {
+        updateSim3aUI();
+        drawSim3A();
+        drawSim3B();
+      }
+    }
+
+    let prevTime = null;
+    function masterLoop(timestamp) {
+      if (!prevTime) prevTime = timestamp;
+      const dt = Math.min((timestamp - prevTime) / 1000, 0.1);
+      prevTime = timestamp;
+
+      // 1-bo'lim animatsiyasi
+      if (activeTab === "sec1" && !sim1State.paused) {
+        sim1State.totalDays += sim1State.speed * dt;
+        updateSim1Telemetry();
+        drawSim1();
+      }
+
+      // 2-bo'lim avto-animatsiyasi
+      if (activeTab === "sec2" && sim2State.autoPlay) {
+        sim2State.year += 1.8 * dt;
+        if (sim2State.year > 33) sim2State.year = 1;
+        updateSim2UI();
+        drawSim2();
+      }
+
+      // 3A uchib ketuvchi taqvim varaqlari animatsiyasi
+      if (activeTab === "sec3" && sim3aState.flyingPages.length > 0) {
+        let anyActive = false;
+        sim3aState.flyingPages.forEach((fp) => {
+          if (fp.progress <= 1.2) {
+            fp.progress += dt * 1.1;
+            anyActive = true;
+          }
+        });
+        if (anyActive) {
+          drawSim3A();
+        } else {
+          sim3aState.flyingPages = [];
+        }
+      }
+
+      requestAnimationFrame(masterLoop);
+    }
+
+    window.addEventListener("resize", () => {
+      renderAllActiveSimulations();
+    });
+
+    // Dastlabki ishga tushirish
+    renderQuiz(1);
+    renderQuiz(2);
+    renderQuiz(3);
+    updateSim1Telemetry();
+    updateSim2UI();
+    updateSim3aUI();
+    runLeapYearLab(2026);
+    renderAllActiveSimulations();
+    requestAnimationFrame(masterLoop);
+  </script>
+</body>
+</html>
+```
