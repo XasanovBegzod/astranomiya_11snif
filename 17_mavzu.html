@@ -1,0 +1,2562 @@
+```html
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>17-§. Quyosh va Oy tutilishlari — Interaktiv Astronomiya Darsligi</title>
+  <style>
+    /* ==========================================================================
+       1. KOSMIK DARK-MODE DIZAYN TIZIMI VA ASOSIY O‘ZGARUVCHILAR
+       ========================================================================== */
+    :root {
+      --bg-deep: #0b0f19;
+      --bg-space: #111827;
+      --card-bg: rgba(17, 24, 39, 0.76);
+      --card-bg-solid: #131c31;
+      --card-border: rgba(148, 163, 184, 0.18);
+      --card-border-hover: rgba(56, 189, 248, 0.42);
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --gold: #fbbf24;
+      --gold-dim: rgba(251, 191, 36, 0.16);
+      --earth: #38bdf8;
+      --earth-dim: rgba(56, 189, 248, 0.16);
+      --moon: #e2e8f0;
+      --crimson: #ef4444;
+      --copper: #b91c1c;
+      --crimson-dim: rgba(239, 68, 68, 0.16);
+      --emerald: #10b981;
+      --emerald-dim: rgba(16, 185, 129, 0.16);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-cosmic: 0 18px 45px -12px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(ellipse at 15% 10%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 20%, rgba(251, 191, 36, 0.07) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 90%, rgba(185, 28, 28, 0.09) 0%, transparent 50%);
+      color: var(--text-primary);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Nozik yulduzli fon effekti */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.45) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 28% 42%, rgba(255,255,255,0.35) 50%, transparent 100%),
+        radial-gradient(1px 1px at 47% 12%, rgba(255,255,255,0.5) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 66% 31%, rgba(56,189,248,0.45) 50%, transparent 100%),
+        radial-gradient(1px 1px at 81% 14%, rgba(251,191,36,0.45) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 91% 58%, rgba(255,255,255,0.4) 50%, transparent 100%),
+        radial-gradient(1px 1px at 19% 76%, rgba(255,255,255,0.35) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 58% 82%, rgba(255,255,255,0.3) 50%, transparent 100%),
+        radial-gradient(1px 1px at 74% 69%, rgba(255,255,255,0.4) 50%, transparent 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px 16px 56px;
+    }
+
+    /* ==========================================================================
+       2. SARLAVHA VA NAVIGATSIYA PANELI
+       ========================================================================== */
+    .hero-header {
+      background: linear-gradient(135deg, rgba(19, 28, 49, 0.9), rgba(11, 15, 25, 0.92));
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-cosmic);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--earth-dim);
+      color: var(--earth);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #ffffff 0%, #fbbf24 55%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.96rem;
+      max-width: 720px;
+    }
+
+    .score-pill {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 195px;
+    }
+
+    .score-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--gold-dim);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .score-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .score-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    /* 3 ta bo‘lim tab tugmalari */
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+      position: sticky;
+      top: 10px;
+      z-index: 40;
+      background: rgba(11, 15, 25, 0.82);
+      padding: 8px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: 1px solid transparent;
+      background: rgba(30, 41, 59, 0.55);
+      color: var(--text-secondary);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.22s ease;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-height: 54px;
+    }
+
+    .tab-btn:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: rgba(148, 163, 184, 0.3);
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(251, 191, 36, 0.14));
+      border-color: rgba(56, 189, 248, 0.55);
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.16);
+    }
+
+    .tab-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .tab-btn.active .tab-num {
+      background: var(--earth);
+      color: #0b0f19;
+      border-color: var(--earth);
+    }
+
+    .tab-text-wrap {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tab-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tab-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ==========================================================================
+       3. BO‘LIMLAR VA KARTOCHKA TUZILISHI
+       ========================================================================== */
+    .section-panel {
+      display: none;
+      animation: fadeSlideIn 0.32s ease;
+    }
+
+    .section-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-cosmic);
+      backdrop-filter: blur(12px);
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .card-title {
+      font-size: 1.22rem;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    /* Nazariya bloki elementlari */
+    .theory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .theory-box {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius-md);
+      padding: 15px 16px;
+    }
+
+    .theory-box h4 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theory-box p, .theory-lead {
+      font-size: 0.94rem;
+      color: var(--text-secondary);
+    }
+
+    .theory-lead {
+      margin-bottom: 10px;
+    }
+
+    .hl-gold { color: var(--gold); font-weight: 700; }
+    .hl-earth { color: var(--earth); font-weight: 700; }
+    .hl-crimson { color: #f87171; font-weight: 700; }
+    .hl-emerald { color: var(--emerald); font-weight: 700; }
+
+    .formula-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .formula-pill {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-size: 0.86rem;
+      color: #e2e8f0;
+      font-family: "Consolas", "Courier New", monospace;
+    }
+
+    /* ==========================================================================
+       4. SIMULYATSIYA KONTEYNERI VA BOSHQARUV ELEMENTLARI
+       ========================================================================== */
+    .sim-wrapper {
+      position: relative;
+      width: 100%;
+      background: #070b14;
+      border: 1px solid rgba(56, 189, 248, 0.24);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    canvas.sim-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      touch-action: pan-y;
+    }
+
+    /* Jonli telemetriya paneli */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tele-item {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+    }
+
+    .tele-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 3px;
+    }
+
+    .tele-val {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .status-solar {
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+    }
+
+    .status-lunar {
+      background: var(--crimson-dim);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+    }
+
+    .status-active {
+      background: var(--emerald-dim);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+    }
+
+    .status-neutral {
+      background: rgba(148, 163, 184, 0.14);
+      color: var(--text-secondary);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Slayderlar va tugmalar */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .control-group {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius-md);
+      padding: 12px 15px;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .control-readout {
+      color: var(--earth);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: rgba(51, 65, 85, 0.85);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--earth);
+      border: 3px solid #0b0f19;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.65);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--earth);
+      border: 3px solid #0b0f19;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.65);
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sim-btn {
+      appearance: none;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--text-primary);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .sim-btn:hover {
+      background: rgba(51, 65, 85, 0.95);
+      border-color: var(--earth);
+      transform: translateY(-1px);
+    }
+
+    .sim-btn.btn-gold {
+      background: rgba(251, 191, 36, 0.16);
+      border-color: rgba(251, 191, 36, 0.45);
+      color: var(--gold);
+    }
+
+    .sim-btn.btn-gold:hover {
+      background: rgba(251, 191, 36, 0.26);
+    }
+
+    .sim-btn.btn-crimson {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    .sim-btn.btn-crimson:hover {
+      background: rgba(239, 68, 68, 0.26);
+    }
+
+    .sim-btn.btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: rgba(56, 189, 248, 0.65);
+      color: #ffffff;
+    }
+
+    .sim-btn.btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    /* ==========================================================================
+       5. INTERAKTIV TEST SAVOLLARI BLOKI
+       ========================================================================== */
+    .quiz-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .quiz-item {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+    }
+
+    .quiz-q {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 9px;
+    }
+
+    .quiz-opt {
+      appearance: none;
+      text-align: left;
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.18s ease;
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.92);
+      border-color: var(--earth);
+      color: #ffffff;
+    }
+
+    .quiz-opt.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--emerald);
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .quiz-opt.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--crimson);
+      color: #fecaca;
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .quiz-feedback.fb-ok {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #a7f3d0;
+    }
+
+    .quiz-feedback.fb-err {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fecaca;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    /* ==========================================================================
+       6. MOBIL VA PLANSHET MOSLASHUVCHANLIGI
+       ========================================================================== */
+    @media (max-width: 820px) {
+      .nav-tabs {
+        grid-template-columns: 1fr;
+        position: static;
+      }
+      .hero-header {
+        padding: 18px;
+      }
+      .glass-card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- BOSH SARLAVHA -->
+    <header class="hero-header">
+      <div>
+        <div class="hero-badge">11-Sinf Astronomiya • Interaktiv Raqamli Darslik</div>
+        <h1 class="hero-title">17-§. Quyosh va Oy tutilishlari</h1>
+        <p class="hero-subtitle">
+          Soya va yarimsoya konuslari geometriyasi, Oy orbitasi tugunlari, to‘liq hamda halqasimon Quyosh tutilishi,
+          shuningdek, Yer atmosferasi refraksiyasi tufayli yuzaga keluvchi «Qonli Oy» hodisasini jonli laboratoriyalarda tadqiq eting.
+        </p>
+      </div>
+      <div class="score-pill" aria-live="polite">
+        <div class="score-icon">★</div>
+        <div>
+          <div class="score-label">O‘zlashtirish natijasi</div>
+          <div class="score-value" id="globalScore">0 / 9 ball</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 3 TA ASOSIY BO‘LIM MENYUSI -->
+    <nav class="nav-tabs" role="tablist" aria-label="Mavzu bo‘limlari">
+      <button class="tab-btn active" role="tab" aria-selected="true" data-tab="sec1">
+        <span class="tab-num">1</span>
+        <span class="tab-text-wrap">
+          <span class="tab-sub">1-reja bandi</span>
+          <span class="tab-title">Sabablari va shartlari</span>
+        </span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="sec2">
+        <span class="tab-num">2</span>
+        <span class="tab-text-wrap">
+          <span class="tab-sub">2-reja bandi</span>
+          <span class="tab-title">Quyosh tutilishi turlari</span>
+        </span>
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="sec3">
+        <span class="tab-num">3</span>
+        <span class="tab-text-wrap">
+          <span class="tab-sub">3-reja bandi</span>
+          <span class="tab-title">Oy tutilishi va «Qonli Oy»</span>
+        </span>
+      </button>
+    </nav>
+
+    <!-- ========================================================================
+         BO‘LIM 1: QUYOSH VA OY TUTILISHLARINING SABABLARI VA SHARTLARI
+         ======================================================================== -->
+    <section id="sec1" class="section-panel active" role="tabpanel">
+      <!-- 1.1 Nazariya -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">1. Quyosh va Oy tutilishlarining sabablari va shartlari</h2>
+          <span class="card-tag">Nazariy asoslar</span>
+        </div>
+        <p class="theory-lead">
+          Yorug‘likning bir jinsli muhitda <span class="hl-gold">to‘g‘ri chiziq bo‘ylab tarqalishi</span> natijasida Quyosh nurlari bilan yoritilgan sharsimon Yer va Oy ortida ikki xil soya sohasi hosil bo‘ladi: Quyosh nurlari mutlaqo tushmaydigan konussimon <span class="hl-crimson">to‘liq soya (umbra)</span> va Quyosh diskining bir qismi ko‘rinib turadigan kengayuvchi <span class="hl-earth">yarimsoya (penumbra)</span>.
+        </p>
+        <div class="theory-grid">
+          <div class="theory-box">
+            <h4><span class="hl-gold">①</span> Birinchi shart: Oy fazasi</h4>
+            <p>
+              <strong>Quyosh tutilishi</strong> faqat <span class="hl-gold">Yangi oy</span> fazasida (Oy Quyosh va Yer orasiga o‘tganda), <strong>Oy tutilishi</strong> esa faqat <span class="hl-crimson">To‘lin oy</span> fazasida (Yer Quyosh va Oy orasiga tushganda) ro‘y berishi mumkin.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-emerald">②</span> Ikkinchi shart: Tugunlar yaqinligi</h4>
+            <p>
+              Yangi yoki To‘lin oy paytida Oy o‘z orbitasining ekliptika bilan kesishish nuqtalari — <span class="hl-emerald">Chiqish (&#937;)</span> yoki <span class="hl-emerald">Tushish (&#9739;)</span> tugunlari yaqinida turishi shart.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-earth">③</span> Nega har oyda tutilish bo‘lmaydi?</h4>
+            <p>
+              Oy orbitasi tekisligi ekliptika tekisligiga <span class="hl-earth">i = 5°09′</span> burchak ostida og‘gan. Shu sababli ko‘pchilik Yangi oylarda Oy soyasi Yerdan yuqoridan yoki pastdan o‘tib ketadi.
+            </p>
+          </div>
+        </div>
+        <div class="formula-strip">
+          <span class="formula-pill">Orbita og‘ishi: i = 5°09′</span>
+          <span class="formula-pill">Quyosh tutilishi chegarasi: |Δλ| ≤ 18,5°</span>
+          <span class="formula-pill">Oy tutilishi chegarasi: |Δλ| ≤ 12,2°</span>
+          <span class="formula-pill">Tutilishlar mavsumi: yiliga 2 marta (~6 oyda)</span>
+        </div>
+      </article>
+
+      <!-- 1.2 Simulyatsiya №1 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №1: «Tugunlar chizig‘i va 5°09′ og‘ish laboratoriyasi»</h2>
+          <span class="card-tag">Interaktiv Tajriba</span>
+        </div>
+
+        <div class="sim-wrapper">
+          <canvas id="sim1Canvas" class="sim-canvas"></canvas>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Oyning joriy fazasi</div>
+            <div class="tele-val" id="s1PhaseVal">Yangi oy (0°)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Eng yaqin tugundan uzoqlik</div>
+            <div class="tele-val" id="s1NodeDistVal">0.0° (Tugun ustida)</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Soya konusi natijasi</div>
+            <div class="tele-val" id="s1OutcomeVal"><span class="status-badge status-solar">Quyosh tutilishi mumkin!</span></div>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-top">
+              <span>Yerning Quyosh atrofidagi o‘rni (Oy / Burchak)</span>
+              <span class="control-readout" id="s1EarthReadout">Mart (0°)</span>
+            </div>
+            <input type="range" id="s1EarthSlider" min="0" max="360" step="1" value="0" />
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Oyning orbitadagi burchagi (Faza)</span>
+              <span class="control-readout" id="s1MoonReadout">180° (Yangi oy)</span>
+            </div>
+            <input type="range" id="s1MoonSlider" min="0" max="360" step="1" value="180" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="sim-btn btn-gold" id="s1BtnSeason">✦ Tugunlar chizig‘ini Quyoshga to‘g‘rilash (Tutilish mavsumi)</button>
+          <button class="sim-btn" id="s1BtnNoEclipse">↗ Tugunlardan uzoqlashtirish (Tutilishsiz oy)</button>
+          <button class="sim-btn btn-primary" id="s1BtnToggle">⏸ Pauza / Davom ettirish</button>
+        </div>
+      </article>
+
+      <!-- 1.3 Test savollari (Bo‘lim 1) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">1-bo‘lim bo‘yicha o‘z-o‘zini tekshirish testlari</h2>
+          <span class="card-tag">3 ta savol</span>
+        </div>
+        <div class="quiz-list" id="quizContainer1"></div>
+      </article>
+    </section>
+
+    <!-- ========================================================================
+         BO‘LIM 2: QUYOSH TUTILISHI VA UNING TURLARI
+         ======================================================================== -->
+    <section id="sec2" class="section-panel" role="tabpanel">
+      <!-- 2.1 Nazariya -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">2. Quyosh tutilishi va uning turlari</h2>
+          <span class="card-tag">Nazariy asoslar</span>
+        </div>
+        <p class="theory-lead">
+          Oy soya konusining o‘rtacha uzunligi <span class="hl-gold">373 300 km</span> (367 000 km dan 379 800 km gacha) bo‘lib, Oyning Yerdan masofasi esa elliptik orbita bo‘ylab <span class="hl-earth">363 300 km (perigey)</span> dan <span class="hl-crimson">405 500 km (apogey)</span> gacha o‘zgarib turadi. Shu ikki masofa nisbatiga ko‘ra Quyosh tutilishi uch xil bo‘ladi:
+        </p>
+        <div class="theory-grid">
+          <div class="theory-box">
+            <h4><span class="hl-gold">●</span> To‘liq quyosh tutilishi</h4>
+            <p>
+              Oy <strong>perigey</strong> yaqinida bo‘lganda soya konusi Yer sirtiga yetib keladi. Yer sirtidagi soya dog‘i kengligi <span class="hl-gold">270 km</span> gacha, maksimal davomiyligi <span class="hl-gold">≈ 7,5 daqiqa</span>. Bu paytda sadafdek <strong>Quyosh toji</strong>, xromosfera va Beli marjonlari ko‘rinadi.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-crimson">◎</span> Halqasimon quyosh tutilishi</h4>
+            <p>
+              Oy <strong>apogey</strong> yaqinida bo‘lganda soya konusining uchi Yerga yetmay fazoda tugaydi va Yerga <span class="hl-crimson">qarshi soya (antumbra)</span> tushadi. Oy burchak o‘lchami Quyoshnikidan kichik bo‘lgani uchun atrofida yorqin <strong>«olovli halqa»</strong> qoladi.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-earth">◐</span> Qisman quyosh tutilishi</h4>
+            <p>
+              Kuzatuvchi Oyning keng <span class="hl-earth">yarimsoya (penumbra)</span> zonasida joylashganda Oy Quyosh diskining faqat bir qismini to‘sadi va Quyosh yarim oy shaklida ko‘rinadi.
+            </p>
+          </div>
+        </div>
+        <div class="formula-strip">
+          <span class="formula-pill">Oy soya konusi uzunligi: L ≈ 373 300 km</span>
+          <span class="formula-pill">Perigey: 363 300 km (d_Oy ≈ 33,5′)</span>
+          <span class="formula-pill">Apogey: 405 500 km (d_Oy ≈ 29,4′)</span>
+          <span class="formula-pill">To‘liq faza: max 7 daq 31 sek</span>
+        </div>
+      </article>
+
+      <!-- 2.2 Simulyatsiya №2 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №2: «Quyosh tutilishi turlari va Soya konusi laboratoriyasi»</h2>
+          <span class="card-tag">Interaktiv Tajriba</span>
+        </div>
+
+        <div class="sim-wrapper">
+          <canvas id="sim2Canvas" class="sim-canvas"></canvas>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Oy masofasi / Soya uzunligi</div>
+            <div class="tele-val" id="s2DistVal">365 000 km / 373 300 km</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Burchak o‘lchamlari nisbati</div>
+            <div class="tele-val" id="s2AngularVal">Oy 33,3′ > Quyosh 31,9′</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Kuzatuvchidagi tutilish turi</div>
+            <div class="tele-val" id="s2TypeVal"><span class="status-badge status-solar">To‘liq quyosh tutilishi</span></div>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-top">
+              <span>Oyning Yerdan masofasi (Perigey ↔ Apogey)</span>
+              <span class="control-readout" id="s2DistReadout">365 000 km (Perigey)</span>
+            </div>
+            <input type="range" id="s2DistSlider" min="363300" max="405500" step="200" value="365000" />
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Kuzatuvchining soya markazidan siljishi</span>
+              <span class="control-readout" id="s2OffsetReadout">0 km (Markaziy yo‘lak)</span>
+            </div>
+            <input type="range" id="s2OffsetSlider" min="0" max="3200" step="50" value="0" />
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Tutilish bosqichi (Oyning o‘tish vaqti)</span>
+              <span class="control-readout" id="s2TransitReadout">Maksimum faza (0.00)</span>
+            </div>
+            <input type="range" id="s2TransitSlider" min="-120" max="120" step="1" value="0" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="sim-btn btn-gold" id="s2BtnTotal">● To‘liq tutilish</button>
+          <button class="sim-btn btn-crimson" id="s2BtnAnnular">◎ Halqasimon tutilish</button>
+          <button class="sim-btn" id="s2BtnPartial">◐ Qisman tutilish</button>
+          <button class="sim-btn btn-primary" id="s2BtnToggle">▶ O‘ynatish / Pauza</button>
+        </div>
+      </article>
+
+      <!-- 2.3 Test savollari (Bo‘lim 2) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">2-bo‘lim bo‘yicha o‘z-o‘zini tekshirish testlari</h2>
+          <span class="card-tag">3 ta savol</span>
+        </div>
+        <div class="quiz-list" id="quizContainer2"></div>
+      </article>
+    </section>
+
+    <!-- ========================================================================
+         BO‘LIM 3: OY TUTILISHI VA UNING TURLARI
+         ======================================================================== -->
+    <section id="sec3" class="section-panel" role="tabpanel">
+      <!-- 3.1 Nazariya -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">3. Oy tutilishi va uning turlari («Qonli Oy» siri)</h2>
+          <span class="card-tag">Nazariy asoslar</span>
+        </div>
+        <p class="theory-lead">
+          To‘lin oy fazasida Oy Yerning soya konusidan o‘tganda <strong>Oy tutilishi</strong> sodir bo‘ladi. Yer soya konusining uzunligi <span class="hl-earth">≈ 1 380 000 km</span> bo‘lib, Oy orbitasi masofasida Yer soyasining diametri (<span class="hl-crimson">≈ 9 100 km</span>) Oy diametridan (<span class="hl-gold">3 474 km</span>) taxminan <span class="hl-gold">2,6 marta katta</span>. Shu bois Oy tutilishi Yerning butun tungi yarimsharidan bir vaqtda ko‘rinadi.
+        </p>
+        <div class="theory-grid">
+          <div class="theory-box">
+            <h4><span class="hl-crimson">●</span> To‘liq oy tutilishi</h4>
+            <p>
+              Oy Yerning to‘liq soyasiga butunlay kiradi. To‘liq faza <span class="hl-crimson">1 soat 40 daqiqagacha</span>, umumiy jarayon esa <span class="hl-earth">3,5 soatgacha</span> davom etadi.
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-gold">◐</span> Qisman va Yarimsoyali tutilish</h4>
+            <p>
+              Oyning bir qismi to‘liq soyaga kirsa <strong>qisman</strong>, faqat tashqi yarimsoyadan o‘tsa <strong>yarimsoyali oy tutilishi</strong> yuz beradi (Oy yorqinligi biroz xiralashadi).
+            </p>
+          </div>
+          <div class="theory-box">
+            <h4><span class="hl-crimson">✦</span> Nega Oy mis-qizg‘ish («Qonli Oy») ko‘rinadi?</h4>
+            <p>
+              Yer atmosferasi qisqa to‘lqinli <strong>ko‘k nurlarni</strong> sochib yuboradi, uzun to‘lqinli <span class="hl-crimson">qizil-to‘q sariq Quyosh nurlarini</span> esa sindirib (refraksiya) soya konusi ichidagi Oyga yo‘naltiradi.
+            </p>
+          </div>
+        </div>
+        <div class="formula-strip">
+          <span class="formula-pill">Yer soyasi diametri: D_soya ≈ 9 100 km (2,6 · D_Oy)</span>
+          <span class="formula-pill">To‘liq faza davomiyligi: max 1 soat 40 daq</span>
+          <span class="formula-pill">Yorqinlik bahosi: Danjon shkalasi (L = 0 … 4)</span>
+        </div>
+      </article>
+
+      <!-- 3.2 Simulyatsiya №3 -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">Simulyatsiya №3: «Yer soyasi kesimi va "Qonli Oy" atmosfera refraksiyasi»</h2>
+          <span class="card-tag">Interaktiv Tajriba</span>
+        </div>
+
+        <div class="sim-wrapper">
+          <canvas id="sim3Canvas" class="sim-canvas"></canvas>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="tele-item">
+            <div class="tele-label">Oy tutilishi turi</div>
+            <div class="tele-val" id="s3TypeVal"><span class="status-badge status-lunar">To‘liq oy tutilishi</span></div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Joriy kontakt bosqichi / Vaqt</div>
+            <div class="tele-val" id="s3StageVal">Maksimum faza • 01:50</div>
+          </div>
+          <div class="tele-item">
+            <div class="tele-label">Danjon shkalasi (Atmosfera)</div>
+            <div class="tele-val" id="s3DanjonVal">L = 3 (Yorqin mis-qizg‘ish)</div>
+          </div>
+        </div>
+
+        <div class="controls-grid">
+          <div class="control-group">
+            <div class="control-top">
+              <span>Trayektoriya balandligi (Tugundan og‘ish)</span>
+              <span class="control-readout" id="s3ImpactReadout">0.25 R_Oy (Markaziy)</span>
+            </div>
+            <input type="range" id="s3ImpactSlider" min="0" max="420" step="5" value="25" />
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Atmosfera shaffofligi (Danjon shkalasi: L=0 … L=4)</span>
+              <span class="control-readout" id="s3DanjonReadout">L = 3 (Toza atmosfera)</span>
+            </div>
+            <input type="range" id="s3DanjonSlider" min="0" max="4" step="1" value="3" />
+          </div>
+          <div class="control-group">
+            <div class="control-top">
+              <span>Tutilish vaqti (0 dan 220 daqiqagacha)</span>
+              <span class="control-readout" id="s3TimeReadout">110 daq (01:50)</span>
+            </div>
+            <input type="range" id="s3TimeSlider" min="0" max="220" step="1" value="110" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="sim-btn btn-crimson" id="s3BtnTotal">● To‘liq Oy tutilishi</button>
+          <button class="sim-btn btn-gold" id="s3BtnPartial">◐ Qisman Oy tutilishi</button>
+          <button class="sim-btn" id="s3BtnPenumbral">○ Yarimsoyali tutilish</button>
+          <button class="sim-btn btn-primary" id="s3BtnToggle">▶ O‘ynatish / Pauza</button>
+        </div>
+      </article>
+
+      <!-- 3.3 Test savollari (Bo‘lim 3) -->
+      <article class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title">3-bo‘lim bo‘yicha o‘z-o‘zini tekshirish testlari</h2>
+          <span class="card-tag">3 ta savol</span>
+        </div>
+        <div class="quiz-list" id="quizContainer3"></div>
+      </article>
+    </section>
+
+    <footer class="footer-note">
+      11-sinf Astronomiya • «17-§. Quyosh va Oy tutilishlari» interaktiv o‘quv majmuasi (100% oflayn HTML5 Canvas 2D)
+    </footer>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       UMUMIY YORDAMCHI FUNKSIYALAR VA TAB NAVIGATSIYASI
+       ========================================================================== */
+    const appState = {
+      activeTab: 'sec1',
+      score: 0,
+      answeredQuestions: new Set()
+    };
+
+    // High-DPI (Retina/HD) Canvas o‘lchamlarini moslashtirish
+    function setupHighDPICanvas(canvas, desktopAspect = 2.15, mobileAspect = 0.86) {
+      const parent = canvas.parentElement;
+      if (!parent) return null;
+      const cssWidth = Math.max(280, parent.clientWidth);
+      const isMobile = cssWidth < 680;
+      const cssHeight = Math.round(cssWidth / (isMobile ? mobileAspect : desktopAspect));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+
+      if (canvas.width !== Math.round(cssWidth * dpr) || canvas.height !== Math.round(cssHeight * dpr)) {
+        canvas.width = Math.round(cssWidth * dpr);
+        canvas.height = Math.round(cssHeight * dpr);
+        canvas.style.height = cssHeight + 'px';
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, w: cssWidth, h: cssHeight, isMobile };
+    }
+
+    // Tablar o‘rtasida almashish
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const sectionPanels = document.querySelectorAll('.section-panel');
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.tab;
+        appState.activeTab = targetId;
+
+        tabButtons.forEach((b) => {
+          const active = b.dataset.tab === targetId;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+
+        sectionPanels.forEach((panel) => {
+          panel.classList.toggle('active', panel.id === targetId);
+        });
+      });
+    });
+
+    /* ==========================================================================
+       SIMULYATSIYA №1: TUGUNLAR CHIZIG‘I VA 5°09′ OG‘ISH LABORATORIYASI
+       ========================================================================== */
+    const sim1 = {
+      canvas: document.getElementById('sim1Canvas'),
+      earthSlider: document.getElementById('s1EarthSlider'),
+      moonSlider: document.getElementById('s1MoonSlider'),
+      earthReadout: document.getElementById('s1EarthReadout'),
+      moonReadout: document.getElementById('s1MoonReadout'),
+      phaseVal: document.getElementById('s1PhaseVal'),
+      nodeDistVal: document.getElementById('s1NodeDistVal'),
+      outcomeVal: document.getElementById('s1OutcomeVal'),
+      earthAngle: 0,    // 0° -> Mart (Tugunlar chizig‘i Quyoshga yo‘nalgan)
+      moonAngle: 180,   // 180° -> Quyosh va Yer orasida (Yangi oy, agar earthAngle=0 bo‘lsa)
+      playing: true,
+      months: ['Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr', 'Yanvar', 'Fevral']
+    };
+
+    function normalizeAngle(deg) {
+      let a = deg % 360;
+      if (a < 0) a += 360;
+      return a;
+    }
+
+    function shortestAngleDiff(a, b) {
+      let d = normalizeAngle(a - b);
+      if (d > 180) d -= 360;
+      return d;
+    }
+
+    function updateSim1Telemetry() {
+      const eAng = normalizeAngle(sim1.earthAngle);
+      const mAng = normalizeAngle(sim1.moonAngle);
+
+      const monthIdx = Math.floor(((eAng + 15) % 360) / 30);
+      sim1.earthReadout.textContent = `${sim1.months[monthIdx]} (${Math.round(eAng)}°)`;
+
+      // Quyoshdan Yerga yo‘nalish burchagi = eAng, Yerdan Quyoshga yo‘nalish = (eAng + 180) % 360
+      const sunDirFromEarth = normalizeAngle(eAng + 180);
+      const phaseDiff = normalizeAngle(mAng - sunDirFromEarth); // 0° = Yangi oy, 180° = To‘lin oy
+
+      let phaseName = 'O‘sayotgan oy';
+      if (phaseDiff < 12 || phaseDiff > 348) phaseName = 'Yangi oy';
+      else if (Math.abs(phaseDiff - 90) <= 15) phaseName = 'Birinchi chorak';
+      else if (Math.abs(phaseDiff - 180) <= 12) phaseName = 'To‘lin oy';
+      else if (Math.abs(phaseDiff - 270) <= 15) phaseName = 'Oxirgi chorak';
+      else if (phaseDiff > 180) phaseName = 'Kamayuvchi oy';
+
+      sim1.moonReadout.textContent = `${Math.round(mAng)}° (${phaseName})`;
+      sim1.phaseVal.textContent = `${phaseName} (${Math.round(phaseDiff)}°)`;
+
+      // Tugunlar chizig‘i fazoda 0° — 180° yo‘nalishida o‘zgarmas saqlanadi
+      const distToNode0 = Math.abs(shortestAngleDiff(mAng, 0));
+      const distToNode180 = Math.abs(shortestAngleDiff(mAng, 180));
+      const minNodeDist = Math.min(distToNode0, distToNode180);
+
+      sim1.nodeDistVal.textContent = `${minNodeDist.toFixed(1)}° ${minNodeDist <= 18.5 ? '(Tugun zonasida)' : '(Tugundan uzoq)'}`;
+
+      // Tutilish shartini tekshirish
+      const isNewMoon = (phaseDiff <= 10 || phaseDiff >= 350);
+      const isFullMoon = Math.abs(phaseDiff - 180) <= 10;
+
+      if (isNewMoon && minNodeDist <= 18.5) {
+        sim1.outcomeVal.innerHTML = `<span class="status-badge status-solar">☀ Quyosh tutilishi sodir bo‘ldi!</span>`;
+      } else if (isFullMoon && minNodeDist <= 12.2) {
+        sim1.outcomeVal.innerHTML = `<span class="status-badge status-lunar">● Oy tutilishi sodir bo‘ldi!</span>`;
+      } else if (isNewMoon || isFullMoon) {
+        sim1.outcomeVal.innerHTML = `<span class="status-badge status-neutral">Soya chetdan o‘tib ketdi (i = 5°09′)</span>`;
+      } else {
+        const sunNodeOffset = Math.min(
+          Math.abs(shortestAngleDiff(eAng, 0)),
+          Math.abs(shortestAngleDiff(eAng, 180))
+        );
+        if (sunNodeOffset <= 18.5) {
+          sim1.outcomeVal.innerHTML = `<span class="status-badge status-active">✦ Tutilishlar mavsumi (Yangi/To‘lin oyni kuting)</span>`;
+        } else {
+          sim1.outcomeVal.innerHTML = `<span class="status-badge status-neutral">Oddiy orbita harakati</span>`;
+        }
+      }
+
+      return { eAng, mAng, phaseDiff, minNodeDist, isNewMoon, isFullMoon };
+    }
+
+    function drawSim1() {
+      const setup = setupHighDPICanvas(sim1.canvas, 2.25, 0.85);
+      if (!setup) return;
+      const { ctx, w, h, isMobile } = setup;
+      const state = updateSim1Telemetry();
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Panel chegaralari
+      const leftBox = isMobile
+        ? { x: 0, y: 0, w: w, h: h * 0.54 }
+        : { x: 0, y: 0, w: w * 0.48, h: h };
+      const rightBox = isMobile
+        ? { x: 0, y: h * 0.54, w: w, h: h * 0.46 }
+        : { x: w * 0.48, y: 0, w: w * 0.52, h: h };
+
+      // Ajratuvchi chiziq
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (isMobile) {
+        ctx.moveTo(12, rightBox.y);
+        ctx.lineTo(w - 12, rightBox.y);
+      } else {
+        ctx.moveTo(rightBox.x, 12);
+        ctx.lineTo(rightBox.x, h - 12);
+      }
+      ctx.stroke();
+
+      /* --- CHAP PANEL: YUQORIDAN KO‘RINISH (QUYOSH-YER-OY) --- */
+      const cx = leftBox.x + leftBox.w * 0.5;
+      const cy = leftBox.y + leftBox.h * 0.53;
+      const earthOrbitR = Math.min(leftBox.w, leftBox.h) * 0.34;
+      const moonOrbitR = Math.max(24, earthOrbitR * 0.27);
+
+      // Sarlavha
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('A) Yuqoridan ko‘rinish: Tugunlar chizig‘i (Ω — ☋)', leftBox.x + 14, leftBox.y + 22);
+
+      // Tutilishlar mavsumi zonalari (0° va 180° atrofida yashil sektorlar)
+      [0, Math.PI].forEach((baseRad) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, earthOrbitR + 18, baseRad - 0.32, baseRad + 0.32);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Yer orbitasi
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.32)';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(cx, cy, earthOrbitR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Quyosh
+      const sunGrad = ctx.createRadialGradient(cx, cy, 4, cx, cy, 26);
+      sunGrad.addColorStop(0, '#ffffff');
+      sunGrad.addColorStop(0.35, '#fbbf24');
+      sunGrad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = sunGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 13, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Yer koordinatalari
+      const eRad = (state.eAng * Math.PI) / 180;
+      const ex = cx + earthOrbitR * Math.cos(eRad);
+      const ey = cy - earthOrbitR * Math.sin(eRad);
+
+      // Quyosh-Yer nuri
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.25)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+
+      // Oy orbitasi doirasi
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.35)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(ex, ey, moonOrbitR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Tugunlar chizig‘i (Ω — ☋) — fazoda doim gorizontal yo‘nalishni saqlaydi!
+      const sunAlignedWithNodes =
+        Math.abs(shortestAngleDiff(state.eAng, 0)) <= 18.5 ||
+        Math.abs(shortestAngleDiff(state.eAng, 180)) <= 18.5;
+
+      ctx.strokeStyle = sunAlignedWithNodes ? '#10b981' : 'rgba(148, 163, 184, 0.7)';
+      ctx.lineWidth = sunAlignedWithNodes ? 2.2 : 1.4;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(ex - moonOrbitR - 14, ey);
+      ctx.lineTo(ex + moonOrbitR + 14, ey);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Tugun belgilari (Ω va ☋)
+      ctx.fillStyle = sunAlignedWithNodes ? '#34d399' : '#94a3b8';
+      ctx.font = '700 11px sans-serif';
+      ctx.fillText('Ω', ex + moonOrbitR + 6, ey - 4);
+      ctx.fillText('☋', ex - moonOrbitR - 15, ey - 4);
+
+      // Yer shari
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(ex, ey, 7.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Oy koordinatalari
+      const mRad = (state.mAng * Math.PI) / 180;
+      const mx = ex + moonOrbitR * Math.cos(mRad);
+      const my = ey - moonOrbitR * Math.sin(mRad);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.arc(mx, my, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pastki izoh
+      ctx.fillStyle = sunAlignedWithNodes ? '#34d399' : '#94a3b8';
+      ctx.font = '600 11.5px sans-serif';
+      ctx.fillText(
+        sunAlignedWithNodes
+          ? '● Tugunlar chizig‘i Quyoshga yo‘nalgan: Tutilishlar mavsumi!'
+          : '○ Tugunlar chizig‘i Quyoshdan chetda: Soya Yerdan o‘tib ketadi',
+        leftBox.x + 14,
+        leftBox.y + leftBox.h - 12
+      );
+
+      /* --- O‘NG PANEL: YON TOMONDAN (EKLIPTIKA VA 5°09′ OG‘ISH KESIMI) --- */
+      const rx0 = rightBox.x + 18;
+      const rx1 = rightBox.x + rightBox.w - 18;
+      const rMidY = rightBox.y + rightBox.h * 0.54;
+      const rEarthX = rightBox.x + rightBox.w * 0.54;
+      const rOrbitSpan = Math.min(rightBox.w * 0.28, 125);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('B) Yon ko‘rinish: Ekliptika tekisligi va 5°09′ og‘ish kesimi', rightBox.x + 14, rightBox.y + 22);
+
+      // Chapdan kelayotgan parallel Quyosh nurlari
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.14)';
+      ctx.lineWidth = 1;
+      for (let i = -3; i <= 3; i++) {
+        const ly = rMidY + i * 22;
+        ctx.beginPath();
+        ctx.moveTo(rx0, ly);
+        ctx.lineTo(rx1, ly);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('☀ Quyosh nurlari →', rx0, rightBox.y + 42);
+
+      // Ekliptika tekisligi (gorizontal)
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+      ctx.setLineDash([6, 4]);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(rx0, rMidY);
+      ctx.lineTo(rx1, rMidY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('Ekliptika (0°)', rx0, rMidY - 7);
+
+      // Oy orbitasining ko‘rinma og‘ish burchagi (tugunlar chizig‘ining Quyosh nuriga nisbatan burchagiga bog‘liq)
+      // Agar eAng = 0° yoki 180° bo‘lsa, tugunlar chizig‘i Quyosh-Yer o‘qi bilan ustma-ust tushadi -> Yangi/To‘lin oy tugunda bo‘ladi!
+      // Agar eAng = 90° yoki 270° bo‘lsa, tugunlar chizig‘i ko‘rish nuriga perpendikulyar -> Oy orbitasi yon tomondan to‘liq 5°09′ og‘ish bilan ko‘rinadi!
+      const tiltVisualRad = (19 * Math.PI) / 180; // Vizual aniqlik uchun 5°09′ -> 19° qilib ko‘rsatiladi
+      const nodeAlignmentFactor = Math.sin((state.eAng * Math.PI) / 180); // 0 bo‘lganda tugunlar Quyoshga qaraydi
+
+      // Oyning ko‘rish chizig‘i bo‘ylab gorizontal koordinatasi:
+      // phaseDiff = 0° -> Quyosh tomonda (chapda), phaseDiff = 180° -> Yer ortida (o‘ngda)
+      const phaseRad = (state.phaseDiff * Math.PI) / 180;
+      const moonSideX = rEarthX - rOrbitSpan * Math.cos(phaseRad);
+
+      // Oyning ekliptikadan balandligi z = R * sin(5°09′) * sin(mAng - nodeAngle)
+      // mAng = 0° (Ω) va 180° (☋) da balandlik har doim 0 ga teng!
+      const moonSideY = rMidY - rOrbitSpan * Math.sin(tiltVisualRad) * Math.sin(mRad);
+
+      // Oy orbitasining yon proyeksiyasi (ellips/to‘g‘ri chiziq)
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.35)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      for (let deg = 0; deg <= 360; deg += 6) {
+        const a = (deg * Math.PI) / 180;
+        const pDiff = normalizeAngle(deg - (state.eAng + 180));
+        const pRad = (pDiff * Math.PI) / 180;
+        const px = rEarthX - rOrbitSpan * Math.cos(pRad);
+        const py = rMidY - rOrbitSpan * Math.sin(tiltVisualRad) * Math.sin(a);
+        if (deg === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Yerning to‘liq soya konusi (o‘ng tomonga cho‘zilgan)
+      const earthR = 13;
+      const shadowLen = rightBox.w * 0.38;
+      const earthUmbraGrad = ctx.createLinearGradient(rEarthX, rMidY, rEarthX + shadowLen, rMidY);
+      earthUmbraGrad.addColorStop(0, 'rgba(185, 28, 28, 0.58)');
+      earthUmbraGrad.addColorStop(1, 'rgba(185, 28, 28, 0.08)');
+      ctx.fillStyle = earthUmbraGrad;
+      ctx.beginPath();
+      ctx.moveTo(rEarthX, rMidY - earthR);
+      ctx.lineTo(rEarthX + shadowLen, rMidY - earthR * 0.42);
+      ctx.lineTo(rEarthX + shadowLen, rMidY + earthR * 0.42);
+      ctx.lineTo(rEarthX, rMidY + earthR);
+      ctx.closePath();
+      ctx.fill();
+
+      // Oyning to‘liq soya konusi (Oy ortidan o‘ngga yo‘nalgan)
+      const moonR = 6.5;
+      const moonShadowLen = rOrbitSpan * 1.15;
+      const moonUmbraGrad = ctx.createLinearGradient(moonSideX, moonSideY, moonSideX + moonShadowLen, moonSideY);
+      moonUmbraGrad.addColorStop(0, 'rgba(251, 191, 36, 0.65)');
+      moonUmbraGrad.addColorStop(1, 'rgba(251, 191, 36, 0.05)');
+      ctx.fillStyle = moonUmbraGrad;
+      ctx.beginPath();
+      ctx.moveTo(moonSideX, moonSideY - moonR);
+      ctx.lineTo(moonSideX + moonShadowLen, moonSideY - 1.5);
+      ctx.lineTo(moonSideX + moonShadowLen, moonSideY + 1.5);
+      ctx.lineTo(moonSideX, moonSideY + moonR);
+      ctx.closePath();
+      ctx.fill();
+
+      // Yer shari (o‘ng panelda)
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(rEarthX, rMidY, earthR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e0f2fe';
+      ctx.font = '700 11px sans-serif';
+      ctx.fillText('Yer', rEarthX - 9, rMidY + earthR + 14);
+
+      // Oy shari (o‘ng panelda — agar Yer soyasi ichiga kirsa qizaradi!)
+      const inEarthShadow =
+        moonSideX > rEarthX + earthR &&
+        Math.abs(moonSideY - rMidY) < earthR * 0.85;
+
+      ctx.fillStyle = inEarthShadow ? '#ef4444' : '#f1f5f9';
+      ctx.beginPath();
+      ctx.arc(moonSideX, moonSideY, moonR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = inEarthShadow ? '#fca5a5' : '#cbd5e1';
+      ctx.fillText('Oy', moonSideX - 7, moonSideY - moonR - 6);
+
+      // Quyosh tutilishi paytida Yerdagi zarba nishoni
+      const moonShadowHitsEarth =
+        moonSideX < rEarthX - earthR &&
+        Math.abs(moonSideY - rMidY) < earthR * 0.9;
+
+      if (moonShadowHitsEarth) {
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(rEarthX - earthR, moonSideY, 9, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // 5°09′ og‘ish yorlig‘i
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('Oy orbitasi og‘ishi: i = 5°09′', rightBox.x + 14, rightBox.y + rightBox.h - 12);
+    }
+
+    sim1.earthSlider.addEventListener('input', (e) => {
+      sim1.earthAngle = parseFloat(e.target.value);
+      sim1.playing = false;
+    });
+
+    sim1.moonSlider.addEventListener('input', (e) => {
+      sim1.moonAngle = parseFloat(e.target.value);
+      sim1.playing = false;
+    });
+
+    document.getElementById('s1BtnSeason').addEventListener('click', () => {
+      sim1.earthAngle = 0;
+      sim1.moonAngle = 180;
+      sim1.earthSlider.value = 0;
+      sim1.moonSlider.value = 180;
+      sim1.playing = true;
+    });
+
+    document.getElementById('s1BtnNoEclipse').addEventListener('click', () => {
+      sim1.earthAngle = 90;
+      sim1.moonAngle = 270; // Yangi oy, lekin tugundan 90° uzoqda!
+      sim1.earthSlider.value = 90;
+      sim1.moonSlider.value = 270;
+      sim1.playing = false;
+    });
+
+    document.getElementById('s1BtnToggle').addEventListener('click', () => {
+      sim1.playing = !sim1.playing;
+    });
+
+    /* ==========================================================================
+       SIMULYATSIYA №2: QUYOSH TUTILISHI TURLARI VA SOYA KONUSI LABORATORIYASI
+       ========================================================================== */
+    const sim2 = {
+      canvas: document.getElementById('sim2Canvas'),
+      distSlider: document.getElementById('s2DistSlider'),
+      offsetSlider: document.getElementById('s2OffsetSlider'),
+      transitSlider: document.getElementById('s2TransitSlider'),
+      distReadout: document.getElementById('s2DistReadout'),
+      offsetReadout: document.getElementById('s2OffsetReadout'),
+      transitReadout: document.getElementById('s2TransitReadout'),
+      distVal: document.getElementById('s2DistVal'),
+      angularVal: document.getElementById('s2AngularVal'),
+      typeVal: document.getElementById('s2TypeVal'),
+      moonDist: 365000,    // km (363 300 .. 405 500)
+      observerOffset: 0,   // km (0 .. 3200)
+      transitPhase: 0,     // -120 .. +120 (0 = markaziy yaqinlashuv)
+      playing: false
+    };
+
+    function computeSim2Physics() {
+      const umbraLen = 373300; // km
+      const d = sim2.moonDist;
+      const off = sim2.observerOffset;
+      const tNorm = sim2.transitPhase / 100; // -1.2 .. +1.2
+
+      // Burchak diametrlari (yoy daqiqalarida)
+      const sunAng = 31.9;
+      const moonAng = 31.9 * (umbraLen / d); // d < 373300 -> > 31.9'; d > 373300 -> < 31.9'
+
+      // Yer sirtidagi umbra yoki antumbra radiusi (km)
+      const coreRadiusKm = Math.abs(umbraLen - d) * 0.0093; // ~135 km perigeyda
+      const penumbraRadiusKm = 3200;
+
+      // Kuzatuvchining soya markazidan umumiy masofasi (transit + joylashuv siljishi)
+      const effectiveOffKm = Math.hypot(off, tNorm * 2600);
+
+      let eclipseType = 'Tutilish kuzatilmayapti';
+      let badgeClass = 'status-neutral';
+
+      if (effectiveOffKm <= coreRadiusKm) {
+        if (d <= umbraLen) {
+          eclipseType = 'To‘liq quyosh tutilishi';
+          badgeClass = 'status-solar';
+        } else {
+          eclipseType = 'Halqasimon quyosh tutilishi';
+          badgeClass = 'status-lunar';
+        }
+      } else if (effectiveOffKm <= penumbraRadiusKm) {
+        eclipseType = 'Qisman quyosh tutilishi';
+        badgeClass = 'status-active';
+      }
+
+      // UI matnlarni yangilash
+      const locTag = d < 370000 ? 'Perigey yaqini' : d > 398000 ? 'Apogey yaqini' : 'O‘rta masofa';
+      sim2.distReadout.textContent = `${d.toLocaleString('ru-RU')} km (${locTag})`;
+      sim2.offsetReadout.textContent = off === 0 ? '0 km (Markaziy yo‘lak)' : `${off.toLocaleString('ru-RU')} km`;
+      sim2.transitReadout.textContent =
+        Math.abs(sim2.transitPhase) <= 2 ? 'Maksimum faza (0.00)' : `Faza siljishi: ${sim2.transitPhase}%`;
+
+      sim2.distVal.textContent = `${d.toLocaleString('ru-RU')} km / ${umbraLen.toLocaleString('ru-RU')} km`;
+      const sign = moonAng >= sunAng ? '>' : '<';
+      sim2.angularVal.textContent = `Oy ${moonAng.toFixed(1)}′ ${sign} Quyosh ${sunAng.toFixed(1)}′`;
+      sim2.typeVal.innerHTML = `<span class="status-badge ${badgeClass}">${eclipseType}</span>`;
+
+      return { umbraLen, d, off, tNorm, sunAng, moonAng, coreRadiusKm, penumbraRadiusKm, effectiveOffKm, eclipseType };
+    }
+
+    function drawSim2() {
+      const setup = setupHighDPICanvas(sim2.canvas, 2.2, 0.82);
+      if (!setup) return;
+      const { ctx, w, h, isMobile } = setup;
+      const phys = computeSim2Physics();
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Yuqori panel: Optik geometriya, Pastki panel: Teleskop ko‘rinishi (yoki yonma-yon desktopda)
+      const geoBox = isMobile
+        ? { x: 0, y: 0, w: w, h: h * 0.48 }
+        : { x: 0, y: 0, w: w * 0.62, h: h };
+      const teleBox = isMobile
+        ? { x: 0, y: h * 0.48, w: w, h: h * 0.52 }
+        : { x: w * 0.62, y: 0, w: w * 0.38, h: h };
+
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (isMobile) {
+        ctx.moveTo(12, teleBox.y);
+        ctx.lineTo(w - 12, teleBox.y);
+      } else {
+        ctx.moveTo(teleBox.x, 12);
+        ctx.lineTo(teleBox.x, h - 12);
+      }
+      ctx.stroke();
+
+      /* --- PANEL A: OPTIK GEOMETRIYA VA SOYA KONUSLARI --- */
+      const gy = geoBox.y + geoBox.h * 0.54;
+      const sunX = geoBox.x + 36;
+      const sunR = Math.min(34, geoBox.h * 0.13);
+      const earthX = geoBox.x + geoBox.w - 58;
+      const earthR = Math.min(28, geoBox.h * 0.11);
+
+      // Oyning gorizontal holati (perigey -> Yerga yaqin, apogey -> Quyoshga biroz yaqinroq)
+      const distNorm = (phys.d - 363300) / (405500 - 363300); // 0 = perigey, 1 = apogey
+      const moonX = earthX - (76 + distNorm * 46);
+      const moonR = 9.5;
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('A) Optik geometriya: To‘liq soya, Qarshi soya va Yarimsoya', geoBox.x + 14, geoBox.y + 22);
+
+      // Tashqi urinma chiziqlar kesishish nuqtasi (To‘liq soya konusi uchi)
+      const slopeUmbra = (sunR - moonR) / (moonX - sunX);
+      const vertexX = moonX + moonR / slopeUmbra;
+
+      // Yarimsoya (Penumbra) konusi
+      const slopePen = (sunR + moonR) / (moonX - sunX);
+      const penReachX = earthX + 26;
+      const penHalfH = moonR + slopePen * (penReachX - moonX);
+
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.13)';
+      ctx.beginPath();
+      ctx.moveTo(moonX, gy - moonR);
+      ctx.lineTo(penReachX, gy - penHalfH);
+      ctx.lineTo(penReachX, gy + penHalfH);
+      ctx.lineTo(moonX, gy + moonR);
+      ctx.closePath();
+      ctx.fill();
+
+      // To‘liq soya (Umbra) konusi
+      const umbraGrad = ctx.createLinearGradient(moonX, gy, vertexX, gy);
+      umbraGrad.addColorStop(0, 'rgba(15, 23, 42, 0.92)');
+      umbraGrad.addColorStop(1, 'rgba(239, 68, 68, 0.55)');
+      ctx.fillStyle = umbraGrad;
+      ctx.beginPath();
+      ctx.moveTo(moonX, gy - moonR);
+      ctx.lineTo(vertexX, gy);
+      ctx.lineTo(moonX, gy + moonR);
+      ctx.closePath();
+      ctx.fill();
+
+      // Agar soya uchi Yerga yetmasa -> Qarshi soya (Antumbra) konusini chizamiz!
+      if (vertexX < earthX) {
+        const antumbraEnd = earthX + 24;
+        const antHalfH = slopeUmbra * (antumbraEnd - vertexX);
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.18)';
+        ctx.beginPath();
+        ctx.moveTo(vertexX, gy);
+        ctx.lineTo(antumbraEnd, gy - antHalfH);
+        ctx.lineTo(antumbraEnd, gy + antHalfH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Soya uchi nuqtasini belgilash
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(vertexX, gy, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = '600 10.5px sans-serif';
+        ctx.fillText('Soya uchi', vertexX - 22, gy - 10);
+      }
+
+      // Optik urinma nurlar (chiziqli)
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.42)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      // Tashqi urinmalar
+      ctx.moveTo(sunX, gy - sunR);
+      ctx.lineTo(vertexX, gy);
+      ctx.moveTo(sunX, gy + sunR);
+      ctx.lineTo(vertexX, gy);
+      // Ichki kesishuvchi urinmalar (yarimsoya)
+      ctx.moveTo(sunX, gy - sunR);
+      ctx.lineTo(penReachX, gy + penHalfH);
+      ctx.moveTo(sunX, gy + sunR);
+      ctx.lineTo(penReachX, gy - penHalfH);
+      ctx.stroke();
+
+      // Quyosh
+      const sGlow = ctx.createRadialGradient(sunX, gy, sunR * 0.4, sunX, gy, sunR * 1.65);
+      sGlow.addColorStop(0, '#fde68a');
+      sGlow.addColorStop(0.55, '#fbbf24');
+      sGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = sGlow;
+      ctx.beginPath();
+      ctx.arc(sunX, gy, sunR * 1.65, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(sunX, gy, sunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Oy
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.arc(moonX, gy, moonR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Yer shari
+      const eGrad = ctx.createRadialGradient(earthX - 8, gy - 6, 4, earthX, gy, earthR);
+      eGrad.addColorStop(0, '#7dd3fc');
+      eGrad.addColorStop(0.7, '#0284c7');
+      eGrad.addColorStop(1, '#0c4a6e');
+      ctx.fillStyle = eGrad;
+      ctx.beginPath();
+      ctx.arc(earthX, gy, earthR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Kuzatuvchi nuqtasi (Yer sirtida siljiydi)
+      const obsAngle = (phys.off / 3200) * 0.95;
+      const obsX = earthX - earthR * Math.cos(obsAngle);
+      const obsY = gy - earthR * Math.sin(obsAngle);
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.arc(obsX, obsY, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+
+      // Yorliqlar
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('Quyosh', sunX - 18, gy + sunR + 16);
+      ctx.fillText('Oy', moonX - 7, gy - moonR - 8);
+      ctx.fillText('Yer', earthX - 9, gy + earthR + 16);
+      ctx.fillStyle = '#34d399';
+      ctx.fillText('Kuzatuvchi', obsX - 24, obsY - 9);
+
+      /* --- PANEL B: YERDAGI KUZATUVCHI TELESKOPI KO‘RINISHI --- */
+      const tx = teleBox.x + teleBox.w * 0.5;
+      const ty = teleBox.y + teleBox.h * 0.54;
+      const baseSunR = Math.min(teleBox.w, teleBox.h) * 0.22;
+      const moonApparentR = baseSunR * (phys.moonAng / phys.sunAng);
+
+      // Oy diski markazi siljishi
+      const maxOffsetPx = baseSunR * 2.1;
+      const dyPx = -(phys.off / 3200) * (baseSunR * 1.45);
+      const dxPx = phys.tNorm * maxOffsetPx;
+      const distCenters = Math.hypot(dxPx, dyPx);
+
+      // Osmon qorayish darajasi (tutilish chuqurligiga qarab)
+      const coverage = Math.max(0, Math.min(1, 1 - distCenters / (baseSunR + moonApparentR)));
+      const skyDarkness = Math.pow(coverage, 1.8);
+
+      // Teleskop maydoni foni
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(teleBox.x + 8, teleBox.y + 32, teleBox.w - 16, teleBox.h - 42);
+      ctx.clip();
+
+      const skyGrad = ctx.createRadialGradient(tx, ty, baseSunR * 0.6, tx, ty, teleBox.w * 0.7);
+      skyGrad.addColorStop(0, `rgba(${Math.round(28 * (1 - skyDarkness))}, ${Math.round(58 * (1 - skyDarkness))}, ${Math.round(115 * (1 - skyDarkness))}, 0.85)`);
+      skyGrad.addColorStop(1, '#050811');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(teleBox.x + 8, teleBox.y + 32, teleBox.w - 16, teleBox.h - 42);
+
+      // To‘liq tutilish yaqinlashganda yulduzlar va Quyosh toji (Corona) ko‘rinadi!
+      const isTotalMoment = phys.d <= phys.umbraLen && distCenters <= Math.max(3, moonApparentR - baseSunR + 2);
+      const coronaStrength = isTotalMoment ? 1 : Math.max(0, (coverage - 0.86) / 0.14);
+
+      if (coronaStrength > 0.05) {
+        // Yulduzlar
+        const starCoords = [
+          [-0.36, -0.28], [0.34, -0.31], [-0.32, 0.3], [0.38, 0.26], [0.05, -0.38], [-0.41, 0.04]
+        ];
+        ctx.fillStyle = `rgba(255, 255, 255, ${coronaStrength * 0.9})`;
+        starCoords.forEach(([sx, sy]) => {
+          ctx.beginPath();
+          ctx.arc(tx + sx * teleBox.w, ty + sy * teleBox.h, 1.7, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Sadafdek porlovchi Quyosh toji (Corona streamers)
+        const coronaGrad = ctx.createRadialGradient(tx, ty, baseSunR * 0.95, tx, ty, baseSunR * 2.45);
+        coronaGrad.addColorStop(0, `rgba(255, 255, 255, ${0.85 * coronaStrength})`);
+        coronaGrad.addColorStop(0.35, `rgba(186, 230, 253, ${0.36 * coronaStrength})`);
+        coronaGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+        ctx.fillStyle = coronaGrad;
+        ctx.beginPath();
+        ctx.arc(tx, ty, baseSunR * 2.45, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Toj nurlari
+        ctx.strokeStyle = `rgba(224, 242, 254, ${0.35 * coronaStrength})`;
+        ctx.lineWidth = 2;
+        for (let k = 0; k < 12; k++) {
+          const ang = (k * Math.PI) / 6 + 0.15;
+          const len = baseSunR * (1.7 + (k % 3) * 0.32);
+          ctx.beginPath();
+          ctx.moveTo(tx + Math.cos(ang) * baseSunR, ty + Math.sin(ang) * baseSunR);
+          ctx.lineTo(tx + Math.cos(ang) * len, ty + Math.sin(ang) * len);
+          ctx.stroke();
+        }
+      }
+
+      // Quyosh diski
+      const diskGrad = ctx.createRadialGradient(tx, ty, baseSunR * 0.2, tx, ty, baseSunR);
+      diskGrad.addColorStop(0, '#fffbeb');
+      diskGrad.addColorStop(0.75, '#fbbf24');
+      diskGrad.addColorStop(1, '#f59e0b');
+      ctx.fillStyle = diskGrad;
+      ctx.beginPath();
+      ctx.arc(tx, ty, baseSunR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Protuberanslar (to‘liq tutilish paytida qizil alangalar)
+      if (isTotalMoment) {
+        ctx.fillStyle = '#fb7185';
+        [0.4, 2.3, 4.5].forEach((pAng) => {
+          ctx.beginPath();
+          ctx.arc(tx + Math.cos(pAng) * (baseSunR + 2), ty + Math.sin(pAng) * (baseSunR + 2), 3.2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // Qora Oy diski (Quyosh oldidan o‘tmoqda)
+      ctx.fillStyle = '#060913';
+      ctx.beginPath();
+      ctx.arc(tx + dxPx, ty + dyPx, moonApparentR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Halqasimon tutilishda «Olovli halqa» yorlig‘i
+      const isAnnularMoment =
+        phys.d > phys.umbraLen && distCenters <= Math.max(3, baseSunR - moonApparentR);
+
+      ctx.restore();
+
+      // Teleskop sarlavhasi va pastki holat izohi
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('B) Yerdagi teleskop ko‘rinishi', teleBox.x + 14, teleBox.y + 22);
+
+      ctx.fillStyle = isTotalMoment ? '#fbbf24' : isAnnularMoment ? '#fca5a5' : '#cbd5e1';
+      ctx.font = '600 11.5px sans-serif';
+      const bottomCaption = isTotalMoment
+        ? '✦ Quyosh toji va protuberanslar ko‘rinmoqda!'
+        : isAnnularMoment
+        ? '◎ «Olovli halqa» (Halqasimon tutilish)'
+        : phys.eclipseType;
+      ctx.fillText(bottomCaption, teleBox.x + 14, teleBox.y + teleBox.h - 12);
+    }
+
+    sim2.distSlider.addEventListener('input', (e) => {
+      sim2.moonDist = parseFloat(e.target.value);
+    });
+    sim2.offsetSlider.addEventListener('input', (e) => {
+      sim2.observerOffset = parseFloat(e.target.value);
+    });
+    sim2.transitSlider.addEventListener('input', (e) => {
+      sim2.transitPhase = parseFloat(e.target.value);
+      sim2.playing = false;
+    });
+
+    document.getElementById('s2BtnTotal').addEventListener('click', () => {
+      sim2.moonDist = 365000;
+      sim2.observerOffset = 0;
+      sim2.transitPhase = 0;
+      sim2.distSlider.value = 365000;
+      sim2.offsetSlider.value = 0;
+      sim2.transitSlider.value = 0;
+      sim2.playing = false;
+    });
+
+    document.getElementById('s2BtnAnnular').addEventListener('click', () => {
+      sim2.moonDist = 404000;
+      sim2.observerOffset = 0;
+      sim2.transitPhase = 0;
+      sim2.distSlider.value = 404000;
+      sim2.offsetSlider.value = 0;
+      sim2.transitSlider.value = 0;
+      sim2.playing = false;
+    });
+
+    document.getElementById('s2BtnPartial').addEventListener('click', () => {
+      sim2.moonDist = 384400;
+      sim2.observerOffset = 1450;
+      sim2.transitPhase = 0;
+      sim2.distSlider.value = 384400;
+      sim2.offsetSlider.value = 1450;
+      sim2.transitSlider.value = 0;
+      sim2.playing = false;
+    });
+
+    document.getElementById('s2BtnToggle').addEventListener('click', () => {
+      sim2.playing = !sim2.playing;
+    });
+
+    /* ==========================================================================
+       SIMULYATSIYA №3: YER SOYASI KESIMI VA "QONLI OY" ATMOSFERA REFRAKSIYASI
+       ========================================================================== */
+    const sim3 = {
+      canvas: document.getElementById('sim3Canvas'),
+      impactSlider: document.getElementById('s3ImpactSlider'),
+      danjonSlider: document.getElementById('s3DanjonSlider'),
+      timeSlider: document.getElementById('s3TimeSlider'),
+      impactReadout: document.getElementById('s3ImpactReadout'),
+      danjonReadout: document.getElementById('s3DanjonReadout'),
+      timeReadout: document.getElementById('s3TimeReadout'),
+      typeVal: document.getElementById('s3TypeVal'),
+      stageVal: document.getElementById('s3StageVal'),
+      danjonVal: document.getElementById('s3DanjonVal'),
+      impactParam: 0.25, // Oy radiusi birliklarida (0 .. 4.2)
+      danjonL: 3,        // 0 .. 4
+      timeMin: 110,      // 0 .. 220 daqiqa (110 = maksimum faza)
+      playing: false,
+      danjonLabels: [
+        'L = 0 (Juda to‘q qo‘ng‘ir, deyarli ko‘rinmas)',
+        'L = 1 (To‘q kulrang-qo‘ng‘ir, detallari xira)',
+        'L = 2 (To‘q qizil yoki zangsimon rang)',
+        'L = 3 (Yorqin mis-qizg‘ish, cheti sarg‘ish)',
+        'L = 4 (Juda yorqin mis-to‘q sariq)'
+      ],
+      danjonColors: [
+        { core: 'rgba(38, 22, 20, 0.94)', rim: 'rgba(95, 42, 30, 0.85)' },
+        { core: 'rgba(78, 30, 24, 0.92)', rim: 'rgba(145, 55, 35, 0.82)' },
+        { core: 'rgba(135, 34, 24, 0.88)', rim: 'rgba(195, 72, 38, 0.78)' },
+        { core: 'rgba(185, 48, 28, 0.84)', rim: 'rgba(235, 110, 48, 0.72)' },
+        { core: 'rgba(215, 75, 35, 0.78)', rim: 'rgba(251, 146, 60, 0.65)' }
+      ]
+    };
+
+    function formatMinutes(min) {
+      const m = Math.max(0, Math.round(min));
+      const hh = String(Math.floor(m / 60)).padStart(2, '0');
+      const mm = String(m % 60).padStart(2, '0');
+      return `${hh}:${mm}`;
+    }
+
+    function computeSim3Physics() {
+      // Birliklar: R_Moon = 1.0
+      // Yer to‘liq soyasi radiusi R_umbra = 2.6 * R_Moon
+      // Yer yarimsoyasi radiusi R_penumbra = 4.6 * R_Moon
+      const rMoon = 1.0;
+      const rUmbra = 2.6;
+      const rPen = 4.6;
+      const b = sim3.impactParam; // Markazdan minimal masofa (R_Moon birliklarida)
+
+      // Vaqt bo‘yicha gorizontal x koordinatasi (t = 110 daq da x = 0)
+      // Oy tezligi: ~ 0.052 R_Moon / daqiqa
+      const speed = 0.052;
+      const xMoon = (sim3.timeMin - 110) * speed;
+      const yMoon = -b;
+      const distFromCenter = Math.hypot(xMoon, yMoon);
+
+      // Tutilish turi (minimal masofa b ga qarab)
+      let eclipseType = 'Yarimsoyali oy tutilishi';
+      let badgeClass = 'status-neutral';
+      if (b + rMoon <= rUmbra) {
+        eclipseType = 'To‘liq oy tutilishi';
+        badgeClass = 'status-lunar';
+      } else if (b - rMoon < rUmbra) {
+        eclipseType = 'Qisman oy tutilishi';
+        badgeClass = 'status-solar';
+      }
+
+      // Joriy kontakt bosqichi
+      let stageText = 'Tutilishdan tashqarida';
+      if (distFromCenter <= rUmbra - rMoon) {
+        stageText = 'To‘liq faza (U2 — U3: «Qonli Oy»)';
+      } else if (distFromCenter < rUmbra + rMoon) {
+        stageText = xMoon < 0 ? 'Qisman faza (U1 — U2)' : 'Qisman faza (U3 — U4)';
+      } else if (distFromCenter < rPen + rMoon) {
+        stageText = xMoon < 0 ? 'Yarimsoyali kirish (P1 — U1)' : 'Yarimsoyali chiqish (U4 — P4)';
+      }
+
+      // Kontakt vaqtlarini hisoblash
+      const calcContactTime = (targetR) => {
+        if (b >= targetR) return null;
+        const dx = Math.sqrt(targetR * targetR - b * b);
+        const dt = dx / speed;
+        return { enter: 110 - dt, exit: 110 + dt, dx };
+      };
+
+      const p14 = calcContactTime(rPen + rMoon);
+      const u14 = calcContactTime(rUmbra + rMoon);
+      const u23 = calcContactTime(rUmbra - rMoon);
+
+      // UI yangilash
+      sim3.impactReadout.textContent = `${b.toFixed(2)} R_Oy`;
+      sim3.danjonReadout.textContent = `L = ${sim3.danjonL}`;
+      sim3.timeReadout.textContent = `${Math.round(sim3.timeMin)} daq (${formatMinutes(sim3.timeMin)})`;
+      sim3.typeVal.innerHTML = `<span class="status-badge ${badgeClass}">${eclipseType}</span>`;
+      sim3.stageVal.textContent = `${stageText} • ${formatMinutes(sim3.timeMin)}`;
+      sim3.danjonVal.textContent = sim3.danjonLabels[sim3.danjonL];
+
+      return { rMoon, rUmbra, rPen, b, xMoon, yMoon, distFromCenter, eclipseType, stageText, p14, u14, u23 };
+    }
+
+    function drawMoonTexture(ctx, cx, cy, r) {
+      // Oyning tabiiy kumushrang sirti va dengizlari (Maria)
+      const baseGrad = ctx.createRadialGradient(cx - r * 0.25, cy - r * 0.25, r * 0.1, cx, cy, r);
+      baseGrad.addColorStop(0, '#f8fafc');
+      baseGrad.addColorStop(0.7, '#cbd5e1');
+      baseGrad.addColorStop(1, '#94a3b8');
+      ctx.fillStyle = baseGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Oy dengizlari (qoramtir bazalt tekisliklar)
+      ctx.fillStyle = 'rgba(71, 85, 105, 0.34)';
+      const maria = [
+        [-0.28, -0.22, 0.26, 0.2],
+        [0.14, -0.28, 0.22, 0.18],
+        [0.24, 0.05, 0.24, 0.22],
+        [-0.12, 0.15, 0.2, 0.16],
+        [-0.36, 0.12, 0.15, 0.14]
+      ];
+      maria.forEach(([mx, my, rx, ry]) => {
+        ctx.beginPath();
+        ctx.ellipse(cx + mx * r, cy + my * r, rx * r, ry * r, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Tixo krateri va nurlari
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+      ctx.lineWidth = 1;
+      const tychoX = cx - 0.1 * r;
+      const tychoY = cy + 0.56 * r;
+      for (let a = 0; a < Math.PI * 2; a += 0.65) {
+        ctx.beginPath();
+        ctx.moveTo(tychoX, tychoY);
+        ctx.lineTo(tychoX + Math.cos(a) * r * 0.45, tychoY + Math.sin(a) * r * 0.45);
+        ctx.stroke();
+      }
+    }
+
+    function drawSim3() {
+      const setup = setupHighDPICanvas(sim3.canvas, 2.2, 0.8);
+      if (!setup) return;
+      const { ctx, w, h, isMobile } = setup;
+      const phys = computeSim3Physics();
+
+      ctx.clearRect(0, 0, w, h);
+
+      const leftBox = isMobile
+        ? { x: 0, y: 0, w: w, h: h * 0.52 }
+        : { x: 0, y: 0, w: w * 0.54, h: h };
+      const rightBox = isMobile
+        ? { x: 0, y: h * 0.52, w: w, h: h * 0.48 }
+        : { x: w * 0.54, y: 0, w: w * 0.46, h: h };
+
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (isMobile) {
+        ctx.moveTo(12, rightBox.y);
+        ctx.lineTo(w - 12, rightBox.y);
+      } else {
+        ctx.moveTo(rightBox.x, 12);
+        ctx.lineTo(rightBox.x, h - 12);
+      }
+      ctx.stroke();
+
+      /* --- CHAP PANEL: YER SOYASI KO‘NDALANG KESIMI VA KONTAKTLAR --- */
+      const cx = leftBox.x + leftBox.w * 0.5;
+      const cy = leftBox.y + leftBox.h * 0.55;
+      const unitPx = Math.min(leftBox.w, leftBox.h) * 0.082; // 1 R_Moon pikselda
+
+      const rPenPx = phys.rPen * unitPx;
+      const rUmbraPx = phys.rUmbra * unitPx;
+      const rMoonPx = phys.rMoon * unitPx;
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('A) Yer soyasi ko‘ndalang kesimi (D_soya ≈ 2,6 · D_Oy)', leftBox.x + 14, leftBox.y + 22);
+
+      // Tashqi Yarimsoya (Penumbra) doirasi
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.14)';
+      ctx.beginPath();
+      ctx.arc(cx, cy, rPenPx, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Ichki To‘liq soya (Umbra) doirasi — mis-qizg‘ish refraksiya gradiyenti bilan
+      const dCol = sim3.danjonColors[sim3.danjonL];
+      const uGrad = ctx.createRadialGradient(cx, cy, rUmbraPx * 0.15, cx, cy, rUmbraPx);
+      uGrad.addColorStop(0, dCol.core);
+      uGrad.addColorStop(0.82, dCol.rim);
+      uGrad.addColorStop(1, 'rgba(239, 68, 68, 0.55)');
+      ctx.fillStyle = uGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rUmbraPx, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(248, 113, 113, 0.75)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rUmbraPx, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Soya yorliqlari
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 11px sans-serif';
+      ctx.fillText('Yarimsoya', cx - 26, cy - rPenPx - 6);
+      ctx.fillStyle = '#fca5a5';
+      ctx.fillText('To‘liq soya (Umbra)', cx - 48, cy - rUmbraPx + 15);
+
+      // Oy trayektoriyasi chizig‘i (5°09′ qiyalikda)
+      const trajY = cy + phys.yMoon * unitPx;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((-5.15 * Math.PI) / 180);
+
+      const relY = phys.yMoon * unitPx;
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-rPenPx - rMoonPx * 1.4, relY);
+      ctx.lineTo(rPenPx + rMoonPx * 1.4, relY);
+      ctx.stroke();
+
+      // Kontakt nuqtalarini chizish (P1, U1, U2, Maks, U3, U4, P4)
+      const drawContactDot = (xVal, label, color) => {
+        const px = xVal * unitPx;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(px, relY, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = '700 10px sans-serif';
+        ctx.fillText(label, px - 7, relY - 8);
+      };
+
+      if (phys.p14) {
+        drawContactDot(-phys.p14.dx, 'P1', '#cbd5e1');
+        drawContactDot(phys.p14.dx, 'P4', '#cbd5e1');
+      }
+      if (phys.u14) {
+        drawContactDot(-phys.u14.dx, 'U1', '#fbbf24');
+        drawContactDot(phys.u14.dx, 'U4', '#fbbf24');
+      }
+      if (phys.u23) {
+        drawContactDot(-phys.u23.dx, 'U2', '#f87171');
+        drawContactDot(phys.u23.dx, 'U3', '#f87171');
+      }
+
+      // Harakatlanayotgan Oy diski (chap panelda)
+      const mxPx = phys.xMoon * unitPx;
+      drawMoonTexture(ctx, mxPx, relY, rMoonPx);
+
+      // Agar Oy to‘liq soyaga kirgan bo‘lsa, ustidan qizg‘ish parda tortamiz
+      if (phys.distFromCenter < phys.rUmbra + phys.rMoon) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(mxPx, relY, rMoonPx, 0, Math.PI * 2);
+        ctx.clip();
+
+        ctx.fillStyle = dCol.core;
+        ctx.beginPath();
+        ctx.arc(0, 0, rUmbraPx, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      ctx.restore();
+
+      /* --- O‘NG PANEL: ATMOSFERA REFRAKSIYASI VA TELESKOPDA «QONLI OY» --- */
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '700 13px sans-serif';
+      ctx.fillText('B) Yer atmosferasi refraksiyasi va Oy ko‘rinishi', rightBox.x + 14, rightBox.y + 22);
+
+      // Yuqori kichik optik sxema: Yer atmosferasida qizil nurlarning sinishi
+      const optY = rightBox.y + rightBox.h * 0.27;
+      const optEarthX = rightBox.x + rightBox.w * 0.34;
+      const optEarthR = 17;
+      const optAtmR = 23;
+      const optMoonX = rightBox.x + rightBox.w * 0.84;
+
+      // Quyosh nurlari (chapdan)
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+      ctx.lineWidth = 1.4;
+      [-19, 0, 19].forEach((dy) => {
+        ctx.beginPath();
+        ctx.moveTo(rightBox.x + 16, optY + dy);
+        ctx.lineTo(optEarthX - optAtmR, optY + dy);
+        ctx.stroke();
+      });
+
+      // Ko‘k nurlarning atmosferada tashqariga sochilishi
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(optEarthX, optY - optAtmR + 2);
+      ctx.lineTo(optEarthX + 26, optY - optAtmR - 18);
+      ctx.moveTo(optEarthX, optY + optAtmR - 2);
+      ctx.lineTo(optEarthX + 26, optY + optAtmR + 18);
+      ctx.stroke();
+
+      // Qizil nurlarning sinib (refraksiya) soya konusi ichidagi Oyga egilishi!
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(optEarthX, optY - optAtmR + 2);
+      ctx.lineTo(optMoonX, optY);
+      ctx.moveTo(optEarthX, optY + optAtmR - 2);
+      ctx.lineTo(optMoonX, optY);
+      ctx.stroke();
+
+      // Yerning moviy atmosfera halqasi
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
+      ctx.beginPath();
+      ctx.arc(optEarthX, optY, optAtmR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Yer shari
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.arc(optEarthX, optY, optEarthR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Optik sxemadagi kichik Oy
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(optMoonX, optY, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#7dd3fc';
+      ctx.font = '600 10.5px sans-serif';
+      ctx.fillText('Ko‘k nur sochiladi', optEarthX + 18, optY - optAtmR - 14);
+      ctx.fillStyle = '#fca5a5';
+      ctx.fillText('Qizil nur sinib Oyga tushadi', optEarthX + 28, optY + optAtmR + 14);
+
+      // Pastki katta teleskop ko‘rinishi: Oy diskiga Yer soyasi tushishi
+      const bigMoonX = rightBox.x + rightBox.w * 0.5;
+      const bigMoonY = rightBox.y + rightBox.h * 0.71;
+      const bigMoonR = Math.min(rightBox.w * 0.22, rightBox.h * 0.22, 66);
+
+      drawMoonTexture(ctx, bigMoonX, bigMoonY, bigMoonR);
+
+      // Katta Oy diski ustida Yer soyasi proyeksiyasi (xMoon, yMoon masshtablangan)
+      const scaleBig = bigMoonR / phys.rMoon;
+      const bigShadowCenterX = bigMoonX - phys.xMoon * scaleBig;
+      const bigShadowCenterY = bigMoonY - phys.yMoon * scaleBig;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(bigMoonX, bigMoonY, bigMoonR, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Yarimsoya xiralashuvi
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.26)';
+      ctx.beginPath();
+      ctx.arc(bigShadowCenterX, bigShadowCenterY, phys.rPen * scaleBig, 0, Math.PI * 2);
+      ctx.fill();
+
+      // To‘liq soya («Qonli Oy» mis-qizg‘ish nurlanishi)
+      const bigUmbraGrad = ctx.createRadialGradient(
+        bigShadowCenterX,
+        bigShadowCenterY,
+        phys.rUmbra * scaleBig * 0.2,
+        bigShadowCenterX,
+        bigShadowCenterY,
+        phys.rUmbra * scaleBig
+      );
+      bigUmbraGrad.addColorStop(0, dCol.core);
+      bigUmbraGrad.addColorStop(0.85, dCol.rim);
+      bigUmbraGrad.addColorStop(1, 'rgba(239, 68, 68, 0.65)');
+      ctx.fillStyle = bigUmbraGrad;
+      ctx.beginPath();
+      ctx.arc(bigShadowCenterX, bigShadowCenterY, phys.rUmbra * scaleBig, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // Katta Oy atrofidagi nozik halqa
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.25)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(bigMoonX, bigMoonY, bigMoonR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 11.5px sans-serif';
+      ctx.fillText(`Teleskopda Oy ko‘rinishi (Danjon L=${sim3.danjonL})`, rightBox.x + 14, rightBox.y + rightBox.h - 12);
+    }
+
+    sim3.impactSlider.addEventListener('input', (e) => {
+      sim3.impactParam = parseFloat(e.target.value) / 100;
+    });
+    sim3.danjonSlider.addEventListener('input', (e) => {
+      sim3.danjonL = parseInt(e.target.value, 10);
+    });
+    sim3.timeSlider.addEventListener('input', (e) => {
+      sim3.timeMin = parseFloat(e.target.value);
+      sim3.playing = false;
+    });
+
+    document.getElementById('s3BtnTotal').addEventListener('click', () => {
+      sim3.impactParam = 0.25;
+      sim3.timeMin = 110;
+      sim3.impactSlider.value = 25;
+      sim3.timeSlider.value = 110;
+      sim3.playing = false;
+    });
+
+    document.getElementById('s3BtnPartial').addEventListener('click', () => {
+      sim3.impactParam = 2.35;
+      sim3.timeMin = 110;
+      sim3.impactSlider.value = 235;
+      sim3.timeSlider.value = 110;
+      sim3.playing = false;
+    });
+
+    document.getElementById('s3BtnPenumbral').addEventListener('click', () => {
+      sim3.impactParam = 3.55;
+      sim3.timeMin = 110;
+      sim3.impactSlider.value = 355;
+      sim3.timeSlider.value = 110;
+      sim3.playing = false;
+    });
+
+    document.getElementById('s3BtnToggle').addEventListener('click', () => {
+      sim3.playing = !sim3.playing;
+    });
+
+    /* ==========================================================================
+       ASOSIY ANIMATSIYA SIKLI (REQUESTANIMATIONFRAME)
+       ========================================================================== */
+    let lastTimestamp = 0;
+
+    function mainAnimationLoop(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const dt = Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+      lastTimestamp = timestamp;
+
+      // 1-simulyatsiya animatsiyasi
+      if (sim1.playing) {
+        sim1.moonAngle = normalizeAngle(sim1.moonAngle + dt * 52);
+        sim1.earthAngle = normalizeAngle(sim1.earthAngle + dt * 4.2);
+        sim1.moonSlider.value = Math.round(sim1.moonAngle);
+        sim1.earthSlider.value = Math.round(sim1.earthAngle);
+      }
+
+      // 2-simulyatsiya animatsiyasi
+      if (sim2.playing) {
+        sim2.transitPhase += dt * 36;
+        if (sim2.transitPhase > 120) sim2.transitPhase = -120;
+        sim2.transitSlider.value = Math.round(sim2.transitPhase);
+      }
+
+      // 3-simulyatsiya animatsiyasi
+      if (sim3.playing) {
+        sim3.timeMin += dt * 24;
+        if (sim3.timeMin > 220) sim3.timeMin = 0;
+        sim3.timeSlider.value = Math.round(sim3.timeMin);
+      }
+
+      // Faol tabdagi Canvas ni chizish
+      if (appState.activeTab === 'sec1') drawSim1();
+      else if (appState.activeTab === 'sec2') drawSim2();
+      else if (appState.activeTab === 'sec3') drawSim3();
+
+      requestAnimationFrame(mainAnimationLoop);
+    }
+
+    /* ==========================================================================
+       9 TA INTERAKTIV TEST SAVOLLARI (HAR BIR BO‘LIM UCHUN 3 TADAN)
+       ========================================================================== */
+    const quizData = {
+      quizContainer1: [
+        {
+          id: 'q1_1',
+          question: '1. Quyosh va Oy tutilishlari sodir bo‘lishi uchun qanday ikkita asosiy shart bir vaqtda bajarilishi kerak?',
+          options: [
+            'Oy Yangi yoki To‘lin oy fazasida bo‘lishi hamda o‘z orbitasi tugunlari yaqinida turishi',
+            'Oy Birinchi chorak fazasida bo‘lishi va Yer apogeliy nuqtasida turishi',
+            'Yer o‘z o‘qi atrofida sekinroq aylanishi va Oy perigeyda bo‘lishi',
+            'Quyoshda dog‘lar soni maksimumga yetishi va Oy To‘lin oy fazasida bo‘lishi'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Tutilish ro‘y berishi uchun Quyosh, Yer va Oy bir to‘g‘ri chiziqqa yaqin kelishi — ya’ni Oy Yangi oy (Quyosh tutilishi) yoki To‘lin oy (Oy tutilishi) fazasida bo‘lishi hamda ekliptika bilan kesishish tugunlari (Ω yoki ☋) yaqinida turishi shart.'
+        },
+        {
+          id: 'q1_2',
+          question: '2. Nima sababdan har oyda Yangi oy va To‘lin oy fazalari takrorlansa-da, har oyda tutilish sodir bo‘lmaydi?',
+          options: [
+            'Oy orbitasi tekisligi ekliptika tekisligiga 5°09′ burchak ostida og‘ganligi sababli',
+            'Oyning Yerdan masofasi har oyda ikki barobar o‘zgarib turganligi sababli',
+            'Quyosh nurlari Yer atmosferasida sinib, soyani yo‘qotib yuborganligi sababli',
+            'Yerning Quyosh atrofidagi orbitasi kvadrat shaklida bo‘lganligi sababli'
+          ],
+          correctIndex: 0,
+          explanation: 'Barakalla! Oy orbitasi tekisligi ekliptika tekisligiga 5°09′ og‘ganligi tufayli ko‘pchilik Yangi oylarda Oy soyasi Yerdan yuqoridan yoki pastdan o‘tib ketadi.'
+        },
+        {
+          id: 'q1_3',
+          question: '3. Bir kalendar yili davomida Yer yuzida odatda necha marta «Tutilishlar mavsumi» (tugunlar chizig‘ining Quyoshga yo‘nalishi) kuzatiladi?',
+          options: [
+            'Yiliga 2 marta (har yarim yilda bir marta)',
+            'Har oyda 1 marta (yiliga 12 marta)',
+            'Faqat 4 yilda bir marta (kabisa yilida)',
+            'Yiliga 6 marta'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Tugunlar chizig‘i fazoda o‘z yo‘nalishini deyarli saqlagani uchun Yer Quyosh atrofida aylanayotganda bu chiziq yiliga 2 marta (taxminan 6 oy oralig‘ida) Quyoshga yo‘naladi.'
+        }
+      ],
+      quizContainer2: [
+        {
+          id: 'q2_1',
+          question: '1. Oy o‘z orbitasining apogey nuqtasi yaqinida (Yerdan ~405 500 km uzoqlikda) bo‘lganda markaziy Quyosh tutilishining qaysi turi kuzatiladi?',
+          options: [
+            'Halqasimon quyosh tutilishi («olovli halqa»)',
+            'To‘liq quyosh tutilishi',
+            'Yarimsoyali quyosh tutilishi',
+            'Hech qanday tutilish bo‘lmaydi'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Apogeyda Oyning Yerdan masofasi uning soya konusi uzunligidan (373 300 km) katta bo‘ladi; soya uchi Yerga yetmay tugaydi va Oy diski Quyoshni to‘liq yopa olmay, atrofida yorqin olovli halqa qoldiradi.'
+        },
+        {
+          id: 'q2_2',
+          question: '2. Yer sirtida to‘liq quyosh tutilishi yo‘lagining maksimal kengligi va eng uzoq davomiyligi qanchaga yetishi mumkin?',
+          options: [
+            'Kengligi 270 km gacha, davomiyligi ≈ 7,5 daqiqagacha',
+            'Kengligi 9 100 km gacha, davomiyligi 1 soat 40 daqiqagacha',
+            'Kengligi 50 km gacha, davomiyligi 30 soniyagacha',
+            'Butun yarimsharda ko‘rinadi, davomiyligi 3,5 soatgacha'
+          ],
+          correctIndex: 0,
+          explanation: 'A’lo! Oy soya konusining Yer sirtini kesish dog‘i diametri 270 km dan oshmaydi, Yerning aylanishi va Oyning harakati tufayli to‘liq faza bir joyda eng ko‘pi bilan ≈ 7,5 daqiqa davom etadi.'
+        },
+        {
+          id: 'q2_3',
+          question: '3. Quyoshning sadafdek porlovchi tashqi atmosferasi — Quyosh toji va xromosferani Yerdan oddiy ko‘z bilan faqat qaysi paytda ko‘rish mumkin?',
+          options: [
+            'To‘liq quyosh tutilishining to‘liq fazasi paytida',
+            'Yarimsoyali oy tutilishi paytida',
+            'Halqasimon quyosh tutilishi paytida',
+            'Qisman quyosh tutilishi boshlanishida'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Fotosferaning o‘ta yorqin nuri faqat to‘liq quyosh tutilishi paytidagina Oy diski bilan butunlay to‘siladi va kuchsiz yorug‘likka ega Quyosh toji ko‘rinadi.'
+        }
+      ],
+      quizContainer3: [
+        {
+          id: 'q3_1',
+          question: '1. Oy orbitasi masofasida Yer to‘liq soyasining diametri Oy diametridan necha marta katta?',
+          options: [
+            'Taxminan 2,6 marta katta (≈ 9 100 km ga qarshi 3 474 km)',
+            'Taxminan 10 marta kichik',
+            'Oy diametriga teng (1 marta)',
+            'Taxminan 100 marta katta'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Yer soya konusining uzunligi ~1 380 000 km bo‘lib, Oy orbitasi masofasida uning diametri ≈ 9 100 km ni tashkil etadi, bu esa Oy diametridan (3 474 km) ≈ 2,6 marta kattadir.'
+        },
+        {
+          id: 'q3_2',
+          question: '2. To‘liq oy tutilishi paytida Oy butunlay ko‘rinmay qolmasdan, mis-qizg‘ish («Qonli Oy») tusga kirishining fizik sababi nima?',
+          options: [
+            'Yer atmosferasi ko‘k nurlarni sochib, uzun to‘lqinli qizil nurlarni sindirib (refraksiya) soya ichidagi Oyga yo‘naltirishi',
+            'Oy sirtidagi vulqonlar tutilish paytida qizil lava otib chiqarishi',
+            'Quyosh tutilish paytida faqat qizil rangli nurlar chiqara boshlashi',
+            'Oy magnit maydonining Quyosh shamoli bilan to‘qnashuvi'
+          ],
+          correctIndex: 0,
+          explanation: 'Barakalla! Yer atmosferasi qisqa to‘lqinli ko‘k nurlarni sochadi, uzun to‘lqinli qizil-to‘q sariq Quyosh nurlarini esa sindirib Yer soya konusi ichiga buradi.'
+        },
+        {
+          id: 'q3_3',
+          question: '3. To‘liq oy tutilishining to‘liq fazasi (Oy butunlay Yer soyasi ichida turadigan vaqt) eng ko‘pi bilan qancha davom etadi?',
+          options: [
+            '1 soat 40 daqiqagacha',
+            '7,5 daqiqagacha',
+            '12 soatgacha',
+            '2 daqiqagacha'
+          ],
+          correctIndex: 0,
+          explanation: 'To‘g‘ri! Yer soyasi Oy diametridan 2,6 marta keng bo‘lganligi sababli to‘liq oy tutilishining to‘liq fazasi 1 soat 40 daqiqagacha, umumiy jarayon esa 3,5 soatgacha cho‘ziladi.'
+        }
+      ]
+    };
+
+    function renderQuizzes() {
+      const scoreEl = document.getElementById('globalScore');
+
+      Object.entries(quizData).forEach(([containerId, questions]) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        questions.forEach((item) => {
+          const qDiv = document.createElement('div');
+          qDiv.className = 'quiz-item';
+
+          const qTitle = document.createElement('div');
+          qTitle.className = 'quiz-q';
+          qTitle.textContent = item.question;
+          qDiv.appendChild(qTitle);
+
+          const optsGrid = document.createElement('div');
+          optsGrid.className = 'quiz-options';
+
+          const fbDiv = document.createElement('div');
+          fbDiv.className = 'quiz-feedback';
+
+          item.options.forEach((optText, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'quiz-opt';
+            btn.textContent = optText;
+
+            btn.addEventListener('click', () => {
+              const allBtns = optsGrid.querySelectorAll('.quiz-opt');
+              allBtns.forEach((b, bIdx) => {
+                b.disabled = true;
+                if (bIdx === item.correctIndex) b.classList.add('correct');
+              });
+
+              const isRight = idx === item.correctIndex;
+              if (!isRight) {
+                btn.classList.add('wrong');
+              }
+
+              if (!appState.answeredQuestions.has(item.id)) {
+                appState.answeredQuestions.add(item.id);
+                if (isRight) {
+                  appState.score += 1;
+                  scoreEl.textContent = `${appState.score} / 9 ball`;
+                }
+              }
+
+              fbDiv.className = `quiz-feedback show ${isRight ? 'fb-ok' : 'fb-err'}`;
+              fbDiv.textContent = `${isRight ? '✓ To‘g‘ri javob! ' : '✕ Noto‘g‘ri. '}${item.explanation}`;
+            });
+
+            optsGrid.appendChild(btn);
+          });
+
+          qDiv.appendChild(optsGrid);
+          qDiv.appendChild(fbDiv);
+          container.appendChild(qDiv);
+        });
+      });
+    }
+
+    // Dasturni ishga tushirish
+    window.addEventListener('load', () => {
+      renderQuizzes();
+      drawSim1();
+      requestAnimationFrame(mainAnimationLoop);
+    });
+  </script>
+</body>
+</html>
+```
